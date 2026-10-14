@@ -2,3 +2,4 @@ fastapi
 pytest
 httpx
 python-multipart
+oci
