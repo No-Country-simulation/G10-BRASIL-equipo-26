@@ -1,0 +1,19 @@
+{
+  "httpRequest": {
+    "method": "PUT",
+    "path": "/n/test-namespace/b/test-documents/o/guide.md",
+    "headers": {
+      "Content-Type": ["text/markdown"]
+    },
+    "body": {
+      "type": "STRING",
+      "string": "# Test document"
+    }
+  },
+  "httpResponse": {
+    "statusCode": 200,
+    "headers": {
+      "ETag": ["\"test-etag\""]
+    }
+  }
+}
