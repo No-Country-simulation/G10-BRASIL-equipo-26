@@ -96,16 +96,13 @@ compatível com Anki. Acopla-se à saída JSON.
 3. **Deploy OCI Compute:** hospedagem da aplicação em VM Linux na camada Always
 Free.
 
-4. **Quiz com feedback em tempo real:** o aluno responde as perguntas geradas e
-recebe explicação imediata.
-
-5. **Suporte multimodal:** interpretação de diagramas e tabelas contidos no
+4. **Suporte multimodal:** interpretação de diagramas e tabelas contidos no
 documento original, exigindo modelo de visão (ex.: Gemini Vision) na etapa
 de ingestão.
 
-4. **Quiz com feedback em tempo real:** o aluno responde as perguntas geradas e
+5. **Quiz com feedback em tempo real:** o aluno responde as perguntas geradas e
 recebe explicação imediata.
 
-5. **Suporte multimodal:** interpretação de diagramas e tabelas contidos no
+6. **Suporte multimodal:** interpretação de diagramas e tabelas contidos no
 documento original, exigindo modelo de visão (ex.: Gemini Vision) na etapa
 de ingestão.
