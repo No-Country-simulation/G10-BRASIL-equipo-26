@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "NovaMenteOutputSchema",
+  "type": "object",
+  "properties": {
+    "status": { "type": "string" },
+    "metadados": {
+      "type": "object",
+      "properties": {
+        "perfil_aplicado": { "type": "string" },
+        "formato_gerado": { "type": "string" },
+        "tempo_estimado_estudo_minutos": { "type": "integer" },
+        "conceitos_chave": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["perfil_aplicado", "formato_gerado", "tempo_estimado_estudo_minutos", "conceitos_chave"]
+    },
+    "conteudo_adaptado": {
+      "type": "object",
+      "properties": {
+        "titulo": { "type": "string" },
+        "introducao_contextualizada": { "type": "string" },
+        "itens": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "frente": { "type": "string" },
+              "verso": { "type": "string" },
+              "dica_didatica": { "type": "string" }
+            }
+          }
+        }
+      },
+      "required": ["titulo", "introducao_contextualizada", "itens"]
+    },
+    "avaliacao_qualidade": {
+      "type": "object",
+      "properties": {
+        "ancoragem_fonte_score": { "type": "number" },
+        "clareza_pedagogica": { "type": "string" },
+        "observacoes": { "type": "string" }
+      },
+      "required": ["ancoragem_fonte_score", "clareza_pedagogica"]
+    },
+    "armazenamento_oci": {
+      "type": "object",
+      "properties": {
+        "bucket": { "type": "string" },
+        "objeto_id": { "type": "string" },
+        "status_upload": { "type": "string" }
+      },
+      "required": ["bucket", "objeto_id", "status_upload"]
+    }
+  },
+  "required": ["status", "metadados", "conteudo_adaptado", "avaliacao_qualidade", "armazenamento_oci"]
+}
