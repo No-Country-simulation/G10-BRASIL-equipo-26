@@ -5,6 +5,9 @@
 ## Tecnologias Usadas:
 
 ## Arquitetura da Solução:
+<p align="center">
+    <img src="./assets/novamente_architecture_flowchart.png" alt="fluxograma da arquitetura do projeto novamente">
+</p>
 
 ## Diagrama do Fluxo RAG/Agentes:
 
