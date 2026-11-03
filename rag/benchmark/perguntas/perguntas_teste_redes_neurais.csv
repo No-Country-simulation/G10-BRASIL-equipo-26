@@ -1,0 +1,16 @@
+﻿pergunta,documento_esperado,paginas_relevantes
+Qual foi a inspiração biológica para a criação das redes neurais artificiais?,redes_neurais.pdf,3
+O que é uma sinapse e como a informação é transmitida entre neurônios?,redes_neurais.pdf,3;4
+O que representam a junção aditiva e a função de ativação de um neurônio artificial?,redes_neurais.pdf,4;5
+Como a função degrau determina a saída do neurônio artificial?,redes_neurais.pdf,5
+Por que a diferenciabilidade da função sigmoide é relevante para redes neurais?,redes_neurais.pdf,6
+Como o conhecimento aprendido por uma rede neural é armazenado e ajustado?,redes_neurais.pdf,7
+Como se diferenciam redes alimentadas adiante e redes recorrentes?,redes_neurais.pdf,8
+Quais paradigmas de aprendizagem de redes neurais são discutidos?,redes_neurais.pdf,9
+Por que uma MLP supera limitações de um perceptron de camada única?,redes_neurais.pdf,10
+Como são calculados os erros e atualizados os pesos durante o backpropagation?,redes_neurais.pdf,11;12
+Quais dificuldades existem para definir a arquitetura e os parâmetros de uma MLP?,redes_neurais.pdf,12;13
+Em que as redes de função de base radial diferem das MLPs?,redes_neurais.pdf,14
+"Quais são as etapas de competição, cooperação e adaptação sináptica em mapas auto-organizáveis?",redes_neurais.pdf,15;16
+Quais limitações das redes neurais artificiais são destacadas na conclusão?,redes_neurais.pdf,19;20
+Qual foi o desempenho exato da rede descrita no material em um teste com o dataset CIFAR-100?,redes_neurais.pdf,

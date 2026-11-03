@@ -1,0 +1,16 @@
+﻿pergunta,documento_esperado,paginas_relevantes
+Como o material define machine learning e qual é seu objetivo?,Machine_Learning.pdf,5
+"Qual a diferença entre instâncias, variável resposta e features em um dataset?",Machine_Learning.pdf,5
+Quais são as duas formas de agrupar algoritmos de machine learning apresentadas no material?,Machine_Learning.pdf,6
+Qual é a diferença entre problemas de classificação e de regressão?,Machine_Learning.pdf,7
+"Na equação y = W*x + B, o que representam W e B?",Machine_Learning.pdf,7
+Como o exemplo de horas de estudo e faltas é utilizado para prever notas de alunos?,Machine_Learning.pdf,8
+O que representa o parâmetro k no algoritmo KNN?,Machine_Learning.pdf,8
+Quais são os componentes de uma árvore de decisão e o que cada um representa?,Machine_Learning.pdf,9
+Em que a aprendizagem não supervisionada difere da supervisionada?,Machine_Learning.pdf,7;10
+Qual é o objetivo do algoritmo K-means e o que é um centroide?,Machine_Learning.pdf,10
+Quais algoritmos são listados como exemplos de classificação supervisionada?,Machine_Learning.pdf,11
+Para que servem os dados de treino e os dados de teste na construção de um modelo?,Machine_Learning.pdf,12;13
+Por que normalizar dados e reduzir sua dimensionalidade?,Machine_Learning.pdf,13
+O que acontece nas etapas de avaliação e predição do modelo?,Machine_Learning.pdf,15
+Quais comandos exatos do pacote tidymodels são usados para ajustar uma floresta aleatória neste material?,Machine_Learning.pdf,
