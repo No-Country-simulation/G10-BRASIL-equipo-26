@@ -1,0 +1,16 @@
+﻿pergunta,documento_esperado,paginas_relevantes
+Qual é o objetivo principal do estudo sobre Deep Learning em diferentes áreas do conhecimento?,Deep_learning.pdf,1;2
+"Como o artigo distingue Inteligência Artificial, Machine Learning e Deep Learning?",Deep_learning.pdf,1;2
+Quais quatro vertentes de inteligência artificial são apresentadas a partir de Russell e Norvig?,Deep_learning.pdf,3
+Quais aplicações reais de machine learning são listadas no referencial teórico?,Deep_learning.pdf,4
+Quais são as partes do neurônio biológico descritas no artigo?,Deep_learning.pdf,4
+Como o artigo diferencia aprendizagem supervisionada e não supervisionada?,Deep_learning.pdf,6
+Como são caracterizadas as redes Multilayer Perceptron do tipo feed-forward?,Deep_learning.pdf,7
+Qual é o papel dos filtros e das camadas convolucionais no reconhecimento de características?,Deep_learning.pdf,7;8
+Como a composição de funções e camadas é usada para representar o aprendizado profundo?,Deep_learning.pdf,8;9
+Como são organizadas as camadas ocultas em uma arquitetura deep?,Deep_learning.pdf,10
+Quais resultados são relatados para a classificação de imagens de melanoma com CNN?,Deep_learning.pdf,11
+Quais aplicações de Deep Learning em imagens e objetos são descritas no levantamento?,Deep_learning.pdf,11;12
+Como LSTM e SVM são utilizadas no estudo citado sobre detecção de fake news?,Deep_learning.pdf,13
+Quais áreas futuras ou possibilidades de aprofundamento são sugeridas na conclusão?,Deep_learning.pdf,14
+Qual é o código completo em TensorFlow usado pelos autores para treinar o modelo de melanoma?,Deep_learning.pdf,
