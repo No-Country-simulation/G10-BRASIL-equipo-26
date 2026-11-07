@@ -1,0 +1,16 @@
+﻿pergunta,documento_esperado,paginas_relevantes
+Qual é o objetivo central do estudo comparativo de Red Team em LLMs?,LLM.pdf,1;2
+Como o artigo relaciona tokens e embeddings ao funcionamento de LLMs?,LLM.pdf,2
+Por que a previsibilidade dos resultados de LLMs é considerada difícil?,LLM.pdf,2
+Como o artigo define jailbreaking em sistemas de IA generativa?,LLM.pdf,3
+Como o artigo caracteriza prompt injection?,LLM.pdf,3
+Quais são as seis questões de pesquisa da revisão sistemática?,LLM.pdf,3
+Quais palavras-chave foram usadas na busca da revisão sistemática?,LLM.pdf,3
+Quantos artigos foram encontrados inicialmente e quantos foram selecionados?,LLM.pdf,3;4
+Como a ferramenta AgentPoison é caracterizada no artigo?,LLM.pdf,4
+Como o AutoDAN gera prompts de jailbreak?,LLM.pdf,4
+Quais frameworks foram destacados para comparação com o GCG?,LLM.pdf,4;5
+Qual a diferença entre as taxas de sucesso de GCG e EnJa contra Llama-2-13B na Tabela 2?,LLM.pdf,5
+Quais taxas de sucesso são apresentadas para ReNeLLM e GCG no cenário de reescrita com GPT-4?,LLM.pdf,5
+Que trabalhos futuros são propostos nas considerações finais?,LLM.pdf,5
+Qual foi a taxa de sucesso obtida pelos autores ao executar seus próprios ataques contra GPT-6?,LLM.pdf,

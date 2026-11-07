@@ -1,0 +1,16 @@
+﻿pergunta,documento_esperado,paginas_relevantes
+O que é uma Virtual Cloud Network (VCN)?,vcn.pdf,4
+Quais componentes padrão são criados com uma VCN?,vcn.pdf,4
+Qual a diferença entre sub-redes públicas e privadas?,vcn.pdf,5
+Para que servem os endereços IP privados secundários?,vcn.pdf,6;7
+Quais condições são necessárias para expor uma instância à internet?,vcn.pdf,8
+Quando usar um service gateway?,vcn.pdf,8;12;17
+Como as route tables funcionam?,vcn.pdf,9
+Como o DHCP fornece configuração às instâncias?,vcn.pdf,10
+Qual a diferença entre regras stateful e stateless?,vcn.pdf,18;19
+Como conectar a VCN à rede local usando VPN Connect?,vcn.pdf,11
+Quais são os tipos de peering entre VCNs?,vcn.pdf,12
+Como é estruturada a aplicação multicamadas apresentada?,vcn.pdf,13;14;15
+Como o cenário multicamadas trata a conectividade com a internet?,vcn.pdf,14;15
+Que papel as políticas IAM têm no peering remoto?,vcn.pdf,15
+Qual é o procedimento exato para configurar um firewall de próxima geração Palo Alto neste guia?,vcn.pdf,

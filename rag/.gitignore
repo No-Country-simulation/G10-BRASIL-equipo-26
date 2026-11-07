@@ -1,0 +1,23 @@
+# Credenciais e ambiente
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.pytest_cache/
+# Dados locais e artefatos
+*.code-workspace
+*.db
+*.sqlite
+*.sqlite3
+benchmark/pdfs/*.pdf
+benchmark/chroma*/
+*.log
+.vscode/
+*.zip
+
+# Resultados locais do teste
+/resultados_teste_local/
