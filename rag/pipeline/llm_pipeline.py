@@ -13,7 +13,7 @@ from google.genai.errors import ServerError
 
 from pydantic import TypeAdapter, ValidationError
 
-from schemas import (
+from pipeline.schemas import (
     ContextoRAG,
     PacoteFinal,
     Metadados,

@@ -15,9 +15,9 @@ from langchain_core.embeddings import Embeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 
-from rag_config import (CHUNK_SIZE, CHUNK_OVERLAP, K_RETRIEVER,
+from pipeline.rag_config import (CHUNK_SIZE, CHUNK_OVERLAP, K_RETRIEVER,
                         TOP_N_RERANKER, EMBEDDING_MODEL, RERANKER_MODEL)
-from schemas import DocumentoExtraido, PedidoGeracao, ContextoRAG, TrechoRecuperado
+from pipeline.schemas import DocumentoExtraido, PedidoGeracao, ContextoRAG, TrechoRecuperado
 
 
 class GeminiEmbeddings(Embeddings):
