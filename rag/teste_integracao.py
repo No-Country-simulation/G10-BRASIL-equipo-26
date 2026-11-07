@@ -1,6 +1,6 @@
-"""Teste manual dos seis formatos com PDF real, RAG Gemini/Groq, Pydantic e SQLite.
+"""Teste manual dos seis formatos com documento real, RAG Gemini/Groq, Pydantic e SQLite.
 
-Executar da raiz do repositório: python .\rag\teste_integracao.py caminho\arquivo.pdf
+Executar da raiz do repositório: python .\rag\teste_integracao.py caminho\arquivo
 Não modifica os módulos do pipeline nem executa o benchmark.
 Requer rag/database.py e rag/persistencia.py.
 """
@@ -12,16 +12,18 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 RAIZ_RAG = Path(__file__).resolve().parent
+RAIZ_PROJETO = RAIZ_RAG.parent
+sys.path.insert(0, str(RAIZ_PROJETO / 'backend'))
 sys.path.insert(0, str(RAIZ_RAG / 'pipeline'))
 sys.path.insert(0, str(RAIZ_RAG))
 load_dotenv(RAIZ_RAG / '.env')
 
 from database import init_db, migrate_respostas
 from persistencia import registrar_geracao
-from extrator_temporario.extrair_pdf_teste import extrair_pdf
-from schemas import PedidoGeracao, Perfil, Formato, Nicho, PacoteFinal
-from rag_retrieval import indice_documento
-from llm_pipeline import gerar_de_contexto
+from backend.app.ingestao import processar_documento
+from pipeline.schemas import PedidoGeracao, Perfil, Formato, Nicho, PacoteFinal
+from pipeline.rag_retrieval import indice_documento
+from pipeline.llm_pipeline import gerar_de_contexto
 
 CONSULTAS = {
     Formato.TUTORIAL: 'Explique os conceitos centrais do documento em etapas, com exemplos práticos.',
@@ -34,12 +36,12 @@ CONSULTAS = {
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Teste integrado RAG + LLM + Pydantic + SQLite.')
-    parser.add_argument('pdf', type=Path, help='Caminho para PDF com texto selecionável')
+    parser = argparse.ArgumentParser(description='Teste integrado ingestão + RAG + LLM + Pydantic + SQLite.')
+    parser.add_argument('arquivo', type=Path, help='Caminho para PDF, Markdown ou TXT')
     args = parser.parse_args()
-    pdf = args.pdf.resolve()
-    if not pdf.is_file():
-        parser.error(f'PDF não encontrado: {pdf}')
+    arquivo = args.arquivo.resolve()
+    if not arquivo.is_file():
+        parser.error(f'Arquivo não encontrado: {arquivo}')
     if not os.getenv('GEMINI_API_KEY'):
         parser.error('Configure GEMINI_API_KEY no ambiente ou em rag/.env')
 
@@ -49,8 +51,11 @@ def main():
     migrate_respostas()
     print('SQLite inicializado.', flush=True)
 
-    documento, total_paginas = extrair_pdf(pdf)
-    print(f'PDF: {pdf.name} | páginas: {total_paginas} | com texto: {len(documento.paginas)}', flush=True)
+    documento = processar_documento(str(arquivo), documento_id=arquivo.stem)
+    print(
+        f'Arquivo: {arquivo.name} | páginas com texto: {len(documento.paginas)}',
+        flush=True,
+    )
     saida = RAIZ_RAG / 'resultados_teste_local'
     saida.mkdir(exist_ok=True)
     falhas = []

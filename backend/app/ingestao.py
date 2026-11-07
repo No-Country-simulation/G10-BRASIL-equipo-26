@@ -1,16 +1,11 @@
-"""Leitura e extração de documentos para o pipeline de RAG.
-
-O módulo possui uma única responsabilidade externa: transformar um arquivo
-PDF, Markdown ou texto bruto em documentos LangChain prontos para consumo.
-As funções privadas separam as etapas internas desse fluxo.
-"""
+"""Leitura e extração de documentos para o pipeline de RAG."""
 
 import logging
 import re
 from pathlib import Path
 
-from langchain_core.documents import Document
 from pypdf import PdfReader
+from rag.pipeline.schemas import DocumentoEntrada, DocumentoExtraido, PaginaExtraida
 
 
 logger = logging.getLogger(__name__)
@@ -61,9 +56,8 @@ def _criar_documento(
     texto: str,
     pagina: int,
     caminho: Path,
-    extensao: str,
-    documento_id: str | None,
-) -> Document | None:
+    documento_id: str,
+) -> PaginaExtraida | None:
     texto_limpo = limpar_texto(texto)
 
     if not texto_limpo:
@@ -74,24 +68,18 @@ def _criar_documento(
         )
         return None
 
-    metadata = {
-        "nome_arquivo": caminho.name,
-        "tipo_arquivo": extensao[1:],
-        "caminho_origem": str(caminho.resolve()),
-        "pagina_origem": pagina if extensao == ".pdf" else None,
-    }
+    return PaginaExtraida(
+        documento_id=documento_id,
+        pagina=pagina,
+        texto=texto_limpo,
+    )
 
-    if documento_id is not None:
-        metadata["documento_id"] = documento_id
-
-    return Document(page_content=texto_limpo, metadata=metadata)
-
-# Responsabilidade: coordenar a validação, extração, limpeza e retorno de documentos.
 def processar_documento(
     caminho_arquivo: str,
     documento_id: str | None = None,
-) -> list[Document]:
+) -> DocumentoExtraido:
     caminho, extensao = _validar_arquivo(caminho_arquivo)
+    identificador = caminho.stem if documento_id is None else documento_id
 
     try:
         partes_extraidas = (
@@ -103,24 +91,32 @@ def processar_documento(
         logger.exception("Erro ao processar %s", caminho.name)
         raise
 
-    documentos = [
+    paginas = [
         documento
         for pagina, texto in partes_extraidas
         if (documento := _criar_documento(
             texto,
             pagina,
             caminho,
-            extensao,
-            documento_id,
+            identificador,
         )) is not None
     ]
 
-    if not documentos:
+    if not paginas:
         raise ValueError("Nenhum conteúdo textual válido foi extraído.")
 
-    logger.info(
-        "Arquivo processado: %s | Documentos: %d",
-        caminho.name,
-        len(documentos),
+    documento = DocumentoExtraido(
+        documento=DocumentoEntrada(
+            documento_id=identificador,
+            nome_arquivo=caminho.name,
+            tipo_arquivo=extensao[1:],
+        ),
+        paginas=paginas,
     )
-    return documentos
+
+    logger.info(
+        "Arquivo processado: %s | Páginas com texto: %d",
+        caminho.name,
+        len(documento.paginas),
+    )
+    return documento

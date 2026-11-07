@@ -260,7 +260,7 @@ O PDF possui 16 páginas com texto extraível.
 
 Caso esse documento não esteja incluído no repositório, utilize outro PDF com texto extraível e informe seu caminho ao executar o teste.
 
-O extrator provisório não realiza OCR. Portanto, PDFs digitalizados sem camada de texto podem não funcionar corretamente.
+O extrator de `backend/app/ingestao.py` não realiza OCR. Portanto, PDFs digitalizados sem camada de texto podem não funcionar corretamente.
 
 ### 7.2. Executar o teste
 
@@ -509,20 +509,19 @@ A análise dos resultados salvos não requer novas chamadas às APIs.
 
 ---
 
-## 12. Extração provisória de documentos
+## 12. Extração de documentos
 
-O diretório `extrator_temporario/` contém uma implementação baseada em `pypdf`, utilizada durante o desenvolvimento e os testes de integração.
+O módulo `backend/app/ingestao.py` implementa a extração de arquivos PDF, Markdown e TXT com `pypdf` e leitura UTF-8.
 
-Sua finalidade é permitir que o pipeline seja testado independentemente da implementação definitiva de extração de documentos.
+Sua finalidade é produzir a entrada validada pelo pipeline no formato `DocumentoExtraido`.
 
 Essa implementação:
 
-- Extrai texto de PDFs com camada textual.
-- Organiza o conteúdo para utilização pelo pipeline.
+- Extrai texto de PDFs com camada textual e atribui cada página à sua origem.
+- Trata Markdown e TXT como uma única página lógica.
+- Normaliza espaços sem remover a estrutura de parágrafos.
+- Descarta páginas sem texto e rejeita documentos sem conteúdo válido.
 - Não realiza OCR.
-- Não substitui o extrator definitivo desenvolvido pela equipe.
-
-Quando o componente definitivo estiver disponível, a equipe poderá substituir o extrator provisório, preservando os contratos de dados necessários à integração.
 
 ---
 
