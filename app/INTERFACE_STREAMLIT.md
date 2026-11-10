@@ -1,127 +1,97 @@
-# 💻 Módulo da Interface (Frontend - Streamlit)
+# 💻 Módulo da Interface (Frontend - Streamlit) · MentorIA-Tech
 
-Este diretório contém a interface interativa do **Projeto NovaMente**, construída com [Streamlit](https://streamlit.io/) para atender a todos os requisitos visuais, de parametrização e de validação do Hackathon ONE G10.
-
----
-
-## 📌 O que já está implementado neste app (`app/main.py`)
-
-A interface foi estruturada e alinhada com as especificações do documento do projeto (`G10 - Hackathon - NovaMente.pdf`):
-
-1. **Barra Lateral de Parametrização Completa:**
-   - **Perfil do Destinatário:** Iniciante / Transição, Desenvolvedor Júnior / Pleno, Líder Técnico / Arquiteto, Gestor / Executivo (Não Técnico).
-   - **Formato Pedagógico:** Flashcards, Quiz Interativo, Tutorial Passo a Passo, Resumo TL;DR, Roteiro de Aula / Vídeo.
-   - **Nicho / Contexto de Aplicação:** Geral, Fintech, Saúde, E-commerce.
-   - **Nível de Detalhe:** Sintético, Didático, Aprofundado.
-
-2. **Ingestão Flexível de Conteúdo Técnico:**
-   - Upload de arquivos nos formatos `.pdf`, `.md` e `.txt`.
-   - Alternativa de inserção direta via campo de texto bruto.
-   - Campo para identificação do título ou tema do documento.
-
-3. **Validações e Tratamento de Erros:**
-   - Alertas visuais amigáveis caso o usuário tente submeter o formulário sem preencher o título ou sem carregar um documento.
-
-4. **Renderização dos Resultados e Métricas:**
-   - Cards com indicadores do RAG: Tempo de Estudo, Score de Ancoragem (Grounding / Mitigação de Alucinação), Nível de Clareza Pedagógica e Status de Persistência no OCI Bucket.
-   - **Abas de Visualização:**
-     - *Visualização Interativa:* Flashcards expansíveis, dicas didáticas e observações pedagógicas.
-     - *JSON Estruturado:* Inspeção completa do payload de entrada e do schema de saída gerado.
-     - *Persistência OCI & Download:* Botão direto para exportar o arquivo JSON adaptado e conferir os identificadores do bucket.
-
-5. **Dados Mockados para Desenvolvimento Desacoplado:**
-   - O app já conta com uma simulação do schema JSON oficial para que o frontend possa ser testado visualmente mesmo antes da conclusão dos pipelines de IA e nuvem.
+Este diretório contém a interface interativa do **MentorIA-Tech**, construída com [Streamlit](https://streamlit.io/) e desenhada sob a identidade visual oficial do **Brandbook UX/UI v1.1** para atender a todos os requisitos do **Hackathon ONE G10 (Alura & Oracle)**.
 
 ---
 
-## 🛠️ Como rodar o app localmente
+## 🎨 Identidade Visual e Experiência Digital (Brandbook UX/UI)
 
-Execute os passos abaixo a partir da raiz do repositório (`G10-Brasil-Equipe-26-NovaMente`):
+A interface foi projetada sob o conceito: *"Aprender com clareza, leveza e autonomia"*, aplicando rigorosamente as diretrizes da marca:
 
-### 1. Criar e ativar o ambiente virtual (Recomendado)
-```bash
+1. **Tokens de Cores Padronizados:**
+   - **Verde Menta (`#A8E6CF`):** Cor primária para ações principais, destaques e confirmações.
+   - **Lilás Pastel (`#CDB4DB`) / Lavanda (`#EDE4F5`):** Cor secundária para botões secundários e apoios.
+   - **Rosa Suave (`#FFC8DD`) / Rosa Pálido (`#FFF0F5`):** Cor de destaque visual e cards de contextualização.
+   - **Grafite (`#293241`):** Tipografia com alto contraste e conformidade estrita com **WCAG AA** (texto escuro sobre fundos claros).
+   - **Bordas Arredondadas:** `16px` para cards e `10px` para controles de formulário.
+
+2. **Assets e Identidade Integrados (`app/assets/`):**
+   - **Ícone Principal:** Usado no Favicon da aba do navegador (`page_icon`) com recorte automático de transparência.
+   - **Logomarca Principal:** Posicionada no topo da Sidebar com fundo claro, preservando contraste e legibilidade.
+   - **Mascote Oficial:** Integrado no Banner Principal (*Hero*) da Visão Geral e nos estados vazios (*Empty States*) para humanizar a experiência do estudante.
+
+---
+
+## 📌 Telas e Funcionalidades Implementadas
+
+O aplicativo organiza a jornada do usuário em 4 etapas didáticas:
+
+### 1. ◫ Visão Geral
+- **Hero Banner:** Apresentação da proposta de valor com o Mascote oficial do MentorIA-Tech.
+- **Painel de Métricas:** Contadores de documentos indexados, conteúdos adaptados gerados, formatos explorados e status do bucket **OCI Object Storage Always Free**.
+- **Demonstrações Recentes do MVP:** Lista rápida dos últimos materiais adaptados com botão direto para inspeção.
+- **Jornada de Criação:** Resumo das 4 etapas de aprendizado.
+
+### 2. ▤ Minha Biblioteca (Ingestão Real de Documentos)
+- **Upload Multiformato:** Suporte nativo para envio de arquivos `.pdf`, `.md` e `.txt`.
+- **Extração com Mapeamento de Páginas:** Extração automatizada de texto página por página (via `pypdf`) para indexação precisa e citação de fontes no RAG.
+- **Entrada Manual de Texto:** Permite colar textos técnicos diretamente na interface.
+- **Acervo de Fontes:** Visualização de metadados dos materiais (quantidade de páginas, caracteres, tipo de arquivo e prévia do conteúdo).
+- **Fontes Base Incluídas:**
+  - *Introdução à Arquitetura de Redes VCN na OCI* (Redes Virtuais, Sub-redes, Security Lists e Gateways).
+  - *Fundamentos de Machine Learning e Modelos Preditivos* (Conceitos, datasets, tipos de aprendizagem e cross-validation).
+
+### 3. ✧ Estúdio de Criação (Geração com IA + RAG)
+- **Parametrização Flexível:**
+  - **Material de Origem:** Seleção a partir da biblioteca de documentos.
+  - **Perfil do Destinatário:** *Iniciante / Transição*, *Desenvolvedor Jr/Pleno*, *Líder Técnico / Arquiteto* e *Gestor / Executivo*.
+  - **Nível de Profundidade:** *Básico*, *Intermediário* e *Avançado*.
+  - **Quantidade de Itens:** Slider customizável de 3 a 8 itens.
+  - **Instruções Adicionais:** Campo opcional de estilo (ex: analogias do dia a dia, comandos práticos).
+  - *(Conforme alinhamento na reunião de 09/11/2026, o campo Nicho foi simplificado para foco exclusivo em Tecnologia).*
+- **6 Formatos Pedagógicos Suportados:**
+  1. **Flashcards de Memorização:** Cartões com pergunta, resposta, dica didática e classificação.
+  2. **Quiz Interativo:** Questões com alternativas e verificação em tempo real de acerto/erro com explicação didática imediata.
+  3. **Guia Passo a Passo (Tutorial):** Etapas numeradas com orientações práticas e dicas.
+  4. **Resumo Executivo (TL;DR):** Síntese condensada com pontos-chave destacados.
+  5. **Roteiro de Aula / Vídeo:** Sequência cronológica com minutagem estimada por atividade.
+  6. **Resumo Estruturado:** Seções temáticas aprofundadas.
+- **Rastreabilidade e Ancoragem:** Cada item gerado exibe badges indicando a página e o chunk exato de onde a informação foi extraída na documentação original.
+- **Sistema de Avaliação do Usuário (Feedback):** Módulo de feedback por estrelas (1 a 5) e campo de comentário para alimentar métricas de BI e validação da proposta de valor do MVP.
+
+### 4. ▣ Meus Conteúdos (Histórico, Contratos & OCI)
+- **Abas de Inspeção:**
+  - **📖 Estudo Interativo:** Navegação completa por todos os itens pedagógicos gerados.
+  - **🧾 Inspeção JSON (Contratos):** Comparação lado a lado do payload de entrada e do schema oficial `PacoteFinal` do Pydantic.
+  - **☁️ Persistência OCI & Exportações:** Detalhes da sincronização no bucket Always Free da Oracle Cloud Infrastructure e downloads multiformato.
+
+---
+
+## 📦 Exportação Multiformato (Requisito do Edital)
+
+Para cada conteúdo gerado, o MentorIA-Tech oferece 3 opções diretas de exportação:
+1. **⬇️ Baixar JSON (Schema Oficial):** Arquivo JSON estruturado em conformidade com o schema `PacoteFinal` e `output_schema.json`.
+2. **📝 Baixar Markdown:** Arquivo formatado em Markdown com títulos, alertas e dicas, pronto para Notion, Obsidian ou GitHub.
+3. **🗂️ Baixar CSV (Compatível com Anki):** Arquivo formatado com delimitador `;` para importação direta de baralhos no software de repetição espaçada **Anki**.
+
+---
+
+## 🛠️ Como rodar a aplicação localmente
+
+### 1. Criar e ativar o ambiente virtual
+```powershell
 # Windows (PowerShell)
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-
-# Linux / Mac / WSL
-python3 -m venv .venv
-source .venv/bin/activate
 ```
 
-### 2. Instalar dependências
-```bash
-pip install -r requirements.txt
+### 2. Instalar as dependências
+```powershell
+pip install -r app/requirements.txt
 ```
-*(Caso queira rodar apenas a interface de imediato: `pip install streamlit`)*
 
-### 3. Iniciar a aplicação
-```bash
+### 3. Iniciar o MentorIA-Tech
+```powershell
 streamlit run app/main.py
 ```
-O Streamlit abrirá automaticamente no navegador em: `http://localhost:8501`.
-
----
-
-## 🤝 Como as outras áreas devem se conectar ao `app`
-
-Para mantermos o código limpo, desacoplado e sem conflitos de merge, cada frente deve desenvolver seus módulos nas suas respectivas pastas. O ponto de integração no `app/main.py` está sinalizado na linha com o comentário `# TODO`.
-
-### 1. Área: `rag/` (Engenharia de Dados e Ingestão)
-* **Responsabilidade:** Criar a função que recebe o arquivo ou texto bruto, realiza a extração (PyPDF/Markdown), segmentação (chunking), geração de embeddings e busca por similaridade.
-* **Como vincular ao app:**  
-  Expor uma função em `rag/pipeline.py` (ou módulo equivalente):
-  ```python
-  from rag.pipeline import recuperar_contexto_relevante
-
-  # No app/main.py:
-  contexto = recuperar_contexto_relevante(documento_conteudo, query="...")
-  ```
-
-### 2. Área: `agents/` (Engenharia de Prompts e Orquestração LLM)
-* **Responsabilidade:** Montar os prompts persona (LangChain / LangGraph), chamar o modelo (Google Gemini, OpenAI, etc.), validar a fidelidade técnica (grounding score) e estruturar a saída respeitando rigorosamente o schema JSON do projeto (`data/output_schema.json`).
-* **Como vincular ao app:**  
-  Expor uma função central em `agents/orquestrador.py`:
-  ```python
-  from agents.orquestrador import gerar_conteudo_educacional
-
-  # No app/main.py (substituindo a variável mock):
-  resposta_estruturada = gerar_conteudo_educacional(payload_entrada)
-  ```
-
-### 3. Área: `services/` (Oracle Cloud Infrastructure - OCI)
-* **Responsabilidade:** Integrar com o **OCI Object Storage** (Always Free) via `oci-sdk` para salvar o documento técnico enviado e o arquivo JSON resultante.
-* **Como vincular ao app:**  
-  Expor funções em `services/oci_storage.py`:
-  ```python
-  from services.oci_storage import upload_para_bucket
-
-  # No app/main.py:
-  status_upload = upload_para_bucket(
-      bucket_name="novamente-conteudos-educativos",
-      objeto_id=f"conteudo-{formato_saida.lower()}.json",
-      conteudo_json=resposta_estruturada
-  )
-  ```
-
-### 4. Área: `api/` (Opcional - Backend REST)
-* Se a equipe optar por rodar a aplicação em arquitetura desacoplada via FastAPI/Flask, o `app/main.py` fará apenas uma chamada HTTP:
-  ```python
-  import requests
-
-  resposta = requests.post("http://localhost:8000/api/v1/adaptar", json=payload_entrada)
-  resposta_estruturada = resposta.json()
-  ```
-
----
-
-## 📋 Regras de Trabalho e Boas Práticas (Git)
-
-- **Nunca faça commits direto na branch `main`!**
-- Sempre crie uma branch descritiva a partir da `main` atualizada antes de iniciar uma tarefa:
-  ```bash
-  git checkout main
-  git pull origin main
-  git checkout -b feature/nome-da-sua-tarefa
-  ```
-- Ao finalizar, faça o push e abra um **Pull Request (PR)** para revisão do time.
+Acesse no seu navegador: `http://localhost:8501`.
