@@ -119,10 +119,13 @@ def chamar_gemini(system: str, user: str) -> tuple[str, str]:
     from google import genai
     from google.genai import types
 
-    key = os.getenv("GEMINI_API_KEY")
-
-    if not key:
-        raise FalhaGeracao("GEMINI_API_KEY não configurada")
+    try:
+        import sys as _sys
+        _sys.path.insert(0, str(__import__("pathlib").Path(__file__).parent.parent.parent))
+        from services.oci_secrets import obter_chave_gemini as _obter_gemini
+        key = _obter_gemini()
+    except EnvironmentError as exc:
+        raise FalhaGeracao(str(exc)) from exc
 
     modelo = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
 
@@ -171,10 +174,13 @@ def chamar_gemini(system: str, user: str) -> tuple[str, str]:
 def chamar_groq(system: str, user: str) -> tuple[str, str]:
     from groq import Groq
 
-    key = os.getenv("GROQ_API_KEY")
-
-    if not key:
-        raise FalhaGeracao("GROQ_API_KEY não configurada")
+    try:
+        import sys as _sys
+        _sys.path.insert(0, str(__import__("pathlib").Path(__file__).parent.parent.parent))
+        from services.oci_secrets import obter_chave_groq as _obter_groq
+        key = _obter_groq()
+    except EnvironmentError as exc:
+        raise FalhaGeracao(str(exc)) from exc
 
     modelo = os.getenv(
         "GROQ_MODEL",
