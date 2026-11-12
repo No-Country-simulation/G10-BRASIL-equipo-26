@@ -132,8 +132,8 @@ Todos os buckets são do tipo **Standard**, visibilidade **Private**, na camada 
 | Ferramenta | Uso |
 |---|---|
 | **GitHub Projects** | Kanban de tarefas (migrado do Trello) — responsável: Andrea |
-| **Discord** | Comunicação principal da equipe |
-| **Google Meet** | Reuniões semanais (Terças, 19h30) |
+| **Discord** | Comunicação principal e sprint meetings obrigatórias da equipe |
+| **Google Meet** | Alternativa para compartilhamento de tela durante reuniões (usado em paralelo com o Discord, já que o compartilhamento de tela do Discord estava temporariamente desativado por questões legais da plataforma) |
 | **Miro** | Mapeamento IPO e brainstorming visual — responsável: Lysara |
 | **NoCountry** | Registro oficial de função e entregáveis |
 

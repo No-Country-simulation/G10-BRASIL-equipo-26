@@ -121,3 +121,4 @@ def enviar_resultado(payload: dict, nome_objeto: str | None = None) -> dict:
         return _salvar_localmente(payload, nome_objeto)
 
     return _tentar_upload_oci(payload, nome_objeto)
+

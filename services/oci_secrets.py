@@ -89,3 +89,4 @@ def pool_gemini_disponivel() -> bool:
 def pool_groq_disponivel() -> bool:
     """Retorna True se há pelo menos uma chave Groq configurada."""
     return _ciclo_groq is not None
+

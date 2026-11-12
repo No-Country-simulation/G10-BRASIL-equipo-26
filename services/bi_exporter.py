@@ -151,3 +151,4 @@ def exportar_tabela_unica(tabela: str, pasta_destino: Path | None = None) -> str
         sucesso = _exportar_tabela(con, tabela, caminho_csv)
 
     return str(caminho_csv) if sucesso else None
+
