@@ -257,6 +257,18 @@ def _chaves_api(prefixo: str) -> list[str]:
     ))
 
 
+def _espera_http(exc) -> str:
+    """Extrai espera informada pelo provedor sem expor corpo ou credenciais."""
+    resposta = getattr(exc, "response", None)
+    headers = getattr(resposta, "headers", {}) or {}
+    espera = headers.get("retry-after")
+    if espera:
+        return f" (retry-after: {espera} segundos)"
+    # Gemini pode informar a espera somente no campo textual da exceção.
+    match = re.search(r"Please retry in ([0-9]+(?:\.[0-9]+)?[smh](?:[0-9]+(?:\.[0-9]+)?[smh])*)", str(exc))
+    return f" (aguardar: {match.group(1)})" if match else ""
+
+
 def chamar_gemini(system: str, user: str, max_output_tokens: int | None = None) -> tuple[str, str]:
     from google import genai
     from google.genai import types
@@ -266,13 +278,10 @@ def chamar_gemini(system: str, user: str, max_output_tokens: int | None = None) 
         raise FalhaGeracao("Nenhuma chave Gemini configurada")
 
     modelo = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
+    erros = []
     for indice, chave in enumerate(chaves, start=1):
-        client = genai.Client(
-            api_key=chave,
-            http_options=types.HttpOptions(timeout=60000),
-        )
+        client = genai.Client(api_key=chave, http_options=types.HttpOptions(timeout=60000))
         try:
-            limite_nesta_chave = False
             for tentativa in range(2):
                 try:
                     response = client.models.generate_content(
@@ -282,58 +291,35 @@ def chamar_gemini(system: str, user: str, max_output_tokens: int | None = None) 
                             system_instruction=system,
                             response_mime_type="application/json",
                             temperature=0.2,
-                            max_output_tokens=int(
-                                os.getenv("NOVAMENTE_MAX_OUTPUT_TOKENS", "8192")
-                            ) if max_output_tokens is None else max_output_tokens,
+                            max_output_tokens=(int(os.getenv("NOVAMENTE_MAX_OUTPUT_TOKENS", "8192"))
+                                               if max_output_tokens is None else max_output_tokens),
                         ),
                     )
-                    break
-
+                    if not response.text:
+                        raise FalhaGeracao("Gemini retornou conteúdo vazio")
+                    return response.text, modelo
                 except ServerError as exc:
                     codigo = getattr(exc, "code", None)
-
                     if codigo not in (503, 504):
                         raise
-
-                    if tentativa == 1:
-                        limite_nesta_chave = True
-                        break
-
-                    time.sleep(2)
-
-                except ServerError as exc:
-                    if getattr(exc, "code", None) not in (503, 504) or tentativa == 1:
-                        raise
-                    time.sleep(2)
+                    if tentativa == 0:
+                        time.sleep(2)
+                        continue
+                    erros.append(f"chave {indice}: HTTP {codigo} (servidor indisponível)")
+                    break
                 except ClientError as exc:
                     codigo = getattr(exc, "code", None)
-                    mensagem = str(exc)
-
-                    chave_invalida = (
-                        codigo in (400, 401, 403)
-                        and (
-                            "API_KEY_INVALID" in mensagem
-                            or "API key not valid" in mensagem
-                            or "API key invalid" in mensagem
-                        )
-                    )
-
-                    if codigo == 429 or chave_invalida:
-                        limite_nesta_chave = True
+                    if codigo == 429:
+                        erros.append(f"chave {indice}: HTTP 429 (cota/limite)" + _espera_http(exc))
                         break
-
+                    if codigo in (401, 403) or (codigo == 400 and "API_KEY_INVALID" in str(exc)):
+                        erros.append(f"chave {indice}: HTTP {codigo} (autenticação/permissão)")
+                        break
                     raise
-
-            if limite_nesta_chave:
-                continue
-
-            if not response.text:
-                raise FalhaGeracao("Gemini retornou conteúdo vazio")
-            return response.text, modelo
         finally:
             client.close()
 
-    raise FalhaGeracao("Nenhuma chave Gemini disponível: limite de uso ou autenticação inválida")
+    raise FalhaGeracao("Gemini indisponível: " + "; ".join(erros))
 
 
 # ============================================================
@@ -348,9 +334,10 @@ def chamar_groq(system: str, user: str, max_output_tokens: int | None = None) ->
         raise FalhaGeracao("Nenhuma chave Groq configurada")
 
     modelo = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
-
+    erros = []
     for indice, chave in enumerate(chaves, start=1):
-        client = Groq(api_key=chave, timeout=60.0, max_retries=1)
+        # Sem retry automático: HTTP 429 deve ser respeitado, não repetido.
+        client = Groq(api_key=chave, timeout=60.0, max_retries=0)
         try:
             response = client.chat.completions.create(
                 model=modelo,
@@ -369,12 +356,14 @@ def chamar_groq(system: str, user: str, max_output_tokens: int | None = None) ->
             if not content:
                 raise FalhaGeracao("Groq retornou conteúdo vazio")
             return content, modelo
-        except (RateLimitError, AuthenticationError):
-            continue
+        except RateLimitError as exc:
+            erros.append(f"chave {indice}: HTTP 429 (cota/limite)" + _espera_http(exc))
+        except AuthenticationError:
+            erros.append(f"chave {indice}: HTTP 401 (autenticação)")
         finally:
             client.close()
 
-    raise FalhaGeracao("Nenhuma chave Groq disponível: limite de uso ou autenticação inválida")
+    raise FalhaGeracao("Groq indisponível: " + "; ".join(erros))
 
 
 # ============================================================
@@ -731,9 +720,8 @@ def gerar_de_contexto(
     provedores: list[Callable] | None = None,
     avaliador: Callable | None = None,
 ) -> ResultadoPipeline:
-    """Gerar -> auditar -> corrigir uma vez -> auditar -> fallback/nível inferior.
+    """Gera conteúdo válido; audita Quiz quando possível sem bloquear a entrega.
 
-    Nunca reduz por falha técnica, nem publica Quiz reprovado.
     Orçamento de auditoria vale para TODA a chamada, não por tentativa.
     """
     inicio = time.perf_counter()
@@ -750,30 +738,13 @@ def gerar_de_contexto(
     orcamento = {"chamadas": 0, "tokens_reservados": 0}
     politica = pedido_original.politica_tokens
 
-    # Reserva uma auditoria e duas chamadas globais para a tentativa final
-    # Iniciante/básico. Não é garantia de entrega: a validação continua obrigatória.
+    # Priorizar o nível solicitado: nunca reservar a única auditoria para
+    # uma tentativa básica posterior. A política existente define o teto.
     perfis = _perfis_tentativa(pedido_original.perfil)
     tentativas = [(perfil, nivel) for perfil in perfis
                  for nivel in _niveis_tentativa(nivel_solicitado)]
-    final = (perfis[-1], "basico")
-    if final not in tentativas:
-        tentativas.append(final)
     correcao_utilizada = False
     for perfil_efetivo, nivel_efetivo in tentativas:
-        ultima_tentativa = (perfil_efetivo, nivel_efetivo) == final
-        if (not ultima_tentativa and politica.permitir_avaliacao_llm
-            and pedido_original.formato.value == "Quiz"
-            and (politica.max_avaliacoes_llm - orcamento["chamadas"] <= 1
-                 or politica.max_tokens_avaliacao_total - orcamento["tokens_reservados"] < 1000
-                 or controle["maximo"] - controle["chamadas"] <= 2)):
-            continue
-        if (politica.permitir_avaliacao_llm and pedido_original.formato.value == "Quiz"
-            and (orcamento["chamadas"] >= politica.max_avaliacoes_llm
-                 or politica.max_tokens_avaliacao_total - orcamento["tokens_reservados"] < 500)):
-            raise FalhaOrcamento(
-                "Auditoria obrigatória sem orçamento: não gerar conteúdo que não poderá ser auditado. "
-                + " | ".join(erros[-3:])
-            )
         if controle["chamadas"] >= controle["maximo"]:
             raise FalhaOrcamento("Limite global de chamadas atingido. " + " | ".join(erros[-3:]))
         pedido_tentativa = pedido_original.model_copy(update={"nivel": nivel_efetivo, "perfil": perfil_efetivo})
@@ -790,56 +761,66 @@ def gerar_de_contexto(
                 conteudo = _ajustar_classificacao_quiz(conteudo, nivel_efetivo)
                 conteudo = _remover_referencias_posicionais_quiz(conteudo)
                 nota_correcao = None
-
-                try:
-                    nivel_auditado, nota_pedagogica = _avaliar_quiz_opcional(
-                        conteudo, contexto_tentativa, provedor,
-                        (avaliador or _provedor_limitado(
+                nivel_auditado = None
+                nota_pedagogica = "Auditoria pedagógica não realizada."
+                # Conteúdo validado por Pydantic e pelas referências é o fallback.
+                # A auditoria não é requisito de entrega.
+                if conteudo.formato == "Quiz" and politica.permitir_avaliacao_llm:
+                    restante = politica.max_tokens_avaliacao_total - orcamento["tokens_reservados"]
+                    pode_auditar = (orcamento["chamadas"] < politica.max_avaliacoes_llm
+                                    and restante >= 500
+                                    and controle["chamadas"] < controle["maximo"])
+                    if pode_auditar:
+                        auditor_quiz = (avaliador or _provedor_limitado(
                             chamar_groq if getattr(provedor, "__wrapped__", provedor) is chamar_gemini else chamar_gemini,
-                            controle)), orcamento
-                    )
-                except FalhaOrcamento:
-                    raise
-                except FalhaAvaliacaoPedagogica as exc:
-                    # A reprovação não é falta de contexto: tentar UMA correção
-                    # no mesmo nível antes de tentar outro provedor/nível.
-                    if conteudo.formato != "Quiz":
-                        raise
-                    # No máximo uma correção por execução. Nunca gastar a
-                    # última auditoria reservada para a tentativa básica.
-                    auditorias_restantes = politica.max_avaliacoes_llm - orcamento["chamadas"]
-                    tokens_restantes = politica.max_tokens_avaliacao_total - orcamento["tokens_reservados"]
-                    chamadas_restantes = controle["maximo"] - controle["chamadas"]
-                    pode_corrigir = (not correcao_utilizada and
-                                    (ultima_tentativa or (auditorias_restantes >= 2 and tokens_restantes >= 1000 and chamadas_restantes >= 4)) and
-                                    auditorias_restantes >= 1 and tokens_restantes >= 500 and chamadas_restantes >= 2)
-                    if not pode_corrigir:
-                        raise FalhaAvaliacaoPedagogica(
-                            "Auditoria reprovou; correção omitida para preservar orçamento. " + str(exc)[:220]
-                        ) from exc
-                    correcao_utilizada = True
-                    nota_correcao = "Quiz corrigido após reprovação pedagógica e auditado novamente."
-                    try:
-                        conteudo = _corrigir_quiz_pedagogicamente(
-                            conteudo, contexto_tentativa, provedor, str(exc)
+                            controle))
+                        try:
+                            nivel_auditado, nota_pedagogica = _avaliar_quiz_opcional(
+                                conteudo, contexto_tentativa, provedor, auditor_quiz, orcamento
+                            )
+                        except (FalhaAvaliacaoPedagogica, FalhaGeracao, FalhaOrcamento) as exc:
+                            nota_pedagogica = (
+                                "Quiz entregue com validação estrutural; auditoria pedagógica "
+                                "não aprovada/concluída: " + str(exc)[:240]
+                            )
+                            # Corrigir somente se houver orçamento para correção E nova auditoria.
+                            # Preservar o Quiz original caso a correção falhe.
+                            restantes = politica.max_tokens_avaliacao_total - orcamento["tokens_reservados"]
+                            pode_corrigir = (isinstance(exc, FalhaAvaliacaoPedagogica)
+                                            and not correcao_utilizada
+                                            and orcamento["chamadas"] < politica.max_avaliacoes_llm
+                                            and restantes >= 500
+                                            and controle["maximo"] - controle["chamadas"] >= 2)
+                            if pode_corrigir:
+                                correcao_utilizada = True
+                                try:
+                                    corrigido = _corrigir_quiz_pedagogicamente(
+                                        conteudo.model_copy(deep=True), contexto_tentativa, provedor, str(exc)
+                                    )
+                                    nivel_corrigido, nota_corrigida = _avaliar_quiz_opcional(
+                                        corrigido, contexto_tentativa, provedor, auditor_quiz, orcamento
+                                    )
+                                    conteudo = corrigido
+                                    nivel_auditado = nivel_corrigido
+                                    nota_pedagogica = nota_corrigida
+                                    nota_correcao = "Quiz corrigido e reavaliado pedagogicamente."
+                                except (FalhaGeracao, FalhaAvaliacaoPedagogica, FalhaOrcamento) as erro:
+                                    nota_correcao = (
+                                        "Correção não aprovada; preservada a geração original válida: "
+                                        + str(erro)[:160]
+                                    )
+                    else:
+                        nota_pedagogica = (
+                            "Auditoria pedagógica omitida por limite de chamadas/tokens; "
+                            "conteúdo validado estruturalmente."
                         )
-                    except FalhaOrcamento:
-                        raise
-                    except FalhaGeracao as erro_correcao:
-                        if str(erro_correcao) == "A LLM informou contexto insuficiente":
-                            raise FalhaAvaliacaoPedagogica(
-                                "Correção pedagógica inviável com os trechos recuperados"
-                            ) from erro_correcao
-                        raise FalhaAvaliacaoPedagogica(
-                            "Correção pedagógica inválida: " + str(erro_correcao)[:250]
-                        ) from erro_correcao
-                    nivel_auditado, nota_pedagogica = _avaliar_quiz_opcional(
-                        conteudo, contexto_tentativa, provedor,
-                        (avaliador or _provedor_limitado(
-                            chamar_groq if getattr(provedor, "__wrapped__", provedor) is chamar_gemini else chamar_gemini,
-                            controle)), orcamento
+                # Nível inferido pela auditoria não prova insuficiência do documento.
+                # Manter o solicitado e sinalizar eventual divergência, sem rebaixar.
+                if conteudo.formato == "Quiz" and nivel_auditado and nivel_auditado != nivel_efetivo:
+                    nota_pedagogica += (
+                        f" Atenção: auditoria estimou nível {nivel_auditado}, "
+                        f"inferior ao solicitado ({nivel_efetivo}); dificuldade não garantida."
                     )
-
                 nivel_publicado = nivel_auditado or nivel_efetivo
                 conteudo = _remover_referencias_posicionais_quiz(conteudo)
                 conteudo = _distribuir_respostas_quiz(conteudo)
@@ -849,7 +830,7 @@ def gerar_de_contexto(
                     causa = (
                         "auditoria pedagógica estimou dificuldade inferior"
                         if nivel_auditado and nivel_auditado != nivel_efetivo
-                        else "geração avançada não sustentada pelos trechos recuperados"
+                        else "nível diferente do solicitado na tentativa de geração; causa não comprovada"
                     )
                     aviso = (
                         f"Adaptação: nível {nivel_solicitado} → {nivel_publicado}: "
@@ -881,8 +862,8 @@ def gerar_de_contexto(
                         metodo_ancoragem=None,
                         observacoes=[
                             "Referências verificadas estruturalmente; auditoria por LLM não é prova factual.",
-                            ("Dificuldade estimada por auditoria; não é garantia."
-                             if nivel_auditado else "Dificuldade não auditada."),
+                            ("Dificuldade avaliada por auditoria; não é garantia."
+                             if nivel_auditado else "Dificuldade não aprovada por auditoria independente."),
                             nota_pedagogica,
                             *([nota_correcao] if nota_correcao else []),
                             *(["JSON reparado e revalidado com Pydantic."] if reparado else []),
@@ -919,7 +900,8 @@ def gerar_de_contexto(
         # Somente problemas pedagógicos ou contexto insuficiente permitem
         # reduzir o nível. Erros de API, JSON, orçamento ou auditor indisponível
         # NÃO constituem evidência de que o documento é insuficiente.
-        if not provedores or falhas_tecnicas or (insuficientes + reprovacoes != len(provedores)):
+        if (not provedores or falhas_tecnicas or reprovacoes
+            or insuficientes != len(provedores)):
             raise FalhaGeracao("Falha técnica impede adaptação segura. " + " | ".join(erros))
 
     raise FalhaGeracao("Falha em todos os provedores/níveis. " + " | ".join(erros))
