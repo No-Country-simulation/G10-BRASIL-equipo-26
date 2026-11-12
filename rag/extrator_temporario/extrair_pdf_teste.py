@@ -3,7 +3,7 @@ A equipe substituirá este adaptador pela ingestão definitiva.
 """
 from pathlib import Path
 from pypdf import PdfReader
-from schemas import DocumentoEntrada, DocumentoExtraido, PaginaExtraida
+from pipeline.schemas import DocumentoEntrada, DocumentoExtraido, PaginaExtraida
 
 def extrair_pdf(caminho):
     if not caminho.is_file():

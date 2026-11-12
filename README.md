@@ -142,12 +142,11 @@ O sistema conta com 3 cenários completos de execução com documentos técnicos
 
 ## 👥 Integrantes da Equipe (Grupo 10 · Equipe 26)
 
-- **Wagner Julio:** Full Stack & Frontend Developer
-- **Rodrigo Silva:** Data Scientist & RAG / LLM Engineer
-- **Lídia Moura:** BI Analyst & OCI Cloud Architect
-- **Vinicius Ferreira:** Backend & Ingestão de Documentos
+- **Wagner Julio:** Full Stack
+- **Rodrigo Silva:** Data Scientist
+- **Lídia Moura:** BI Analyst
 - **Marcos Vinicius:** Backend Developer
-- **Lysara Jacó:** Data Analyst & UX/UI Designer
+- **Lysara Jacó:** Data Analyst
 - **Leonardo Santos:** Data Analyst
 - **Vagner Marques:** Data Analyst
 - **João Okuyama:** Data Analyst

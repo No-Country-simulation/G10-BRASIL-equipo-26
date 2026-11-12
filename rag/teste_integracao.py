@@ -5,7 +5,7 @@ Executar da raiz do repositório:
     python .\rag\teste_integracao.py caminho\arquivo.pdf
 
 Ou dentro da pasta rag:
-    python teste_integracao.py ".\Machine_Learning.pdf"
+    python teste_integracao.py ".\\Machine_Learning.pdf"
 
 Não modifica os módulos do pipeline nem executa o benchmark.
 Requer rag/database.py e rag/persistencia.py.
@@ -88,19 +88,19 @@ CONSULTAS = {
 # ============================================================
 
 def main():
+    parser = argparse.ArgumentParser(description='Teste integrado ingestão + RAG + LLM + Pydantic + SQLite.')
 
-    parser = argparse.ArgumentParser(
-        description="Teste integrado RAG + LLM + Pydantic + SQLite."
-    )
-
-    parser.add_argument(
-        "pdf",
-        type=Path,
-        help="Caminho para PDF com texto selecionável",
-    )
+    parser.add_argument('pdf', type=Path, help='Caminho para PDF, Markdown ou TXT')
 
     args = parser.parse_args()
+
     pdf = args.pdf.resolve()
+
+    if not pdf.is_file():
+        parser.error(f'PDF não encontrado: {pdf}')
+
+    if not os.getenv('GEMINI_API_KEY'):
+        parser.error('Configure GEMINI_API_KEY no ambiente ou em rag/.env')
 
     if not pdf.is_file():
         parser.error(f"PDF não encontrado: {pdf}")
