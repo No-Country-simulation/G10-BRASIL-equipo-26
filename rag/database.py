@@ -35,7 +35,7 @@ def init_db():
           geracao_id TEXT PRIMARY KEY, data_hora TEXT NOT NULL,
           usuario_id TEXT NOT NULL, sessao_id TEXT NOT NULL,
           documento_id TEXT, perfil TEXT NOT NULL, formato TEXT NOT NULL,
-          nicho TEXT NOT NULL, nivel TEXT, quantidade_itens INTEGER NOT NULL,
+          nivel TEXT, quantidade_itens INTEGER NOT NULL,
           tempo_estimado_estudo_minutos REAL, ancoragem_fonte_score REAL,
           modelo_llm TEXT, duracao_geracao_ms REAL, pacote_json TEXT NOT NULL
         );
@@ -59,6 +59,30 @@ def init_db():
         CREATE INDEX IF NOT EXISTS idx_respostas_data ON respostas(data_hora);
         CREATE INDEX IF NOT EXISTS idx_eventos_tipo ON eventos_estudo(tipo_evento);
         ''')
+    migrate_geracoes()
+
+def migrate_geracoes():
+    """Remove nicho de bancos legados sem recriar tabelas ou alterar FKs."""
+    with connection() as con:
+        cols = {r['name'] for r in con.execute('PRAGMA table_info(geracoes)')}
+        if 'nicho' not in cols:
+            return
+        if sqlite3.sqlite_version_info < (3, 35, 0):
+            raise RuntimeError('Migração requer SQLite 3.35 ou superior.')
+        # Backup consistente usando a API do SQLite (inclusive em modo WAL).
+        backup_path = DB_PATH.with_name(DB_PATH.name + '.antes_remover_nicho.bak')
+        if backup_path.exists():
+            raise FileExistsError(f'Backup já existe; migração interrompida: {backup_path}')
+        with sqlite3.connect(backup_path) as backup:
+            con.backup(backup)
+        try:
+            con.execute('ALTER TABLE geracoes DROP COLUMN nicho')
+            problemas = con.execute('PRAGMA foreign_key_check').fetchall()
+            if problemas:
+                raise RuntimeError(f'Integridade referencial comprometida: {problemas}')
+        except Exception:
+            con.rollback()
+            raise
 
 def migrate_respostas():
     with connection() as con:
@@ -90,9 +114,9 @@ def save_geracao(gid, user, session, pacote, duracao_ms):
     conteudo = pacote.conteudo_adaptado
     itens = getattr(conteudo, 'questoes', None) or getattr(conteudo, 'itens', None) or getattr(conteudo, 'secoes', None) or getattr(conteudo, 'passos', None) or getattr(conteudo, 'etapas', None) or []
     with connection() as con:
-        con.execute('''INSERT INTO geracoes VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', (
+        con.execute('''INSERT INTO geracoes (geracao_id,data_hora,usuario_id,sessao_id,documento_id,perfil,formato,nivel,quantidade_itens,tempo_estimado_estudo_minutos,ancoragem_fonte_score,modelo_llm,duracao_geracao_ms,pacote_json) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)''', (
             gid, now(), user, session, m.documento_id, m.perfil.value, m.formato.value,
-            m.nicho.value, m.nivel.value if hasattr(m.nivel,'value') else str(m.nivel), len(itens),
+            m.nivel.value if hasattr(m.nivel,'value') else str(m.nivel), len(itens),
             m.tempo_estimado_estudo_minutos, pacote.avaliacao_qualidade.ancoragem_fonte_score,
             m.modelo_llm, duracao_ms, pacote.model_dump_json()))
 
@@ -130,7 +154,7 @@ def summary():
         assuntos=[dict(x) for x in con.execute('SELECT assunto,COUNT(*) respostas,ROUND(AVG(acertou)*100,2) acerto_pct,ROUND(AVG(tempo_resposta_segundos),2) tempo_medio_s FROM respostas GROUP BY assunto')]
     return {'geracoes':total,'respostas':r['n'],'taxa_acerto_pct':r['acerto_pct'],'tempo_medio_resposta_segundos':r['tempo_medio_s'],'formatos':formatos,'assuntos':assuntos,'observacao':'Dados simulados, produzidos por interações reais com conteúdo fixo; não representam desempenho em conteúdo gerado por RAG/LLM.'}
 
-TABLES={'geracoes':['geracao_id','data_hora','usuario_id','sessao_id','documento_id','perfil','formato','nicho','nivel','quantidade_itens','tempo_estimado_estudo_minutos','ancoragem_fonte_score','modelo_llm','duracao_geracao_ms'], 'respostas':None,'eventos_estudo':None}
+TABLES={'geracoes':['geracao_id','data_hora','usuario_id','sessao_id','documento_id','perfil','formato','nivel','quantidade_itens','tempo_estimado_estudo_minutos','ancoragem_fonte_score','modelo_llm','duracao_geracao_ms'], 'respostas':None,'eventos_estudo':None}
 def export_csv(table):
     if table not in TABLES: raise ValueError('Tabela inválida')
     with connection() as con:

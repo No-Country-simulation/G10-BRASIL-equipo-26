@@ -7,11 +7,9 @@ class Estrito(BaseModel):
     model_config = ConfigDict(extra='forbid', str_strip_whitespace=True)
 
 class Perfil(str, Enum):
-    INICIANTE='Iniciante'; JR_PLENO='Jr/Pleno'; ARQUITETO='Arquiteto'; GESTOR='Gestor'
+    INICIANTE='Iniciante'; JR_PLENO='Jr/Pleno'; ARQUITETO='Tech Lead'; GESTOR='Gestor'
 class Formato(str, Enum):
     TUTORIAL='Tutorial'; FLASHCARDS='Flashcards'; QUIZ='Quiz'; TLDR='TL;DR'; ROTEIRO='Roteiro'; RESUMO='Resumo'
-class Nicho(str, Enum):
-    FINTECH='Fintech'; SAUDE='Saúde'; ECOMMERCE='E-commerce'; GERAL='Geral'
 class Dificuldade(str, Enum):
     BASICO='basico'; INTERMEDIARIO='intermediario'; AVANCADO='avancado'
 
@@ -30,7 +28,6 @@ class PedidoGeracao(Estrito):
     documento: DocumentoEntrada
     perfil: Perfil
     formato: Formato
-    nicho: Nicho
     nivel: str = Field(min_length=1)
     quantidade_itens: int | None = Field(default=None, ge=1, le=100)
     instrucoes_adicionais: str | None = None
@@ -153,12 +150,17 @@ class Metadados(Estrito):
     documento_id: str = Field(min_length=1)
     perfil: Perfil
     formato: Formato
-    nicho: Nicho
     nivel: str = Field(min_length=1)
     tempo_estimado_estudo_minutos: int = Field(ge=0)
     conceitos_chave: list[str] = Field(default_factory=list)
     modelo_llm: str | None = None
     versao_prompt: str | None = None
+    # Campos opcionais para compatibilidade com registros antigos.
+    nivel_solicitado: str | None = None
+    nivel_efetivo: str | None = None
+    perfil_solicitado: Perfil | None = None
+    perfil_efetivo: Perfil | None = None
+    motivo_adaptacao: str | None = None
 class AvaliacaoQualidade(Estrito):
     ancoragem_fonte_score: float | None = Field(default=None, ge=0, le=1)
     metodo_ancoragem: str | None = None
