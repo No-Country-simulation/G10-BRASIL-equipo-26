@@ -1,7 +1,7 @@
 # Tutorial Didático de Configuração na Oracle Cloud (OCI Always Free) — MentorIA Tech
 
 **Responsável:** Lídia Moura (Lidi) — Líder Técnica  
-**Data da última atualização:** 09/11/2026  
+**Data da última atualização:** 12/11/2026  
 **Público:** Liderança Técnica, DevOps e Desenvolvedores da Equipe 26  
 **Objetivo:** Configurar com segurança (passo a passo na interface web da OCI) os Grupos, Policies, Buckets do Object Storage e Vault no compartimento `mentoria-tech`, mantendo 100% dentro da camada **Always Free**.
 
@@ -163,3 +163,136 @@ Conforme nosso protocolo, **não executaremos nenhuma alteração destrutiva no 
    * **Network Access:** se exige `mTLS (Wallet)` ou se permite `TLS (Walletless)` com controle de acesso.
 
 Assim que a equipe confirmar o formato final do campo de **Feedback** na reunião de hoje, geraremos o script SQL `CREATE TABLE IF NOT EXISTS` seguro para você colar no **Database Actions -> SQL** da própria console web da OCI!
+
+---
+
+## PASSO 7 — Configurar o OCI SDK Python localmente (Integração do Código)
+
+**O que é o OCI SDK?**
+É uma biblioteca Python oficial da Oracle (`oci>=2.110.0`) que permite que o nosso código Python converse diretamente com os serviços OCI (buckets, vault, etc.) sem precisar abrir o navegador. É exatamente o que `services/oci_storage.py` usa para enviar os JSONs gerados para o bucket `mentoria-tech-artifacts`.
+
+**Por que precisamos disso?**
+O requisito obrigatório do NoCountry é que a saída JSON do pipeline seja persistida no OCI Object Storage. O SDK é o "cabo" que liga o código Python ao bucket na nuvem.
+
+---
+
+### 7.1 — Verificar o arquivo `~/.oci/config`
+
+O arquivo `~/.oci/config` (em `C:\Users\Acer\.oci\config` no Windows) é onde o SDK busca as credenciais para se autenticar na OCI. Ele pode ter múltiplos perfis — cada projeto usa o seu.
+
+**Estrutura do arquivo após a configuração:**
+```ini
+[DEFAULT]
+user=ocid1.user.oc1..xxxx
+fingerprint=xx:xx:xx:xx
+key_file=C:\Users\Acer\.oci\nome-do-arquivo.pem
+tenancy=ocid1.tenancy.oc1..xxxx
+region=sa-saopaulo-1
+
+[MENTORIA_TECH]
+user=ocid1.user.oc1..xxxx
+fingerprint=xx:xx:xx:xx
+key_file=C:\Users\Acer\.oci\nome-do-arquivo.pem
+tenancy=ocid1.tenancy.oc1..xxxx
+region=sa-saopaulo-1
+```
+
+> **Importante:** O bloco `[MENTORIA_TECH]` usa os mesmos dados do `[DEFAULT]` quando é a mesma conta OCI. O que muda é o nome do perfil — nosso código sempre especifica `profile_name="MENTORIA_TECH"` para deixar claro que está usando o projeto correto.
+
+> **Nunca remova o `[DEFAULT]`** — ele pertence ao projeto anterior e não interfere.
+
+---
+
+### 7.2 — Criar o arquivo `rag/.env`
+
+O arquivo `.env` guarda as variáveis de ambiente do projeto localmente. **Nunca vai para o Git** (está no `.gitignore`).
+
+```powershell
+# No terminal, dentro da pasta do projeto:
+Copy-Item rag\.env.example rag\.env
+```
+
+Abra o `rag/.env` e preencha os valores:
+
+```dotenv
+# Chaves de API das LLMs
+GEMINI_API_KEY=sua_chave_gemini_aqui
+GROQ_API_KEY=sua_chave_groq_aqui
+
+# Modelos
+GEMINI_MODEL=gemini-2.0-flash
+GROQ_MODEL=llama-3.3-70b-versatile
+
+# Limites
+NOVAMENTE_MAX_CONTEXT_CHARS=28000
+NOVAMENTE_MAX_OUTPUT_TOKENS=8192
+
+# OCI SDK — preencher com os valores da sua tenancy
+OCI_PROFILE=MENTORIA_TECH
+OCI_NAMESPACE=           ← copiar do console OCI: qualquer bucket → campo "Namespace"
+OCI_COMPARTMENT_OCID=    ← copiar do PASSO 1 deste tutorial (ocid1.compartment.oc1..)
+OCI_BUCKET_ARTIFACTS=mentoria-tech-artifacts
+OCI_BUCKET_DOCUMENTS=mentoria-tech-documents
+OCI_BUCKET_OBSERVABILITY=mentoria-tech-observability
+USE_OCI_VAULT=false
+```
+
+**Onde encontrar cada valor OCI:**
+
+| Variável | Onde copiar no console OCI |
+|---|---|
+| `OCI_NAMESPACE` | Storage → Buckets → clique em qualquer bucket → campo **Namespace** |
+| `OCI_COMPARTMENT_OCID` | Identity → Compartments → `mentoria-tech` → campo **OCID** |
+
+---
+
+### 7.3 — Testar a conexão (somente leitura, sem custo)
+
+Com o `.venv` ativo no terminal, rode:
+
+```powershell
+cd C:\Projetos\G10-BRASIL-equipo-26
+python -c "
+import oci, os
+from dotenv import load_dotenv
+load_dotenv('rag/.env')
+
+config = oci.config.from_file(profile_name=os.getenv('OCI_PROFILE', 'MENTORIA_TECH'))
+cliente = oci.object_storage.ObjectStorageClient(config)
+namespace = os.getenv('OCI_NAMESPACE')
+
+objetos = cliente.list_objects(namespace, 'mentoria-tech-artifacts').data
+print('Conexao OCI OK! Namespace:', namespace)
+print('Bucket mentoria-tech-artifacts acessivel!')
+print('Objetos armazenados:', len(objetos.objects))
+"
+```
+
+**Resultados esperados:**
+
+| Mensagem | Significado |
+|---|---|
+| `Conexao OCI OK!` | Perfil `[MENTORIA_TECH]` lido com sucesso |
+| `Bucket mentoria-tech-artifacts acessivel!` | SDK autenticado e bucket encontrado |
+| `Objetos armazenados: 0` | Bucket vazio (normal antes do primeiro uso) |
+| `ProfileNotFound` | O bloco `[MENTORIA_TECH]` não foi salvo no `~/.oci/config` |
+| `NotAuthenticated` | Verificar fingerprint ou caminho do arquivo `.pem` |
+| `BucketNotFound` | Verificar se `OCI_NAMESPACE` está correto |
+
+---
+
+### 7.4 — Como o SDK é usado no código (`services/oci_storage.py`)
+
+Este é o fluxo completo quando o pipeline gera um resultado:
+
+```
+1. Pipeline RAG gera o JSON de conteúdo educacional
+2. services/oci_storage.py é chamado com o payload
+3. oci.config.from_file(profile_name="MENTORIA_TECH") lê o ~/.oci/config
+4. ObjectStorageClient(config) cria o cliente autenticado
+5. cliente.put_object(namespace, bucket, nome_objeto, conteudo) faz o upload
+6. Retorna: {"bucket": "mentoria-tech-artifacts", "objeto_id": "resultado_xxx.json", "status_upload": "concluido"}
+7. Se OCI falhar → salva localmente em data/oci_fallback/ → status: "fallback_local"
+```
+
+O campo `armazenamento_oci` com `status_upload: "concluido"` é o **requisito obrigatório do NoCountry** — e está implementado. ✅
