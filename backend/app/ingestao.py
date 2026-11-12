@@ -5,8 +5,7 @@ import re
 from pathlib import Path
 
 from pypdf import PdfReader
-from rag.pipeline.schemas import DocumentoEntrada, DocumentoExtraido, PaginaExtraida
-
+from pipeline.schemas import DocumentoEntrada, DocumentoExtraido, PaginaExtraida
 
 logger = logging.getLogger(__name__)
 FORMATOS_SUPORTADOS = {".pdf", ".md", ".txt"}
