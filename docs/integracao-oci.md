@@ -9,6 +9,7 @@
 ## 1. Princípios de Governança e Segurança na OCI
 
 1. **Conformidade Always Free:** Todos os recursos utilizados pelo projeto **MentorIA Tech** no Hackathon ONE G10 devem operar estritamente dentro da camada **Always Free** da Oracle Cloud Infrastructure (OCI), evitando qualquer geração de custo monetário.
+> ⚠️ **Nota de Escopo MVP vs. Pós-MVP:** Conforme deliberado na reunião técnica de 12/11/2026, o **OCI Vault** está classificado para o roadmap **Pós-MVP / Pós-Hackathon** devido ao limite estrito de 1 Vault por tenancy na conta Always Free. No MVP, o gerenciamento de credenciais utiliza variáveis de ambiente com rotação de chaves (`.env` local e Secrets do Streamlit), mantendo `USE_OCI_VAULT=false`. O OCI Object Storage (buckets) está 100% ativo e funcional no MVP.
 2. **Princípio do Menor Privilégio (Least Privilege):**
    * **Proibido** conceder acesso ao projeto para o grupo padrão `All Domain Users`.
    * **Proibido** manter integrantes de desenvolvimento/BI no grupo global `Administrators` da Tenancy.
