@@ -11,7 +11,8 @@ Documentações técnicas (manuais de software, guias de nuvem e artigos de enge
 Plataforma baseada em **RAG (Retrieval-Augmented Generation)** e **IA Generativa** que recebe um documento técnico (`.pdf`, `.md` ou `.txt`) e gera automaticamente pacotes educacionais personalizados em **PT-BR** conforme:
 - **Perfil do destinatário:** `Iniciante`, `Jr/Pleno`, `Arquiteto`, `Gestor`
 - **Formato pedagógico de saída:** `Tutorial`, `Flashcards`, `Quiz`, `TL;DR`, `Roteiro`, `Resumo`
-- **Nicho de aplicação:** `Geral`, `Fintech`, `Saúde`, `E-commerce`
+- **Foco Estratégico do MVP (Nicho Tecnológico):** Especializado exclusivamente no setor de **Educação em Tecnologia e Engenharia de Software**.  
+  *Justificativa do nicho:* Embora o edital tenha sugerido dispersão em múltiplos nichos (Fintech, Saúde, etc.), a equipe decidiu estrategicamente concentrar 100% do MVP na área técnica. Essa decisão elimina ruídos terminológicos no RAG, aprofunda a fidelidade conceitual e direciona a solução diretamente à nossa persona-alvo do Demo Day: estudantes de tecnologia e profissionais em transição de carreira (ecossistema ONE, Alura e NoCountry).
 
 Todos os itens gerados citam `chunk_ids` e páginas reais do documento, garantindo fidelidade técnica e rastreabilidade das fontes.
 
@@ -28,8 +29,8 @@ Estudantes de tecnologia, profissionais em transição de carreira, desenvolvedo
 - **Validação:** Pydantic v2 com contratos estritos — verificação determinística de `chunk_ids` e páginas
 
 ### Orquestração de LLMs
-- **Provedor principal:** Google Gemini (`gemini-2.0-flash`)
-- **Fallback automático:** Groq (`llama-3.3-70b-versatile`)
+- **Provedor principal:** Google Gemini (`gemini-3.8-flash`)
+- **Fallback automático:** Groq (`openai/gpt-oss-120b`)
 - **Pool de chaves:** Rotação automática entre múltiplas chaves por provedor para alta disponibilidade
 
 ### Integração OCI (Always Free)
@@ -98,10 +99,12 @@ Estudantes de tecnologia, profissionais em transição de carreira, desenvolvedo
 | Bucket documentos | `mentoria-tech-documents` | Object Storage Standard | ✅ Ativo (Private) |
 | Bucket observabilidade | `mentoria-tech-observability` | Object Storage Standard | ✅ Ativo (Private) |
 
+> ⚠️ **Nota de Governança sobre o OCI Vault:** O cofre de senhas (OCI Vault) está registrado no roadmap **Pós-MVP / Pós-Hackathon** devido ao limite técnico da camada gratuita Always Free (1 Vault por tenancy já alocado em projeto anterior). No MVP oficial, o gerenciamento seguro de credenciais é garantido via variáveis de ambiente com rotação automática de pool (`.env` local e Streamlit Secrets criptografados), mantendo `USE_OCI_VAULT=false`.
+
 ## 8. Resultado Esperado
 Reduzir de semanas para menos de 60 segundos a criação de materiais de estudo técnicos validados, entregando saídas JSON estruturadas com verificação determinística de citações (`chunk_ids` e páginas), armazenamento automático na OCI e alta disponibilidade via fallback de LLMs.
 
-## 9. Status Atual do MVP (12/11/2026)
+## 9. Status Atual do MVP (13/11/2026)
 
 | Componente | Status |
 |---|---|
@@ -116,8 +119,8 @@ Reduzir de semanas para menos de 60 segundos a criação de materiais de estudo 
 | Fallback local automático (OCI indisponível) | ✅ Implementado |
 | Exportação CSV para Power BI | ✅ Implementado (`services/bi_exporter.py`) |
 | Benchmark experimental (200 combinações) | ✅ Implementado |
-| Testes QA automatizados (pytest) | ⏳ Em desenvolvimento |
-| Notebook de validação (3 cenários demo) | ⏳ Em desenvolvimento |
+| Testes QA automatizados (pytest) | ✅ Implementado (16 cenários em `tests/test_qa_pipeline.py`) |
+| Notebook de validação (3 cenários demo) | ✅ Implementado (`rag/notebooks/validacao_pipeline_mentoria_tech.ipynb`) |
 
 ## 10. Responsável e Equipe
 

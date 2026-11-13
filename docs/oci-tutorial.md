@@ -117,7 +117,11 @@ O edital da NoCountry exige obrigatoriamente que o MVP persista os documentos or
 
 ---
 
-## PASSO 5 — Configurar o OCI Vault e guardar as Chaves de API (Secrets)
+## PASSO 5 — Configurar o OCI Vault e guardar as Chaves de API (PÓS-MVP / ROADMAP)
+
+> ⚠️ **STATUS NO PROJETO: RECURSO CLASSIFICADO COMO PÓS-MVP / PÓS-HACKATHON**  
+> **Decisão da Reunião de 12/11/2026:** Devido à política da Oracle Cloud Always Free (limite de 1 Vault por tenancy, já alocado em projeto anterior da mesma conta), a centralização de chaves no OCI Vault fica como evolução para a fase pós-hackathon.  
+> **No MVP Oficial:** O gerenciamento seguro é feito via variáveis de ambiente (`rag/.env` local protegido pelo `.gitignore` e painel de *Secrets* criptografado no Streamlit Cloud), mantendo obrigatoriamente a flag **`USE_OCI_VAULT=false`**. As instruções abaixo são documentais para a arquitetura futura de longo prazo.
 
 **O que é o OCI Vault?**  
 É o cofre criptografado da Oracle onde guardamos as chaves da API do Gemini, da Groq e a senha do banco para que ninguém precise passar chaves por mensagens ou arquivos soltos.
