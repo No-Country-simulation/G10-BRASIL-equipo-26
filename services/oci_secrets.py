@@ -28,15 +28,26 @@ load_dotenv(dotenv_path=_env_path, override=False)
 
 
 def _carregar_pool(env_pool: str, env_single: str) -> list[str]:
-    """Carrega uma lista de chaves a partir de variável de pool ou variável simples."""
+    """Carrega uma lista de chaves a partir do ambiente ou do Streamlit Secrets."""
     pool_raw = os.getenv(env_pool, "").strip()
+    chave_simples = os.getenv(env_single, "").strip()
+
+    # Fallback para Streamlit Secrets quando executado no Streamlit Cloud
+    if not pool_raw and not chave_simples:
+        try:
+            import streamlit as st
+            if hasattr(st, "secrets"):
+                pool_raw = str(st.secrets.get(env_pool, "")).strip()
+                chave_simples = str(st.secrets.get(env_single, "")).strip()
+        except Exception:
+            pass
+
     if pool_raw:
         chaves = [c.strip() for c in pool_raw.split(",") if c.strip()]
         if chaves:
             logger.info("Pool de chaves carregado de %s: %d chave(s).", env_pool, len(chaves))
             return chaves
 
-    chave_simples = os.getenv(env_single, "").strip()
     if chave_simples:
         logger.info("Chave simples carregada de %s.", env_single)
         return [chave_simples]
