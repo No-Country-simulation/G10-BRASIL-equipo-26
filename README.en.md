@@ -22,7 +22,7 @@
 
 ---
 
-## 🎯 About the project
+## About the project
 
 **MentorIA Tech** *(initial codename: NovaMente)* is **Team 26**'s solution for **Hackathon ONE G10**, promoted by **Oracle Next Education (ONE)** and **Alura** in partnership with **NoCountry**.
 
@@ -44,7 +44,7 @@ Technical documentation is dense and full of jargon. Adapting it by hand for dif
 
 ---
 
-## 🧩 MVP proposal
+## MVP proposal
 
 The MVP processes **one document per run**, in **PT-BR** (the MVP's mandatory language). This English version is a complementary one, for presentations.
 
@@ -61,7 +61,7 @@ Every generated item cites **real pages and chunks** from the document, and the 
 
 ---
 
-## 📐 Architecture
+## Architecture
 
 <p align="center">
   <img src="./assets/novamente_architecture_flowchart.png" alt="MentorIA Tech architecture flowchart" width="850">
@@ -89,7 +89,7 @@ flowchart TD
 
 ---
 
-## 🛠️ Technologies
+## Technologies
 
 | Layer | Technologies |
 | :--- | :--- |
@@ -103,27 +103,27 @@ flowchart TD
 
 ---
 
-## ✅ Actual feature status
+## Actual feature status
 
 | Status | Item |
 | :--- | :--- |
-| ✅ **IMPLEMENTED** | RAG + LLM pipeline with Gemini → Groq fallback |
-| ✅ **IMPLEMENTED** | Pydantic v2 contracts (6 formats) and source verification |
-| ✅ **IMPLEMENTED** | SQLite persistence and RAG benchmark (200 experiments) |
-| ✅ **IMPLEMENTED** | Multi-format `.pdf/.md/.txt` extractor (PR #40, already on `main`) |
-| ✅ **IMPLEMENTED** | 4-screen Streamlit interface with the MentorIA Tech identity (PR #42) |
-| 🔄 **IN REVIEW** | Rename profiles to `Tech Lead` / `Executivo`; remove `nicho` |
-| 🔄 **IN REVIEW** | API key pool (`GEMINI_API_KEYS`, `GROQ_API_KEYS`) |
-| 📝 **PROPOSAL** | OCI Vault, Autonomous Database and BI data model |
-| ⏳ **PENDING** | Connecting the frontend (`app/main.py`, currently a simulated engine) to the `rag/` pipeline |
-| ⏳ **PENDING** | Real write of the structured JSON to the OCI bucket (`mentoria-tech-artifacts`) |
-| 🚀 **POST-MVP** | Power BI, Telegram, QR Code, conversational AI chat, OCR, English/Spanish in the UI |
+|  **IMPLEMENTED** | RAG + LLM pipeline with Gemini → Groq fallback |
+|  **IMPLEMENTED** | Pydantic v2 contracts (6 formats) and source verification |
+|  **IMPLEMENTED** | SQLite persistence and RAG benchmark (200 experiments) |
+|  **IMPLEMENTED** | Multi-format `.pdf/.md/.txt` extractor (PR #40, already on `main`) |
+|  **IMPLEMENTED** | 4-screen Streamlit interface with the MentorIA Tech identity (PR #42) |
+|  **IN REVIEW** | Rename profiles to `Tech Lead` / `Executivo`; remove `nicho` |
+|  **IN REVIEW** | API key pool (`GEMINI_API_KEYS`, `GROQ_API_KEYS`) |
+|  **PROPOSAL** | OCI Vault, Autonomous Database and BI data model |
+|  **PENDING** | Connecting the frontend (`app/main.py`, currently a simulated engine) to the `rag/` pipeline |
+|  **PENDING** | Real write of the structured JSON to the OCI bucket (`mentoria-tech-artifacts`) |
+|  **POST-MVP** | Power BI, Telegram, QR Code, conversational AI chat, OCR, English/Spanish in the UI |
 
 Details in [`docs/decisoes-e-status.md`](./docs/decisoes-e-status.md) *(in Portuguese)*.
 
 ---
 
-## 🎬 Demo scenarios
+## Demo scenarios
 
 1. **Tutorial** · *Beginner* · `rag/Machine_Learning.pdf`: step-by-step on datasets, learning types and cross-validation, with page citations.
 2. **Flashcards** · *Beginner* · *VCN networking on OCI*: cards about VCNs, subnets, gateways and security lists.
@@ -131,7 +131,7 @@ Details in [`docs/decisoes-e-status.md`](./docs/decisoes-e-status.md) *(in Portu
 
 ---
 
-## 🚀 Running locally
+## Running locally
 
 > Windows (PowerShell). On Linux/macOS, activate with `source .venv/bin/activate`.
 
@@ -168,7 +168,7 @@ python .\rag\teste_integracao.py .\rag\Machine_Learning.pdf
 
 ---
 
-## ☁️ Oracle Cloud (OCI)
+## Oracle Cloud (OCI)
 
 The MVP uses the **Always Free** tier only, with the `mentoria-tech` compartment, least-privilege groups and policies, and **private** buckets. The structured JSON output is the mandatory persistence requirement. No credential is ever versioned: use environment variables, the `~/.oci/config` file (outside the repository) or OCI Vault.
 
@@ -176,7 +176,7 @@ Guides *(in Portuguese)*: [`docs/oci-tutorial.md`](./docs/oci-tutorial.md) · [`
 
 ---
 
-## 📚 Documentation (`docs/`)
+## Documentation (`docs/`)
 
 | Document | Content |
 | :--- | :--- |
@@ -194,7 +194,7 @@ Guides *(in Portuguese)*: [`docs/oci-tutorial.md`](./docs/oci-tutorial.md) · [`
 
 ---
 
-## 👥 Team 26
+## Team 26
 
 Official roles as registered on NoCountry, alongside actual contributions to the project.
 
@@ -213,13 +213,13 @@ Official roles as registered on NoCountry, alongside actual contributions to the
 
 ---
 
-## 🤖 Transparency on AI use
+## Transparency on AI use
 
 The documentation, test structure and organization of this repository were supported by the Antigravity tool (AI assistant) as a productivity instrument. All generated content was produced under **the supervision, governance and review of Lídia Moura** (Tech Lead). Product decisions, experiments and validations were carried out and approved by Team 26.
 
 ---
 
-## 📄 License
+## License
 
 [MIT](./LICENSE) · Last updated: 12/11/2026 · Owner: Lídia Moura (Tech Lead).
 
