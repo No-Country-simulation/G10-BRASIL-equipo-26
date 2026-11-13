@@ -22,7 +22,7 @@
 
 ---
 
-## 🎯 Sobre o projeto
+## Sobre o projeto
 
 O **MentorIA Tech** *(codinome inicial: NovaMente)* é a solução da **Equipe 26** para o **Hackathon ONE G10**, promovido por **Oracle Next Education (ONE)** e **Alura**, em parceria com a **NoCountry**.
 
@@ -44,7 +44,7 @@ Documentações técnicas são densas e cheias de jargões. Adaptá-las à mão 
 
 ---
 
-## 🧩 Proposta do MVP
+## Proposta do MVP
 
 O MVP processa **um documento por execução**, em **PT-BR** (idioma obrigatório).
 
@@ -61,7 +61,7 @@ Todo item gerado cita **páginas e chunks reais** do documento, e o sistema veri
 
 ---
 
-## 📐 Arquitetura
+## Arquitetura
 
 <p align="center">
   <img src="./assets/novamente_architecture_flowchart.png" alt="Fluxograma da arquitetura do MentorIA Tech" width="850">
@@ -103,27 +103,27 @@ flowchart TD
 
 ---
 
-## ✅ Status real das funcionalidades
+## Status real das funcionalidades
 
 | Status | Item |
 | :--- | :--- |
-| ✅ **IMPLEMENTADO** | Pipeline RAG + LLM com fallback Gemini → Groq |
-| ✅ **IMPLEMENTADO** | Contratos Pydantic v2 (6 formatos) e verificação de fontes |
-| ✅ **IMPLEMENTADO** | Persistência SQLite, benchmark RAG (200 experimentos) |
-| ✅ **IMPLEMENTADO** | Extrator multi-formato `.pdf/.md/.txt` (PR #40, já na `main`) |
-| ✅ **IMPLEMENTADO** | Interface Streamlit em 4 telas com identidade MentorIA Tech (PR #42) |
-| 🔄 **EM REVISÃO** | Renomear perfis para `Tech Lead` / `Executivo`; remover `nicho` |
-| 🔄 **EM REVISÃO** | Pool de chaves de API (`GEMINI_API_KEYS`, `GROQ_API_KEYS`) |
-| 📝 **PROPOSTA** | OCI Vault, Autonomous Database e esquema de BI |
-| ⏳ **PENDENTE** | Conexão do frontend (`app/main.py`, hoje com motor simulado) ao pipeline `rag/` |
-| ⏳ **PENDENTE** | Gravação real do JSON estruturado no bucket OCI (`mentoria-tech-artifacts`) |
-| 🚀 **PÓS-MVP** | Power BI, Telegram, QR Code, chat de IA conversacional, OCR, inglês/espanhol na interface |
+|  **IMPLEMENTADO** | Pipeline RAG + LLM com fallback Gemini → Groq |
+|  **IMPLEMENTADO** | Contratos Pydantic v2 (6 formatos) e verificação de fontes |
+|  **IMPLEMENTADO** | Persistência SQLite, benchmark RAG (200 experimentos) |
+|  **IMPLEMENTADO** | Extrator multi-formato `.pdf/.md/.txt` (PR #40, já na `main`) |
+|  **IMPLEMENTADO** | Interface Streamlit em 4 telas com identidade MentorIA Tech (PR #42) |
+|  **EM REVISÃO** | Renomear perfis para `Tech Lead` / `Executivo`; remover `nicho` |
+|  **EM REVISÃO** | Pool de chaves de API (`GEMINI_API_KEYS`, `GROQ_API_KEYS`) |
+|  **PROPOSTA** | OCI Vault, Autonomous Database e esquema de BI |
+|  **PENDENTE** | Conexão do frontend (`app/main.py`, hoje com motor simulado) ao pipeline `rag/` |
+|  **PENDENTE** | Gravação real do JSON estruturado no bucket OCI (`mentoria-tech-artifacts`) |
+|  **PÓS-MVP** | Power BI, Telegram, QR Code, chat de IA conversacional, OCR, inglês/espanhol na interface |
 
 Detalhes e justificativas em [`docs/decisoes-e-status.md`](./docs/decisoes-e-status.md).
 
 ---
 
-## 🎬 Cenários de demonstração
+## Cenários de demonstração
 
 1. **Tutorial** · *Iniciante* · `rag/Machine_Learning.pdf`: passo a passo sobre datasets, tipos de aprendizado e validação cruzada, com citação de páginas.
 2. **Flashcards** · *Iniciante* · *Redes VCN na OCI*: cartões sobre VCN, sub-redes, gateways e security lists.
@@ -131,7 +131,7 @@ Detalhes e justificativas em [`docs/decisoes-e-status.md`](./docs/decisoes-e-sta
 
 ---
 
-## 🚀 Como executar localmente
+## Como executar localmente
 
 > Windows (PowerShell). No Linux/macOS, troque a ativação por `source .venv/bin/activate`.
 
@@ -168,7 +168,7 @@ python .\rag\teste_integracao.py .\rag\Machine_Learning.pdf
 
 ---
 
-## ☁️ Oracle Cloud (OCI)
+## Oracle Cloud (OCI)
 
 O MVP usa exclusivamente a camada **Always Free**, com compartimento `mentoria-tech`, grupos e policies de menor privilégio e buckets **privados**. A saída JSON estruturada é o requisito obrigatório de persistência. Nenhuma credencial é versionada: use variáveis de ambiente, o arquivo `~/.oci/config` (fora do repositório) ou OCI Vault.
 
@@ -176,7 +176,7 @@ Guias: [`docs/oci-tutorial.md`](./docs/oci-tutorial.md) · [`docs/integracao-oci
 
 ---
 
-## 📚 Documentação (`docs/`)
+## Documentação (`docs/`)
 
 | Documento | Conteúdo |
 | :--- | :--- |
@@ -194,7 +194,7 @@ Guias: [`docs/oci-tutorial.md`](./docs/oci-tutorial.md) · [`docs/integracao-oci
 
 ---
 
-## 👥 Equipe 26
+## Equipe 26
 
 Funções oficiais conforme o cadastro na NoCountry, com a atuação real no projeto.
 
@@ -213,12 +213,12 @@ Funções oficiais conforme o cadastro na NoCountry, com a atuação real no pro
 
 ---
 
-## 🤖 Transparência sobre o uso de IA
+## Transparência sobre o uso de IA
 
 A documentação, a estrutura de testes e a organização deste repositório contaram com apoio da ferramenta Antigravity (IA assistente) como instrumento de produtividade. Toda geração de conteúdo foi realizada sob **supervisão, governança e revisão da Lídia Moura** (Líder Técnica). As decisões de produto, experimentos e validações foram conduzidos e aprovados pela Equipe 26.
 
 ---
 
-## 📄 Licença
+## Licença
 
 [MIT](./LICENSE) · Última atualização: 12/11/2026 · Responsável: Lídia Moura (Líder Técnica).
