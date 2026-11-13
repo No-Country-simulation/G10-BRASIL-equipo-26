@@ -65,37 +65,92 @@ def _salvar_localmente(payload: dict, nome_objeto: str) -> dict:
     }
 
 
-def _tentar_upload_oci(payload: dict, nome_objeto: str) -> dict:
-    """Tenta enviar o payload para o OCI Object Storage.
-
-    Returns:
-        Dicionário com informações do upload (bucket, objeto_id, status_upload).
-    """
+def _obter_cliente_e_namespace():
+    """Obtém cliente OCI e namespace suportando Streamlit Secrets e ~/.oci/config."""
     try:
-        import oci  # importação local para não falhar se oci não estiver instalado
+        import oci
+    except ImportError:
+        return None, ""
 
+    # 1. Tenta carregar via Streamlit Secrets (ambiente Streamlit Cloud)
+    try:
+        import streamlit as st
+        if hasattr(st, "secrets") and "oci" in st.secrets:
+            sec = dict(st.secrets["oci"])
+            config = {
+                "user": sec.get("user"),
+                "fingerprint": sec.get("fingerprint"),
+                "key_content": sec.get("key_content"),
+                "tenancy": sec.get("tenancy"),
+                "region": sec.get("region", "sa-saopaulo-1"),
+            }
+            oci.config.validate_config(config)
+            ns = sec.get("namespace", _NAMESPACE)
+            return oci.object_storage.ObjectStorageClient(config), ns
+    except Exception:
+        pass
+
+    # 2. Tenta carregar via arquivo ~/.oci/config (ambiente local do desenvolvedor)
+    try:
         config = oci.config.from_file(profile_name=_PROFILE)
-        cliente = oci.object_storage.ObjectStorageClient(config)
+        ns = _NAMESPACE or config.get("namespace", "")
+        return oci.object_storage.ObjectStorageClient(config), ns
+    except Exception:
+        pass
 
-        conteudo = json.dumps(payload, ensure_ascii=False, indent=2).encode("utf-8")
-        cliente.put_object(
-            namespace_name=_NAMESPACE or config.get("namespace", ""),
-            bucket_name=_BUCKET,
-            object_name=nome_objeto,
-            put_object_body=conteudo,
-            content_type="application/json",
-        )
-        logger.info("Upload OCI concluído: bucket=%s, objeto=%s", _BUCKET, nome_objeto)
-        return {
-            "bucket": _BUCKET,
-            "objeto_id": nome_objeto,
-            "status_upload": "concluido",
-        }
+    return None, ""
 
-    except FileNotFoundError:
-        # Arquivo ~/.oci/config não encontrado
-        logger.warning("Arquivo ~/.oci/config não encontrado. Usando fallback local.")
-        return _salvar_localmente(payload, nome_objeto)
+
+def _tentar_upload_oci(payload: dict, nome_objeto: str) -> dict:
+    """Tenta enviar o payload para o OCI Object Storage via SDK ou PAR."""
+    conteudo = json.dumps(payload, ensure_ascii=False, indent=2).encode("utf-8")
+
+    # 1. Opção via Pre-Authenticated Request (PAR), se configurada
+    par_base = os.getenv("OCI_PAR_URL", "")
+    try:
+        import streamlit as st
+        if hasattr(st, "secrets") and "OCI_PAR_URL" in st.secrets:
+            par_base = st.secrets["OCI_PAR_URL"]
+    except Exception:
+        pass
+
+    if par_base:
+        try:
+            import urllib.request
+            url = par_base.rstrip("/") + "/" + nome_objeto
+            req = urllib.request.Request(url, data=conteudo, method="PUT")
+            req.add_header("Content-Type", "application/json")
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                if resp.status in (200, 201):
+                    logger.info("Upload OCI via PAR concluído: %s", nome_objeto)
+                    return {
+                        "bucket": _BUCKET,
+                        "objeto_id": nome_objeto,
+                        "status_upload": "concluido",
+                    }
+        except Exception as exc_par:
+            logger.warning("Falha no upload via PAR (%s). Tentando SDK...", exc_par)
+
+    # 2. Opção via SDK OCI (Streamlit Secrets em memória ou ~/.oci/config local)
+    try:
+        cliente, ns = _obter_cliente_e_namespace()
+        if cliente:
+            cliente.put_object(
+                namespace_name=ns,
+                bucket_name=_BUCKET,
+                object_name=nome_objeto,
+                put_object_body=conteudo,
+                content_type="application/json",
+            )
+            logger.info("Upload OCI concluído via SDK: bucket=%s, objeto=%s", _BUCKET, nome_objeto)
+            return {
+                "bucket": _BUCKET,
+                "objeto_id": nome_objeto,
+                "status_upload": "concluido",
+            }
+        else:
+            logger.warning("Nenhuma credencial OCI encontrada. Usando fallback local.")
+            return _salvar_localmente(payload, nome_objeto)
 
     except Exception as exc:  # noqa: BLE001
         logger.warning("Erro ao conectar na OCI (%s). Usando fallback local.", exc)
