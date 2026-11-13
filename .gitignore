@@ -220,3 +220,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Bancos SQLite e artefatos locais do MentorIA Tech
+*.db
+*.sqlite
+*.sqlite3
+rag/resultados_teste_local/
+

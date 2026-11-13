@@ -2,6 +2,7 @@
 pydantic>=2,<3
 python-dotenv>=1,<2
 pypdf>=5,<7
+pdfplumber>=0.10,<2
 pandas>=2,<3
 requests>=2.31,<3
 google-genai>=1,<2

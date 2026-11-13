@@ -5,4 +5,4 @@ Este diretório centraliza integrações com serviços de terceiros e infraestru
 ### Responsabilidades:
 - Integração com o **OCI Object Storage** (camada Always Free via OCI SDK).
 - Funções para upload dos documentos técnicos brutos recebidos.
-- Funções para persistência dos arquivos JSON de conteúdos educacionais gerados.
+- Funções para persistência dos arquivos JSON de conteúdos educacionais gerados.( ) 

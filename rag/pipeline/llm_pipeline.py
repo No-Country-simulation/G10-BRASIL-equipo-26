@@ -251,10 +251,14 @@ def construir_mensagens(contexto: ContextoRAG):
 
 def _chaves_api(prefixo: str) -> list[str]:
     """Chaves distintas em ordem de prioridade, sem expor valores em logs."""
+    chaves = []
+    if lista := os.getenv(f"{prefixo}_API_KEYS"):
+        chaves.extend([c.strip() for c in lista.split(",") if c.strip()])
     nomes = (f"{prefixo}_API_KEY", f"{prefixo}_API_KEY_BACKUP")
-    return list(dict.fromkeys(
-        valor for nome in nomes if (valor := os.getenv(nome))
-    ))
+    for nome in nomes:
+        if valor := os.getenv(nome):
+            chaves.append(valor.strip())
+    return list(dict.fromkeys(chaves))
 
 
 def _espera_http(exc) -> str:
