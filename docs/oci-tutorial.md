@@ -219,9 +219,9 @@ Abra o `rag/.env` e preencha os valores:
 GEMINI_API_KEY=sua_chave_gemini_aqui
 GROQ_API_KEY=sua_chave_groq_aqui
 
-# Modelos
-GEMINI_MODEL=gemini-2.0-flash
-GROQ_MODEL=llama-3.3-70b-versatile
+# Modelos atualizados (modelos antigos foram descontinuados)
+GEMINI_MODEL=gemini-3.8-flash
+GROQ_MODEL=openai/gpt-oss-120b
 
 # Limites
 NOVAMENTE_MAX_CONTEXT_CHARS=28000
@@ -296,3 +296,98 @@ Este é o fluxo completo quando o pipeline gera um resultado:
 ```
 
 O campo `armazenamento_oci` com `status_upload: "concluido"` é o **requisito obrigatório do NoCountry** — e está implementado. ✅
+
+---
+
+## PASSO 8 — Configuração no Streamlit (Local e Streamlit Cloud)
+
+> 💡 **Guia para o time de Front-end (Wagner Campos e desenvolvedores):**  
+> Como integrar a interface Streamlit com o roteamento resiliente de IA e a persistência no OCI Object Storage.
+
+Quando a aplicação roda no seu computador local, ela lê o arquivo `rag/.env` e o arquivo `~/.oci/config`. Porém, quando o aplicativo for publicado no **Streamlit Cloud** (ou qualquer servidor web na nuvem), **não existe `.env` nem pasta `~/.oci/config` com a chave `.pem` física no disco**.
+
+Para resolver isso de forma elegante, o nosso módulo `services/oci_storage.py` já foi programado para suportar nativamente as configurações via **Streamlit Secrets** e/ou via **Pre-Authenticated Request (PAR)**.
+
+---
+
+### 8.1 — Configurar os Secrets no Streamlit Cloud
+1. Acesse o painel da sua aplicação em: [share.streamlit.io](https://share.streamlit.io).
+2. Clique no menu do app → **Settings** → aba **Secrets**.
+3. Cole o conteúdo no formato TOML abaixo e clique em **Save**:
+
+```toml
+# ============================================================
+# ROTEAMENTO DE IA (POOL DE CHAVES E MODELOS)
+# ============================================================
+# Provedor Principal: Google Gemini (modelo ativo)
+GEMINI_API_KEY = "sua_chave_gemini_principal"
+GEMINI_API_KEYS = "sua_chave_gemini_principal,sua_chave_gemini_reserva"
+GEMINI_MODEL = "gemini-3.8-flash"
+
+# Provedor Fallback: Groq (contingência automática contra erro 503/429)
+GROQ_API_KEY = "sua_chave_groq_principal"
+GROQ_API_KEYS = "sua_chave_groq_principal,sua_chave_groq_reserva"
+GROQ_MODEL = "openai/gpt-oss-120b"
+
+# Parâmetros de contexto e resposta
+NOVAMENTE_MAX_CONTEXT_CHARS = "28000"
+NOVAMENTE_MAX_OUTPUT_TOKENS = "8192"
+
+# ============================================================
+# CONEXÃO COM A ORACLE CLOUD (OCI OBJECT STORAGE)
+# ============================================================
+OCI_BUCKET_ARTIFACTS = "mentoria-tech-artifacts"
+OCI_NAMESPACE = "grclodnfw2hl"
+USE_OCI_VAULT = "false"
+
+# OPÇÃO A (Recomendada / À prova de falhas): Pre-Authenticated Request
+# Cole aqui a URL PAR gerada com permissão de escrita no bucket mentoria-tech-artifacts:
+# OCI_PAR_URL = "https://objectstorage.sa-saopaulo-1.oraclecloud.com/p/CHAVE_PAR/n/grclodnfw2hl/b/mentoria-tech-artifacts/o/"
+
+# OPÇÃO B: Credenciais completas do OCI SDK (em memória, sem arquivo no disco)
+[oci]
+user = "ocid1.user.oc1..seu_ocid_usuario"
+fingerprint = "xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx"
+tenancy = "ocid1.tenancy.oc1..sua_tenancy"
+region = "sa-saopaulo-1"
+namespace = "grclodnfw2hl"
+key_content = """-----BEGIN RSA PRIVATE KEY-----
+MIIEowIBAAKCAQEA... (cole o conteúdo integral da sua chave privada .pem)
+-----END RSA PRIVATE KEY-----"""
+```
+
+---
+
+### 8.2 — Testando o Streamlit Localmente com Secrets
+Se você quiser rodar o Streamlit localmente simulando exatamente o ambiente de nuvem:
+1. Crie o arquivo `.streamlit/secrets.toml` na raiz do projeto:
+   ```powershell
+   New-Item -ItemType Directory -Path .streamlit -Force
+   # Crie o arquivo .streamlit/secrets.toml com a mesma estrutura acima
+   ```
+2. O arquivo `.streamlit/secrets.toml` já está protegido pelo `.gitignore` e nunca será enviado para o repositório público.
+
+---
+
+### 8.3 — Ajustes Obrigatórios no Código do Frontend (`app/main.py`)
+No código do frontend, certifique-se de dois pontos essenciais de integração:
+
+1. **Nome do Bucket de Artefatos:**  
+   Verifique se o salvamento de artefatos aponta para o bucket oficial:
+   ```python
+   # CORRETO:
+   bucket_name = os.getenv("OCI_BUCKET_ARTIFACTS", "mentoria-tech-artifacts")
+   # EVITAR nomes antigos como "mentoria-tech-conteudos-educativos"
+   ```
+
+2. **Acionamento do Serviço Oficial de Upload:**  
+   Em vez de tentar implementar chamadas OCI manuais dentro do Streamlit, basta chamar a função que criamos em `services/`:
+   ```python
+   from services.oci_storage import enviar_resultado
+
+   # Ao gerar o pacote final JSON:
+   resultado_upload = enviar_resultado(pacote_json, nome_objeto=f"resultado_{geracao_id}.json")
+   # resultado_upload conterá {"bucket": "mentoria-tech-artifacts", "objeto_id": "...", "status_upload": "concluido"}
+   ```
+
+Com isso, o frontend ganha resiliência automática tanto localmente quanto na nuvem da Streamlit!
