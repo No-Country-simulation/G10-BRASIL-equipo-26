@@ -215,3 +215,35 @@ class TelemetriaGeracao(Estrito):
     latencia_segundos: float | None = Field(default=None, ge=0)
     quantidade_chunks: int = Field(ge=0)
     avaliacoes_llm_executadas: int = Field(default=0, ge=0)
+
+# ============================================================
+# AVALIAÇÃO DE ADEQUAÇÃO DO DOCUMENTO
+# ============================================================
+
+class AvaliacaoAdequacaoDocumento(Estrito):
+    perfis_compativeis: list[Perfil] = Field(default_factory=list)
+    niveis_compativeis: list[Dificuldade] = Field(default_factory=list)
+
+    perfil_recomendado: Perfil | None = None
+    nivel_recomendado: Dificuldade | None = None
+
+    justificativa: str | None = None
+    evidencias: list[str] = Field(default_factory=list)
+
+    status: Literal[
+        "avaliado",
+        "inconclusivo",
+        "indisponivel",
+    ] = "inconclusivo"
+
+    modelo_avaliador: str | None = None
+
+class ResultadoAdequacaoSolicitacao(Estrito):
+    perfil_solicitado: Perfil
+    nivel_solicitado: Dificuldade
+
+    perfil_compativel: bool | None = None
+    nivel_compativel: bool | None = None
+
+    divergencia: bool | None = None
+    mensagem: str | None = None

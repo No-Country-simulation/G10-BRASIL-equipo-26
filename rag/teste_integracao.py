@@ -37,7 +37,11 @@ load_dotenv(RAIZ_RAG / ".env")
 # IMPORTAÇÕES DO PROJETO
 # ============================================================
 
-from database import init_db, migrate_respostas
+from database import (
+    init_db,
+    migrate_respostas,
+    associar_telemetria_geracao,
+)
 from persistencia import registrar_geracao
 from backend.app.ingestao import processar_documento
 
@@ -52,6 +56,21 @@ from pipeline.schemas import (
 from pipeline.rag_retrieval import indice_documento
 from pipeline.llm_pipeline import gerar_de_contexto
 
+from uuid import uuid4
+
+from pipeline.avaliacao_documento import (
+    avaliar_documento,
+    comparar_adequacao,
+)
+
+from pipeline.schemas import Dificuldade
+
+from pipeline.telemetria_llm import (
+    definir_execucao,
+    restaurar_execucao,
+    iniciar_tentativa,
+    finalizar_tentativa,
+)
 
 # ============================================================
 # CONSULTAS PARA OS SEIS PRODUTOS
@@ -95,12 +114,6 @@ def main():
     args = parser.parse_args()
 
     pdf = args.pdf.resolve()
-
-    if not pdf.is_file():
-        parser.error(f'PDF não encontrado: {pdf}')
-
-    if not os.getenv('GEMINI_API_KEY'):
-        parser.error('Configure GEMINI_API_KEY no ambiente ou em rag/.env')
 
     if not pdf.is_file():
         parser.error(f"PDF não encontrado: {pdf}")
@@ -152,120 +165,175 @@ def main():
     falhas = []
     sucessos = 0
 
+
+# ------------------------------------------------------------
+# AVALIAÇÃO PEDAGÓGICA DO DOCUMENTO
+# ------------------------------------------------------------
+
+    execucao_id = str(uuid4())
+
+    avaliacao_id, avaliacao = avaliar_documento(
+        documento,
+        execucao_id=execucao_id,
+    )
+
+    adequacao = comparar_adequacao(
+        avaliacao=avaliacao,
+        perfil_solicitado=Perfil.ARQUITETO,
+        nivel_solicitado=Dificuldade.AVANCADO,
+    )
+
+    print("\n=== ADEQUAÇÃO DO DOCUMENTO ===")
+    print("Avaliação ID:", avaliacao_id)
+    print("Status:", avaliacao.status)
+    print("Perfil recomendado:", avaliacao.perfil_recomendado)
+    print("Nível recomendado:", avaliacao.nivel_recomendado)
+
+    if adequacao.divergencia:
+        print("\nAVISO DE ADEQUAÇÃO:")
+        print(adequacao.mensagem)
+    elif adequacao.divergencia is None:
+        print("\nAdequação não determinada.")
+    else:
+        print("\nDocumento compatível com a solicitação.")
+
+
     # --------------------------------------------------------
     # INDEXAÇÃO E GERAÇÃO DOS SEIS FORMATOS
     # --------------------------------------------------------
 
-    with indice_documento(documento) as indice:
+    token_execucao = definir_execucao(execucao_id)
 
-        print(
-            f"Chunks indexados: {indice.quantidade_chunks}",
-            flush=True,
-        )
+    try:
 
-        for formato, consulta in CONSULTAS.items():
+        with indice_documento(documento) as indice:
 
             print(
-                f"\nGerando {formato.value}...",
+                f"Chunks indexados: {indice.quantidade_chunks}",
                 flush=True,
             )
 
-            try:
-
-                # --------------------------------------------
-                # PEDIDO DE GERAÇÃO
-                # --------------------------------------------
-
-                pedido = PedidoGeracao(
-                    documento=documento.documento,
-                    perfil=Perfil.ARQUITETO,
-                    formato=formato,
-                    nivel="avancado",
-                    quantidade_itens=5,
-                    politica_tokens=PoliticaTokens(
-                        permitir_avaliacao_llm=True,
-                        max_tokens_avaliacao_por_resposta=3000,
-                        max_tokens_avaliacao_total=3000,
-                        max_avaliacoes_llm=1,
-                    ),
-                )
-
-                # --------------------------------------------
-                # RECUPERAÇÃO RAG
-                # --------------------------------------------
-
-                contexto = indice.recuperar(
-                    pedido=pedido,
-                    consulta=consulta,
-                )
-
-                # --------------------------------------------
-                # GERAÇÃO GEMINI / GROQ
-                # --------------------------------------------
-
-                resultado = gerar_de_contexto(contexto)
-
-                # --------------------------------------------
-                # VALIDAÇÃO PYDANTIC
-                # --------------------------------------------
-
-                pacote = PacoteFinal.model_validate(
-                    resultado.pacote.model_dump()
-                )
-
-                # --------------------------------------------
-                # PERSISTÊNCIA SQLITE
-                # --------------------------------------------
-
-                geracao_id = registrar_geracao(resultado)
-
-                # --------------------------------------------
-                # SALVAMENTO JSON
-                # --------------------------------------------
-
-                nome = (
-                    "tldr"
-                    if formato == Formato.TLDR
-                    else formato.value.lower()
-                )
-
-                destino = saida / f"{nome}.json"
-
-                destino.write_text(
-                    pacote.model_dump_json(indent=2),
-                    encoding="utf-8",
-                )
-
-                # --------------------------------------------
-                # CONTAGEM DE SUCESSOS
-                # --------------------------------------------
-
-                sucessos += 1
+            for formato, consulta in CONSULTAS.items():
 
                 print(
-                    f"OK | {resultado.provedor} | "
-                    f"{resultado.duracao_ms / 1000:.1f}s | "
-                    f"geracao_id={geracao_id} | {destino}",
+                    f"\nGerando {formato.value}...",
                     flush=True,
                 )
 
-                if resultado.erros_anteriores:
+                chamadas_ids, token_tentativa = iniciar_tentativa()
+                try:
+
+                    # --------------------------------------------
+                    # PEDIDO DE GERAÇÃO
+                    # --------------------------------------------
+
+                    pedido = PedidoGeracao(
+                        documento=documento.documento,
+                        perfil=Perfil.ARQUITETO,
+                        formato=formato,
+                        nivel="avancado",
+                        quantidade_itens=5,
+                        politica_tokens=PoliticaTokens(
+                            permitir_avaliacao_llm=True,
+                            max_tokens_avaliacao_por_resposta=3000,
+                            max_tokens_avaliacao_total=3000,
+                            max_avaliacoes_llm=1,
+                        ),
+                    )
+
+                    # --------------------------------------------
+                    # RECUPERAÇÃO RAG
+                    # --------------------------------------------
+
+                    contexto = indice.recuperar(
+                        pedido=pedido,
+                        consulta=consulta,
+                    )
+
+                    # --------------------------------------------
+                    # GERAÇÃO GEMINI / GROQ
+                    # --------------------------------------------
+
+                    resultado = gerar_de_contexto(contexto)
+
+                    # --------------------------------------------
+                    # VALIDAÇÃO PYDANTIC
+                    # --------------------------------------------
+
+                    pacote = PacoteFinal.model_validate(
+                        resultado.pacote.model_dump()
+                    )
+
+                    # --------------------------------------------
+                    # PERSISTÊNCIA SQLITE
+                    # --------------------------------------------
+
+                    geracao_id = registrar_geracao(
+                        resultado,
+                        avaliacao_id=avaliacao_id,
+                    )
+
+                    quantidade_associada = associar_telemetria_geracao(
+                        geracao_id=geracao_id,
+                        chamadas_ids=chamadas_ids,
+                        execucao_id=execucao_id,
+                    )
+
                     print(
-                        f"  Falhas anteriores: "
-                        f"{resultado.erros_anteriores}",
+                        f"Telemetria associada: {quantidade_associada} chamadas",
+                        flush=True,
+                    )
+                    # --------------------------------------------
+                    # SALVAMENTO JSON
+                    # --------------------------------------------
+
+                    nome = (
+                        "tldr"
+                        if formato == Formato.TLDR
+                        else formato.value.lower()
+                    )
+
+                    destino = saida / f"{nome}.json"
+
+                    destino.write_text(
+                        pacote.model_dump_json(indent=2),
+                        encoding="utf-8",
+                    )
+
+                    # --------------------------------------------
+                    # CONTAGEM DE SUCESSOS
+                    # --------------------------------------------
+
+                    sucessos += 1
+
+                    print(
+                        f"OK | {resultado.provedor} | "
+                        f"{resultado.duracao_ms / 1000:.1f}s | "
+                        f"geracao_id={geracao_id} | {destino}",
                         flush=True,
                     )
 
-            except Exception as exc:
+                    if resultado.erros_anteriores:
+                        print(
+                            f"  Falhas anteriores: "
+                            f"{resultado.erros_anteriores}",
+                            flush=True,
+                        )
 
-                falhas.append(formato.value)
+                except Exception as exc:
 
-                print(
-                    f"ERRO ({formato.value}): "
-                    f"{type(exc).__name__}: {exc}",
-                    flush=True,
-                )
+                    falhas.append(formato.value)
 
+                    print(
+                        f"ERRO ({formato.value}): "
+                        f"{type(exc).__name__}: {exc}",
+                        flush=True,
+                    )
+
+                finally:
+                    finalizar_tentativa(token_tentativa)
+    finally:
+        restaurar_execucao(token_execucao)
     # --------------------------------------------------------
     # RESULTADO FINAL
     # --------------------------------------------------------
@@ -284,11 +352,10 @@ def main():
         flush=True,
     )
 
-    if falhas:
-        print(
-            "Formatos com falha: " + ", ".join(falhas),
-            flush=True,
-        )
+    if falhas or sucessos != len(CONSULTAS):
+        if falhas:
+            print("Formatos com falha: " + ", ".join(falhas), flush=True)
+        print("REPROVADO: nem todos os seis produtos foram concluídos.", flush=True)
         raise SystemExit(1)
 
     print(
