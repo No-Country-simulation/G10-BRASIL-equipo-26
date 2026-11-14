@@ -31,6 +31,9 @@ from pipeline.schemas import (
     TrechoRecuperado,
 )
 
+import time
+from pipeline.telemetria_llm import registrar_chamada
+
 
 class GeminiEmbeddings(Embeddings):
     """Mantém o modelo de embeddings, alternando chaves apenas em 429."""
@@ -40,12 +43,50 @@ class GeminiEmbeddings(Embeddings):
         self.key_index = 0
         self.client = genai.Client(api_key=keys[0])
 
-    def executar(self, operacao):
+
+    def executar(self, operacao, nome_operacao=None, modelo=None):
         while True:
+            inicio = time.perf_counter()
+
             try:
-                return operacao(self.client)
+                resultado = operacao(self.client)
+
+                if nome_operacao is not None:
+                    uso = getattr(resultado, "usage_metadata", None)
+
+                    registrar_chamada(
+                        provedor="Gemini",
+                        modelo=modelo,
+                        operacao=nome_operacao,
+                        inicio=inicio,
+                        status="sucesso",
+                        tokens_entrada=(
+                            getattr(uso, "prompt_token_count", None)
+                            if uso else None
+                        ),
+                        tokens_saida=(
+                            getattr(uso, "candidates_token_count", None)
+                            if uso else None
+                        ),
+                        tokens_totais=(
+                            getattr(uso, "total_token_count", None)
+                            if uso else None
+                        ),
+                    )
+
+                return resultado
 
             except ClientError as exc:
+                if nome_operacao is not None:
+                    registrar_chamada(
+                        provedor="Gemini",
+                        modelo=modelo,
+                        operacao=nome_operacao,
+                        inicio=inicio,
+                        status="erro",
+                        codigo_http=getattr(exc, "code", None),
+                    )
+
                 if getattr(exc, "code", None) != 429:
                     raise
 
@@ -59,6 +100,18 @@ class GeminiEmbeddings(Embeddings):
                 self.client = genai.Client(
                     api_key=self.keys[self.key_index]
                 )
+
+            except Exception as exc:
+                if nome_operacao is not None:
+                    registrar_chamada(
+                        provedor="Gemini",
+                        modelo=modelo,
+                        operacao=nome_operacao,
+                        inicio=inicio,
+                        status="erro",
+                        codigo_http=getattr(exc, "code", None),
+                    )
+                raise
 
     def _embed(
         self,
@@ -74,6 +127,7 @@ class GeminiEmbeddings(Embeddings):
         for i in range(0, len(textos), 16):
             lote = textos[i:i + 16]
 
+
             resposta = self.executar(
                 lambda client: client.models.embed_content(
                     model=EMBEDDING_MODEL,
@@ -81,8 +135,15 @@ class GeminiEmbeddings(Embeddings):
                     config=types.EmbedContentConfig(
                         task_type=tarefa
                     ),
-                )
+                ),
+                nome_operacao=(
+                    "embedding_documento"
+                    if tarefa == "RETRIEVAL_DOCUMENT"
+                    else "embedding_consulta"
+                ),
+                modelo=EMBEDDING_MODEL,
             )
+
 
             if len(resposta.embeddings or []) != len(lote):
                 raise RuntimeError(
@@ -130,35 +191,77 @@ def _reranquear_gemini(
         f"Candidatos: {json.dumps(conteudos, ensure_ascii=False)}"
     )
 
-    resposta = client.models.generate_content(
-        model=RERANKER_MODEL,
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            temperature=0,
-            response_mime_type="application/json",
-            max_output_tokens=256,
+
+    inicio = time.perf_counter()
+
+    try:
+        resposta = client.models.generate_content(
+            model=RERANKER_MODEL,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                response_mime_type="application/json",
+                max_output_tokens=1024,
+                thinking_config=types.ThinkingConfig(
+                    thinking_level="LOW",
+                ),
+            ),
+        )
+
+        # Validar o JSON antes de registrar sucesso
+        dados = json.loads(resposta.text or "")
+        ids = dados["ids"]
+
+        if (
+            not isinstance(ids, list)
+            or len(ids) != n
+            or any(
+                type(i) is not int
+                or i < 0
+                or i >= len(candidatos)
+                for i in ids
+            )
+            or len(set(ids)) != n
+        ):
+            raise ValueError(
+                "Reranker Gemini retornou IDs inválidos."
+            )
+
+    except Exception as exc:
+        registrar_chamada(
+            provedor="Gemini",
+            modelo=RERANKER_MODEL,
+            operacao="reranking",
+            inicio=inicio,
+            status="erro",
+            codigo_http=getattr(exc, "code", None),
+        )
+        raise
+
+    # Só registra sucesso depois da validação
+    uso = getattr(resposta, "usage_metadata", None)
+
+    registrar_chamada(
+        provedor="Gemini",
+        modelo=RERANKER_MODEL,
+        operacao="reranking",
+        inicio=inicio,
+        status="sucesso",
+        tokens_entrada=(
+            getattr(uso, "prompt_token_count", None)
+            if uso else None
+        ),
+        tokens_saida=(
+            getattr(uso, "candidates_token_count", None)
+            if uso else None
+        ),
+        tokens_totais=(
+            getattr(uso, "total_token_count", None)
+            if uso else None
         ),
     )
 
-    dados = json.loads(resposta.text or "")
-    ids = dados["ids"]
-
-    if (
-        not isinstance(ids, list)
-        or len(ids) != n
-        or any(
-            type(i) is not int
-            or i < 0
-            or i >= len(candidatos)
-            for i in ids
-        )
-        or len(set(ids)) != n
-    ):
-        raise ValueError(
-            "Reranker Gemini retornou IDs inválidos."
-        )
-
     return [(i, None) for i in ids]
+
 
 
 @contextmanager

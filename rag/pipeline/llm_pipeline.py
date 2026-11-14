@@ -25,6 +25,7 @@ from pipeline.schemas import (
     Dificuldade,
 )
 
+from pipeline.telemetria_llm import registrar_chamada
 
 PROMPT_VERSION = "rag-llm-v9.2-entrega-controlada"
 CONTEUDO_ADAPTER = TypeAdapter(Conteudo)
@@ -273,7 +274,14 @@ def _espera_http(exc) -> str:
     return f" (aguardar: {match.group(1)})" if match else ""
 
 
-def chamar_gemini(system: str, user: str, max_output_tokens: int | None = None) -> tuple[str, str]:
+
+def chamar_gemini(
+    system: str,
+    user: str,
+    max_output_tokens: int | None = None,
+    *,
+    operacao: str = "geracao",
+) -> tuple[str, str]:
     from google import genai
     from google.genai import types
 
@@ -283,10 +291,17 @@ def chamar_gemini(system: str, user: str, max_output_tokens: int | None = None) 
 
     modelo = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
     erros = []
+
     for indice, chave in enumerate(chaves, start=1):
-        client = genai.Client(api_key=chave, http_options=types.HttpOptions(timeout=60000))
+        client = genai.Client(
+            api_key=chave,
+            http_options=types.HttpOptions(timeout=60000),
+        )
+
         try:
             for tentativa in range(2):
+                inicio = time.perf_counter()
+
                 try:
                     response = client.models.generate_content(
                         model=modelo,
@@ -295,42 +310,134 @@ def chamar_gemini(system: str, user: str, max_output_tokens: int | None = None) 
                             system_instruction=system,
                             response_mime_type="application/json",
                             temperature=0.2,
-                            max_output_tokens=(int(os.getenv("NOVAMENTE_MAX_OUTPUT_TOKENS", "8192"))
-                                               if max_output_tokens is None else max_output_tokens),
+                            max_output_tokens=(
+                                int(os.getenv(
+                                    "NOVAMENTE_MAX_OUTPUT_TOKENS",
+                                    "8192",
+                                ))
+                                if max_output_tokens is None
+                                else max_output_tokens
+                            ),
                         ),
                     )
+
+                    uso = response.usage_metadata
+
+                    tokens_entrada = (
+                        uso.prompt_token_count if uso else None
+                    )
+                    tokens_saida = (
+                        uso.candidates_token_count if uso else None
+                    )
+                    tokens_totais = (
+                        uso.total_token_count if uso else None
+                    )
+
                     if not response.text:
-                        raise FalhaGeracao("Gemini retornou conteúdo vazio")
+                        registrar_chamada(
+                            "Gemini", modelo, operacao,
+                            inicio, "erro",
+                            tokens_entrada=tokens_entrada,
+                            tokens_saida=tokens_saida,
+                            tokens_totais=tokens_totais,
+                        )
+                        raise FalhaGeracao(
+                            "Gemini retornou conteúdo vazio"
+                        )
+
+                    registrar_chamada(
+                        "Gemini", modelo, operacao,
+                        inicio, "sucesso",
+                        tokens_entrada=tokens_entrada,
+                        tokens_saida=tokens_saida,
+                        tokens_totais=tokens_totais,
+                    )
+
                     return response.text, modelo
+
                 except ServerError as exc:
                     codigo = getattr(exc, "code", None)
+
+                    registrar_chamada(
+                        "Gemini", modelo, operacao,
+                        inicio, "erro",
+                        codigo_http=codigo,
+                    )
+
                     if codigo not in (503, 504):
                         raise
+
                     if tentativa == 0:
                         time.sleep(2)
                         continue
-                    erros.append(f"chave {indice}: HTTP {codigo} (servidor indisponível)")
+
+                    erros.append(
+                        f"chave {indice}: HTTP {codigo} "
+                        "(servidor indisponível)"
+                    )
                     break
+
                 except ClientError as exc:
                     codigo = getattr(exc, "code", None)
+
+                    registrar_chamada(
+                        "Gemini", modelo, operacao,
+                        inicio, "erro",
+                        codigo_http=codigo,
+                    )
+
                     if codigo == 429:
-                        erros.append(f"chave {indice}: HTTP 429 (cota/limite)" + _espera_http(exc))
+                        erros.append(
+                            f"chave {indice}: HTTP 429 (cota/limite)"
+                            + _espera_http(exc)
+                        )
                         break
-                    if codigo in (401, 403) or (codigo == 400 and "API_KEY_INVALID" in str(exc)):
-                        erros.append(f"chave {indice}: HTTP {codigo} (autenticação/permissão)")
+
+                    if codigo in (401, 403) or (
+                        codigo == 400
+                        and "API_KEY_INVALID" in str(exc)
+                    ):
+                        erros.append(
+                            f"chave {indice}: HTTP {codigo} "
+                            "(autenticação/permissão)"
+                        )
                         break
+
                     raise
+
+                except Exception as exc:
+                    if not (
+                        isinstance(exc, FalhaGeracao)
+                        and "conteúdo vazio" in str(exc)
+                    ):
+                        registrar_chamada(
+                            "Gemini", modelo, operacao,
+                            inicio, "erro",
+                            codigo_http=getattr(exc, "code", None),
+                        )
+                    raise
+
         finally:
             client.close()
 
-    raise FalhaGeracao("Gemini indisponível: " + "; ".join(erros))
+    raise FalhaGeracao(
+        "Gemini indisponível: " + "; ".join(erros)
+    )
+
 
 
 # ============================================================
 # PROVEDOR FALLBACK: GROQ
 # ============================================================
 
-def chamar_groq(system: str, user: str, max_output_tokens: int | None = None) -> tuple[str, str]:
+
+def chamar_groq(
+    system: str,
+    user: str,
+    max_output_tokens: int | None = None,
+    *,
+    operacao: str = "geracao",
+) -> tuple[str, str]:
     from groq import Groq, RateLimitError, AuthenticationError
 
     chaves = _chaves_api("GROQ")
@@ -339,35 +446,128 @@ def chamar_groq(system: str, user: str, max_output_tokens: int | None = None) ->
 
     modelo = os.getenv("GROQ_MODEL", "openai/gpt-oss-120b")
     erros = []
+
     for indice, chave in enumerate(chaves, start=1):
-        # Sem retry automático: HTTP 429 deve ser respeitado, não repetido.
-        client = Groq(api_key=chave, timeout=60.0, max_retries=0)
+        client = Groq(
+            api_key=chave,
+            timeout=60.0,
+            max_retries=0,
+        )
+
         try:
-            response = client.chat.completions.create(
-                model=modelo,
-                messages=[
-                    {"role": "system", "content": system},
-                    {"role": "user", "content": user},
-                ],
-                temperature=0.2,
-                max_tokens=(max_output_tokens if max_output_tokens is not None
-                            else int(os.getenv("NOVAMENTE_MAX_OUTPUT_TOKENS", "8192"))),
-                response_format={"type": "json_object"},
-            )
-            if not response.choices:
-                raise FalhaGeracao("Groq não retornou alternativas de resposta")
-            content = response.choices[0].message.content
-            if not content:
-                raise FalhaGeracao("Groq retornou conteúdo vazio")
-            return content, modelo
-        except RateLimitError as exc:
-            erros.append(f"chave {indice}: HTTP 429 (cota/limite)" + _espera_http(exc))
-        except AuthenticationError:
-            erros.append(f"chave {indice}: HTTP 401 (autenticação)")
+            inicio = time.perf_counter()
+
+            try:
+                response = client.chat.completions.create(
+                    model=modelo,
+                    messages=[
+                        {"role": "system", "content": system},
+                        {"role": "user", "content": user},
+                    ],
+                    temperature=0.2,
+                    max_tokens=(
+                        max_output_tokens
+                        if max_output_tokens is not None
+                        else int(os.getenv(
+                            "NOVAMENTE_MAX_OUTPUT_TOKENS",
+                            "8192",
+                        ))
+                    ),
+                    response_format={"type": "json_object"},
+                )
+
+                uso = response.usage
+
+                tokens_entrada = (
+                    uso.prompt_tokens if uso else None
+                )
+                tokens_saida = (
+                    uso.completion_tokens if uso else None
+                )
+                tokens_totais = (
+                    uso.total_tokens if uso else None
+                )
+
+                if not response.choices:
+                    registrar_chamada(
+                        "Groq", modelo, operacao,
+                        inicio, "erro",
+                        tokens_entrada=tokens_entrada,
+                        tokens_saida=tokens_saida,
+                        tokens_totais=tokens_totais,
+                    )
+                    raise FalhaGeracao(
+                        "Groq não retornou alternativas de resposta"
+                    )
+
+                content = response.choices[0].message.content
+
+                if not content:
+                    registrar_chamada(
+                        "Groq", modelo, operacao,
+                        inicio, "erro",
+                        tokens_entrada=tokens_entrada,
+                        tokens_saida=tokens_saida,
+                        tokens_totais=tokens_totais,
+                    )
+                    raise FalhaGeracao(
+                        "Groq retornou conteúdo vazio"
+                    )
+
+                registrar_chamada(
+                    "Groq", modelo, operacao,
+                    inicio, "sucesso",
+                    tokens_entrada=tokens_entrada,
+                    tokens_saida=tokens_saida,
+                    tokens_totais=tokens_totais,
+                )
+
+                return content, modelo
+
+            except RateLimitError as exc:
+                registrar_chamada(
+                    "Groq", modelo, operacao,
+                    inicio, "erro",
+                    codigo_http=429,
+                )
+
+                erros.append(
+                    f"chave {indice}: HTTP 429 (cota/limite)"
+                    + _espera_http(exc)
+                )
+
+            except AuthenticationError:
+                registrar_chamada(
+                    "Groq", modelo, operacao,
+                    inicio, "erro",
+                    codigo_http=401,
+                )
+
+                erros.append(
+                    f"chave {indice}: HTTP 401 (autenticação)"
+                )
+
+            except Exception as exc:
+                if not (
+                    isinstance(exc, FalhaGeracao)
+                    and (
+                        "alternativas de resposta" in str(exc)
+                        or "conteúdo vazio" in str(exc)
+                    )
+                ):
+                    registrar_chamada(
+                        "Groq", modelo, operacao,
+                        inicio, "erro",
+                        codigo_http=getattr(exc, "code", None),
+                    )
+                raise
+
         finally:
             client.close()
 
-    raise FalhaGeracao("Groq indisponível: " + "; ".join(erros))
+    raise FalhaGeracao(
+        "Groq indisponível: " + "; ".join(erros)
+    )
 
 
 # ============================================================
@@ -604,7 +804,19 @@ def _avaliar_quiz_opcional(conteudo, contexto: ContextoRAG, provedor, auditor_ex
     orcamento["chamadas"] += 1
     orcamento["tokens_reservados"] += limite
     try:
-        raw, _ = auditor(system, user, max_output_tokens=limite)
+        if auditor in (chamar_gemini, chamar_groq):
+            raw, _ = auditor(
+                system,
+                user,
+                max_output_tokens=limite,
+                operacao="auditoria_quiz",
+            )
+        else:
+            raw, _ = auditor(
+                system,
+                user,
+                max_output_tokens=limite,
+            )
         data = json.loads(raw)
         itens = data.get("itens") if isinstance(data, dict) else None
         if not isinstance(itens, list) or len(itens) != len(perguntas):
@@ -683,7 +895,16 @@ def _corrigir_quiz_pedagogicamente(conteudo, contexto, provedor, feedback):
         + "\nTRECHOS ORIGINAIS (únicas fontes permitidas):\n"
         + _contexto_texto(contexto)
     )
-    raw, _ = provedor(system, user)
+
+    if provedor in (chamar_gemini, chamar_groq):
+        raw, _ = provedor(
+            system,
+            user,
+            operacao="correcao_quiz",
+        )
+    else:
+        raw, _ = provedor(system, user)
+
     corrigido = _validar_conteudo(raw, contexto)
     corrigido = _ajustar_classificacao_quiz(corrigido, _normalizar_nivel(contexto.pedido.nivel))
     return _remover_referencias_posicionais_quiz(corrigido)
