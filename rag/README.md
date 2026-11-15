@@ -1,8 +1,8 @@
-# NovaMente — RAG, LLM, Pydantic e Benchmark
+# MentorIA Tech — RAG, LLM, Pydantic, FastAPI e Benchmark
 
 ## 1. Visão geral
 
-Este diretório contém os componentes desenvolvidos para o processamento de documentos e a geração de produtos educacionais do projeto **NovaMente**.
+Este diretório contém os componentes desenvolvidos para o processamento de documentos e a geração de produtos educacionais do projeto **MentorIA Tech**.
 
 A implementação utiliza:
 
@@ -11,11 +11,12 @@ A implementação utiliza:
 - **Pydantic v2:** definição de contratos, validação e estruturação dos dados.
 - **ChromaDB:** armazenamento e recuperação vetorial.
 - **Benchmark:** avaliação experimental de diferentes configurações de recuperação e reranking.
-- **Extração provisória:** leitura de documentos PDF utilizando `pypdf`.
+- **Extração de documentos:** PDF, Markdown e TXT via `backend/app/ingestao.py`.
+- **FastAPI e SQLite:** endpoints de geração, Quiz e histórico, com persistência local e identificação anônima.
 
 A entrega foi organizada para facilitar a integração com os demais componentes desenvolvidos pela equipe.
 
-A interface FastAPI de demonstração, o banco SQLite, as credenciais reais e os ambientes virtuais locais não fazem parte desta entrega.
+A API FastAPI de teste (`rag/main.py`) e a persistência SQLite fazem parte desta entrega. Credenciais reais, bancos locais e ambientes virtuais não devem ser versionados.
 
 ---
 
@@ -27,7 +28,9 @@ rag/
 │   ├── schemas.py
 │   ├── rag_config.py
 │   ├── rag_retrieval.py
-│   └── llm_pipeline.py
+│   ├── llm_pipeline.py
+│   ├── avaliacao_documento.py
+│   └── telemetria_llm.py
 │
 ├── benchmark/
 │   ├── analisar_benchmark_rag_automatico_otimizado2_corrigido.py
@@ -39,6 +42,10 @@ rag/
 ├── extrator_temporario/
 │   └── extrair_pdf_teste.py
 │
+├── main.py
+├── database.py
+├── persistencia.py
+├── testar_tentativas_sqlite.py
 ├── Machine_Learning.pdf
 ├── teste_integracao.py
 ├── visualizar_resultados_teste.ipynb
@@ -58,6 +65,11 @@ O PDF de exemplo deve ser incluído apenas se sua licença permitir redistribui�
 | `rag_config.py` | Configurações de chunking, embeddings e recuperação |
 | `rag_retrieval.py` | Indexação, embeddings, recuperação e reranking |
 | `llm_pipeline.py` | Geração de conteúdo com Gemini e fallback Groq |
+| `avaliacao_documento.py` | Avaliação da adequação do documento ao perfil e nível solicitados |
+| `telemetria_llm.py` | Registro de tentativas e duração de chamadas aos modelos |
+| `main.py` | API FastAPI de geração, Quiz e histórico |
+| `database.py` e `persistencia.py` | Persistência de gerações e respostas no SQLite |
+| `testar_tentativas_sqlite.py` | Teste das tentativas, bloqueios e rodadas do Quiz |
 | `benchmark/` | Experimentos e avaliação de configurações de RAG |
 | `extrator_temporario/` | Extração provisória de texto de PDFs |
 | `teste_integracao.py` | Teste completo dos componentes |
@@ -186,7 +198,10 @@ Validação Pydantic
 Produto educacional estruturado
       |
       v
-Arquivo JSON
+JSON + persistência SQLite
+      |
+      v
+FastAPI (geração, Quiz e histórico)
 ```
 
 ### 5.2. Configuração de recuperação
@@ -208,16 +223,13 @@ Esses valores são parâmetros de trabalho e podem ser ajustados conforme os doc
 
 ### 5.3. Imports e integração
 
-Os módulos preservam imports absolutos do projeto original, como:
+A integração atual utiliza imports a partir do pacote `pipeline`, por exemplo:
 
 ```python
-from schemas import ...
-from rag_config import ...
+from pipeline.schemas import PedidoGeracao
 ```
 
-Para integrá-los sem modificar os arquivos, a aplicação deve tornar `rag/pipeline/` acessível no caminho de imports do Python.
-
-A equipe poderá adaptar os imports ao integrar os componentes à arquitetura definitiva do NovaMente.
+Execute a API a partir da pasta `rag/` para que esses imports sejam resolvidos.
 
 É importante utilizar um único caminho de importação para cada classe Pydantic, evitando carregar o mesmo schema sob nomes de módulos diferentes.
 
@@ -236,7 +248,7 @@ O pipeline gera seis formatos:
 | Roteiro | Organizar uma sequência de estudo ou apresentação |
 | Resumo | Sintetizar os principais conceitos |
 
-As saídas são estruturadas e validadas por contratos Pydantic.
+As saídas são estruturadas e validadas por contratos Pydantic. Os formatos podem ser adaptados ao perfil (Iniciante, Jr/Pleno, Tech Lead ou Gestor) e ao nível (básico, intermediário ou avançado). O Quiz registra até três tentativas por questão e por rodada, preservando o histórico no SQLite.
 
 O objetivo da validação é garantir que os dados respeitem a estrutura definida. Isso não substitui uma avaliação da correção factual ou da qualidade pedagógica do conteúdo gerado.
 
@@ -277,37 +289,18 @@ O teste executa:
 3. Recuperação de contexto para os formatos solicitados.
 4. Geração dos seis produtos educacionais.
 5. Validação dos resultados com Pydantic.
-6. Armazenamento dos resultados em JSON.
+6. Armazenamento dos resultados em JSON e registro das gerações no SQLite.
 
 O índice é reutilizado durante a geração dos seis formatos, evitando repetir desnecessariamente a indexação do documento.
 
 ### 7.3. Resultados esperados
 
-Exemplo de saída:
+Ao final, o teste deve indicar:
 
 ```text
-PDF: Machine_Learning.pdf | páginas: 16 | com texto: 16
-Chunks indexados: 16
-
-Gerando Tutorial...
-OK | chamar_gemini
-
-Gerando Flashcards...
-OK | chamar_groq
-
-Gerando Quiz...
-OK | chamar_gemini
-
-Gerando TL;DR...
-OK | chamar_groq
-
-Gerando Roteiro...
-OK | chamar_groq
-
-Gerando Resumo...
-OK | chamar_groq
-
-Finalizado. 6/6 formatos gerados.
+Produtos gerados: 6/6
+Falhas: 0
+APROVADO: seis produtos gerados, validados e registrados no SQLite.
 ```
 
 O provedor utilizado pode variar conforme a disponibilidade das APIs.
@@ -400,7 +393,7 @@ Essas informações são úteis para diagnóstico, monitoramento e análise do d
 
 ## 10. Resultado do teste realizado
 
-Em **02/11/2026**, o teste de integração foi executado utilizando `Machine_Learning.pdf`.
+Em **14/11/2026**, após a atualização da branch com a `main`, o teste de integração foi executado utilizando `Machine_Learning.pdf`.
 
 | Indicador | Resultado |
 |---|---|
@@ -409,10 +402,11 @@ Em **02/11/2026**, o teste de integração foi executado utilizando `Machine_Lea
 | Chunks indexados | 16 |
 | Produtos solicitados | 6 |
 | Produtos gerados | 6 |
-| Gerações com Gemini | 2 |
-| Gerações com Groq | 4 |
+| Gerações com Gemini | 6 |
+| Falhas | 0 |
+| Persistência SQLite | Aprovada |
 
-Os seis produtos foram gerados e salvos em JSON.
+Os seis produtos foram gerados, validados e salvos em JSON, com registros no SQLite. O teste `testar_tentativas_sqlite.py` também aprovou tentativas, bloqueios e novas rodadas.
 
 O teste confirmou o funcionamento conjunto da extração, indexação, recuperação, geração e validação no ambiente utilizado.
 
@@ -573,7 +567,7 @@ O arquivo `.env.example` deve conter somente nomes de variáveis e valores fict�
 3. A extração de PDF é provisória e não possui OCR.
 4. O funcionamento das APIs depende de credenciais, disponibilidade e cotas dos provedores.
 5. O teste de integração foi validado localmente, mas ainda não foi reproduzido em uma instalação limpa.
-6. A entrega não inclui a interface definitiva do NovaMente nem o banco de dados de produção.
+6. A API FastAPI e o SQLite são implementações locais de integração; não constituem autenticação nem banco de produção. O identificador anônimo do navegador não substitui login seguro.
 7. Os imports poderão precisar de ajustes durante a integração com os demais componentes da equipe.
 8. As versões das dependências foram definidas para o módulo, mas sua compatibilidade completa em outros ambientes ainda precisa ser verificada.
 
@@ -588,7 +582,7 @@ Para incorporar os componentes à aplicação definitiva:
 3. Centralizar a configuração de credenciais e modelos.
 4. Preservar o mecanismo de fallback entre provedores.
 5. Validar os produtos gerados antes de armazená-los ou apresentá-los ao usuário.
-6. Integrar os resultados à persistência e à interface desenvolvidas pelos demais integrantes.
+6. Conectar a interface da equipe aos endpoints existentes em `rag/main.py`, preservando os identificadores anônimos (`usuario_id`, `sessao_id`) e de rodada (`rodada_id`).
 7. Reexecutar o teste de integração após mudanças relevantes nos módulos.
 
 O arquivo `teste_integracao.py` deve permanecer como uma forma simples de verificar se os componentes continuam funcionando em conjunto.
@@ -630,8 +624,23 @@ Ou abra:
 rag/visualizar_resultados_teste.ipynb
 ```
 
-**Resultado esperado:** geração de Tutorial, Flashcards, Quiz, TL;DR, Roteiro e Resumo, com validação Pydantic e arquivos JSON disponíveis para inspeção.
+**Resultado esperado:** geração de Tutorial, Flashcards, Quiz, TL;DR, Roteiro e Resumo, com validação Pydantic, JSON e registro no SQLite.
+
+Para iniciar a API local de demonstração (a partir da pasta `rag/`):
+
+```powershell
+cd .\rag
+python -m uvicorn main:app --reload
+```
+
+Acesse `http://127.0.0.1:8000/` para a interface de teste ou `http://127.0.0.1:8000/docs` para a documentação interativa. A API permite gerar conteúdo, iniciar rodadas do Quiz, registrar respostas e consultar o histórico. O `usuario_id` permanece no navegador; o `sessao_id` identifica a sessão.
+
+Teste específico de persistência (a partir da raiz do repositório):
+
+```powershell
+python .\rag\testar_tentativas_sqlite.py
+```
 
 ---
 
-**Status da entrega:** pipeline integrado e testado localmente com sucesso; disponível para integração com os demais componentes do NovaMente.
+**Status da entrega:** pipeline, persistência SQLite e API FastAPI testados localmente; integração com a interface definitiva da equipe ainda necessária.
