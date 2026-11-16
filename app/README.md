@@ -164,3 +164,27 @@ python -m py_compile app/config.py app/api_client.py app/identidade.py app/oci_b
 # 2. Testes unitários isolados (sem precisar subir a API)
 python -m unittest tests/test_frontend_api_client.py -v
 ```
+---
+
+## 🖼️ Galeria de Telas (Desktop, Dark Mode & Mobile)
+
+
+### ☀️ Visão Geral — Modo Claro (Light Mode)
+| Topo e Banner Hero | Indicadores e Jornada |
+| :---: | :---: |
+| ![Visão Geral - Modo Claro (Parte 1)](assets/screenshots/1-1.png) | ![Visão Geral - Modo Claro (Parte 2)](assets/screenshots/1-2.png) |
+
+### 🌙 Visão Geral — Modo Escuro (Dark Mode)
+| Topo e Banner Hero (Dark) | Indicadores e Jornada (Dark) |
+| :---: | :---: |
+| ![Visão Geral - Modo Escuro (Parte 1)](assets/screenshots/2-1.png) | ![Visão Geral - Modo Escuro (Parte 2)](assets/screenshots/2-2.png) |
+
+### 🛠️ Fluxo de Trabalho (Biblioteca, Estúdio e Acervo)
+| Minha Biblioteca (Upload & Prévia) | Estúdio de Criação (Dark Mode) | Meus Conteúdos (Acervo & Quizzes) |
+| :---: | :---: | :---: |
+| ![Minha Biblioteca](assets/screenshots/3.png) | ![Estúdio de Criação](assets/screenshots/4.png) | ![Meus Conteúdos](assets/screenshots/5.png) |
+
+### 📱 Responsividade Mobile (`360px`)
+| Visão Geral Mobile (Light) | Minha Biblioteca Mobile (Dark) |
+| :---: | :---: |
+| <img src="assets/screenshots/6.png" alt="Visão Geral Mobile" width="280"> | <img src="assets/screenshots/7.png" alt="Minha Biblioteca Mobile" width="280"> |
