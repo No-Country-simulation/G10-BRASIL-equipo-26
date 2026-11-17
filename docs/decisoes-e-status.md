@@ -1,6 +1,6 @@
 # Matriz de Decisões Técnicas e Status Real — MentorIA Tech
 
-**Responsável:** Lídia Moura (Lidi) — Líder Técnica  
+**Responsável:** Lídia Moura — Líder Técnica  
 **Data da última atualização:** 09/11/2026  
 **Objetivo:** Manter transparência absoluta entre o que já está implementado na `main`, o que está em revisão, o que é proposta arquitetural, o que está pendente para a reta final do MVP e o que foi classificado como Pós-MVP.
 

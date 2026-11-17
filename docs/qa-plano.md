@@ -1,6 +1,6 @@
 # Plano de QA, Testes Automatizados e Validação pelo Método STAR — MentorIA Tech
 
-**Responsável:** Lídia Moura (Lidi) — Líder Técnica (com contribuições de Rodrigo Silva, Lysara Pinheiro, Andrea Gonzalez e Vinicius Ferreira)  
+**Responsável:** Lídia Moura — Líder Técnica (com contribuições de Rodrigo Silva, Lysara Pinheiro, Andrea Gonzalez e Vinicius Ferreira)  
 **Data da última atualização:** 09/11/2026  
 **Status:** Plano de Qualidade Oficial do MVP (Fases 6 e 8)
 

@@ -1,6 +1,6 @@
 # Definição de Métricas, KPIs e Modelo Analítico — MentorIA Tech
 
-**Responsável:** Lídia Moura (Lidi) — Líder Técnica (com contribuições de Rodrigo Silva, Vagner Marques e Equipe de Dados/BI)  
+**Responsável:** Lídia Moura — Líder Técnica (com contribuições de Rodrigo Silva, Vagner Marques e Equipe de Dados/BI)  
 **Data da última atualização:** 09/11/2026  
 **Status:** `IMPLEMENTADO NO PIPELINE / SQLITE` (Conexão ativa com Power BI classificada como `PÓS-MVP`)
 

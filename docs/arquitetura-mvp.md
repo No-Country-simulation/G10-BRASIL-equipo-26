@@ -1,6 +1,6 @@
 # Arquitetura Técnica do MVP — MentorIA Tech
 
-**Responsável:** Lídia Moura (Lidi) — Líder Técnica (com contribuições de Rodrigo Silva, Vinicius Ferreira, Wagner Campos, Leonardo Santos e Vagner Marques)  
+**Responsável:** Lídia Moura — Líder Técnica (com contribuições de Rodrigo Silva, Vinicius Ferreira, Wagner Campos, Leonardo Santos e Vagner Marques)  
 **Data da última atualização:** 09/11/2026  
 **Status:** Documentação Técnica Oficial (Reflete o estado real da `main` + frentes em revisão)
 

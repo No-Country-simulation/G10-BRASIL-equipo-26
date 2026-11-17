@@ -940,6 +940,14 @@ def _provedor_limitado(provedor, controle):
     return chamar
 
 
+def _provedores_padrao() -> list[Callable]:
+    """Define a ordem dos provedores LLM via LLM_PROVIDER_ORDER (padrão: groq,gemini)."""
+    ordem = os.getenv("LLM_PROVIDER_ORDER", "groq,gemini").strip().lower()
+    if ordem.startswith("gemini"):
+        return [chamar_gemini, chamar_groq]
+    return [chamar_groq, chamar_gemini]
+
+
 def gerar_de_contexto(
     contexto: ContextoRAG,
     provedores: list[Callable] | None = None,
@@ -950,7 +958,7 @@ def gerar_de_contexto(
     Orçamento de auditoria vale para TODA a chamada, não por tentativa.
     """
     inicio = time.perf_counter()
-    provedores = provedores if provedores is not None else [chamar_gemini, chamar_groq]
+    provedores = provedores if provedores is not None else _provedores_padrao()
     # Teto de todas as chamadas, não apenas das auditorias.
     max_chamadas = max(1, int(os.getenv("NOVAMENTE_MAX_LLM_CALLS", "12")))
     controle = {"chamadas": 0, "maximo": max_chamadas}

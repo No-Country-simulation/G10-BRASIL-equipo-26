@@ -1,6 +1,6 @@
 # Proposta de Integração e Governança OCI — MentorIA Tech
 
-**Responsável:** Lídia Moura (Lidi) — Líder Técnica  
+**Responsável:** Lídia Moura — Líder Técnica  
 **Data da última atualização:** 09/11/2026  
 **Status:** `PROPOSTA ARQUITETURAL E PLANEJAMENTO CONTROLADO` (Nenhuma alteração em produção deve ser executada sem auditoria prévia e confirmação explícita)
 

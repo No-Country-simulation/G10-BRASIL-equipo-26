@@ -1,6 +1,6 @@
 # Tutorial Didático de Configuração na Oracle Cloud (OCI Always Free) — MentorIA Tech
 
-**Responsável:** Lídia Moura (Lidi) — Líder Técnica  
+**Responsável:** Lídia Moura — Líder Técnica  
 **Data da última atualização:** 12/11/2026  
 **Público:** Liderança Técnica, DevOps e Desenvolvedores da Equipe 26  
 **Objetivo:** Configurar com segurança (passo a passo na interface web da OCI) os Grupos, Policies, Buckets do Object Storage e Vault no compartimento `mentoria-tech`, mantendo 100% dentro da camada **Always Free**.

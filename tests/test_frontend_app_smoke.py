@@ -84,7 +84,7 @@ class TestFrontendAppSmoke(unittest.TestCase):
             at.sidebar.button(key="nav_Minha biblioteca").click().run()
             at.text_input[0].set_value("Guia VCN").run()
             at.text_area[0].set_value("A VCN é uma rede virtual privada na OCI.").run()
-            at.button(label="+ Salvar Texto como .txt").click().run()
+            [b for b in at.button if b.label == "+ Salvar Texto como .txt"][0].click().run()
             self.assertEqual(len(at.session_state["documentos"]), 1)
 
             # Vai para o Estúdio de criação e verifica opção Tech Lead

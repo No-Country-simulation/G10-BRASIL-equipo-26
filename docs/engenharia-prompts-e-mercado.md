@@ -1,6 +1,6 @@
 # Engenharia de Prompts Estratégica, Eficiência de Tokens e Inteligência de Mercado — MentorIA Tech
 
-**Responsável:** Lídia Moura (Lidi) — Líder Técnica (com contribuições de Rodrigo Silva e Equipe 26)  
+**Responsável:** Lídia Moura — Líder Técnica (com contribuições de Rodrigo Silva e Equipe 26)  
 **Data da última atualização:** 09/11/2026  
 **Status:** Framework Oficial de Engenharia de Prompts e Posicionamento Competitivo do MVP
 

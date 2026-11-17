@@ -1,6 +1,6 @@
 # Pitch & AI Canvas — MentorIA Tech (Equipe 26 | Hackathon ONE G10)
 
-**Responsável:** Lídia Moura (Lidi) — Líder Técnica (com revisão da Equipe 26)  
+**Responsável:** Lídia Moura — Líder Técnica (com revisão da Equipe 26)  
 **Data da última atualização:** 09/11/2026  
 **Status:** Documentação de Produto e Estratégia do MVP (Alinhada às Atas de 19/10 a 05/11/2026)
 

@@ -1,5 +1,5 @@
 # MentorIA Tech — Equipe 26 (Hackathon ONE G10)
-*Atualizado em: 12/11/2026 — Responsável: Lídia Moura (Líder Técnica)*
+*Atualizado em: 17/11/2026 — Responsável: Lídia Moura (Líder Técnica)*
 
 ## 1. Nome do Projeto
 **MentorIA Tech** *(codinome de desenvolvimento: NovaMente)* — Sistema Inteligente de Adaptação e Geração de Conteúdo Educacional Técnico.
@@ -9,7 +9,7 @@ Documentações técnicas (manuais de software, guias de nuvem e artigos de enge
 
 ## 3. Solução
 Plataforma baseada em **RAG (Retrieval-Augmented Generation)** e **IA Generativa** que recebe um documento técnico (`.pdf`, `.md` ou `.txt`) e gera automaticamente pacotes educacionais personalizados em **PT-BR** conforme:
-- **Perfil do destinatário:** `Iniciante`, `Jr/Pleno`, `Arquiteto`, `Gestor`
+- **Perfil do destinatário:** `Iniciante`, `Jr/Pleno`, `Tech Lead`, `Gestor`
 - **Formato pedagógico de saída:** `Tutorial`, `Flashcards`, `Quiz`, `TL;DR`, `Roteiro`, `Resumo`
 - **Foco Estratégico do MVP (Nicho Tecnológico):** Especializado exclusivamente no setor de **Educação em Tecnologia e Engenharia de Software**.  
   *Justificativa do nicho:* Embora o edital tenha sugerido dispersão em múltiplos nichos (Fintech, Saúde, etc.), a equipe decidiu estrategicamente concentrar 100% do MVP na área técnica. Essa decisão elimina ruídos terminológicos no RAG, aprofunda a fidelidade conceitual e direciona a solução diretamente à nossa persona-alvo do Demo Day: estudantes de tecnologia e profissionais em transição de carreira (ecossistema ONE, Alura e NoCountry).
@@ -66,24 +66,24 @@ Estudantes de tecnologia, profissionais em transição de carreira, desenvolvedo
 
 ### Linguagem e ambiente
 - **Python:** 3.11+
-- **Dependências:** `oci>=2.110.0`, `pydantic>=2`, `pdfplumber`, `chromadb`, `langchain`, `streamlit`, `google-genai`, `groq`
+- **Dependências:** `fastapi`, `uvicorn`, `oci>=2.110.0`, `pydantic>=2`, `pdfplumber`, `chromadb`, `langchain`, `streamlit`, `google-genai`, `groq`
 
 ## 6. Cenários de Demonstração (mínimo exigido: 3)
 
 **Cenário 1 — Iniciante + Flashcards**
 > Documento: `rag/Machine_Learning.pdf`
-> Perfil: Iniciante · Formato: Flashcards · Nicho: Geral
-> Resultado esperado: 10 flashcards com frente/verso, conceitos básicos de ML, cada um com referência de página e chunk.
+> Perfil: Iniciante · Formato: Flashcards · Idioma: PT-BR
+> Resultado esperado: Flashcards com pergunta/resposta, conceitos básicos de ML, cada um com referência de página e chunk.
 
 **Cenário 2 — Jr/Pleno + Tutorial passo a passo**
 > Documento: `rag/Machine_Learning.pdf`
-> Perfil: Jr/Pleno · Formato: Tutorial · Nicho: Geral
-> Resultado esperado: Tutorial com passos numerados, código ou comandos quando aplicável, fontes por passo.
+> Perfil: Jr/Pleno · Formato: Tutorial · Idioma: PT-BR
+> Resultado esperado: Tutorial com passos numerados, comandos ou exemplos práticos quando aplicável, fontes por passo.
 
-**Cenário 3 — Arquiteto + Quiz com justificativas**
+**Cenário 3 — Tech Lead + Quiz com justificativas**
 > Documento: `rag/Machine_Learning.pdf`
-> Perfil: Arquiteto · Formato: Quiz · Nicho: Geral
-> Resultado esperado: 5 questões de múltipla escolha com alternativas plausíveis, índice correto, explicação detalhada e referência de chunk/página por questão.
+> Perfil: Tech Lead · Formato: Quiz · Idioma: PT-BR
+> Resultado esperado: Questões de múltipla escolha com alternativas plausíveis, índice correto oculto inicialmente (liberado após acerto ou 3 tentativas), explicação detalhada e referência de chunk/página por questão.
 
 ## 7. Infraestrutura OCI Configurada (Always Free)
 
@@ -104,25 +104,27 @@ Estudantes de tecnologia, profissionais em transição de carreira, desenvolvedo
 ## 8. Resultado Esperado
 Reduzir de semanas para menos de 60 segundos a criação de materiais de estudo técnicos validados, entregando saídas JSON estruturadas com verificação determinística de citações (`chunk_ids` e páginas), armazenamento automático na OCI e alta disponibilidade via fallback de LLMs.
 
-## 9. Status Atual do MVP (13/11/2026)
+## 9. Status Atual do MVP (17/11/2026)
 
 | Componente | Status |
 |---|---|
-| Pipeline RAG completo (chunking, embeddings, vector store) | ✅ Implementado |
-| Geração nos 6 formatos com Gemini + fallback Groq | ✅ Implementado |
-| Pool de chaves com rotação automática | ✅ Implementado |
-| Validação Pydantic v2 com verificação de chunks/páginas | ✅ Implementado |
-| Extrator multi-formato PDF/MD/TXT | ✅ Implementado (PR #40) |
-| Interface Streamlit 4 telas | ✅ Implementado (PR #42) |
-| Persistência SQLite com telemetria anonimizada | ✅ Implementado |
-| Integração OCI Object Storage (upload JSON) | ✅ Implementado (`services/oci_storage.py`) |
-| Fallback local automático (OCI indisponível) | ✅ Implementado |
+| API FastAPI (`rag/main.py`, contrato `v0.3`) | ✅ Implementado e validado em execução real |
+| Pipeline RAG completo (chunking, embeddings, vector store) | ✅ Implementado e validado |
+| Geração nos 6 formatos com Gemini + fallback Groq | ✅ Implementado e validado (`openai/gpt-oss-120b`) |
+| Pool de chaves com rotação automática | ✅ Implementado e validado |
+| Validação Pydantic v2 com verificação de chunks/páginas | ✅ Implementado e validado |
+| Extrator multi-formato PDF/MD/TXT | ✅ Implementado e validado |
+| Interface Streamlit integrada à FastAPI (`app/main.py`) | ✅ Implementado e validado (Tema Claro — Demo Day) |
+| Persistência SQLite com telemetria anonimizada | ✅ Implementado e validado (`geracoes` e `respostas`) |
+| Integração OCI Object Storage (upload JSON real) | ✅ Implementado e validado (`mentoria-tech-artifacts`) |
+| Fallback local automático (OCI indisponível) | ✅ Implementado e validado |
 | Exportação CSV para Power BI | ✅ Implementado (`services/bi_exporter.py`) |
 | Benchmark experimental (200 combinações) | ✅ Implementado |
-| Testes QA automatizados (pytest) | ✅ Implementado (16 cenários em `tests/test_qa_pipeline.py`) |
-| Notebook de validação (3 cenários demo) | ✅ Implementado (`rag/notebooks/validacao_pipeline_mentoria_tech.ipynb`) |
+| Testes QA automatizados (`pytest`) | ✅ Validados (19/19 pipeline/API + 9/9 cliente HTTP) |
+| Relatório Final de QA & Evidências (PT-BR/ES/EN) | ✅ Publicado (`docs/relatorio-qa-evidencias.md`) |
+| Notebooks de Validação & BI/Colab | ✅ Publicados (`rag/notebooks/`) |
 
 ## 10. Responsável e Equipe
 
-**Responsável pelo documento:** Lídia Moura (Lidi) — Líder Técnica  
+**Responsável pelo documento:** Lídia Moura — Líder Técnica  
 **Equipe:** Equipe 26 — Hackathon ONE G10 (Oracle Next Education & Alura / NoCountry)

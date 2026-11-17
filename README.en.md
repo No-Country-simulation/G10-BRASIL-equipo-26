@@ -185,6 +185,9 @@ Guides *(in Portuguese)*: [`docs/oci-tutorial.md`](./docs/oci-tutorial.md) · [`
 | [`integracao-oci.md`](./docs/integracao-oci.md) | IAM, Object Storage, Vault and Autonomous Database |
 | [`oci-tutorial.md`](./docs/oci-tutorial.md) | Step-by-step OCI tutorial |
 | [`qa-plano.md`](./docs/qa-plano.md) | QA plan and STAR method |
+| [`relatorio-qa-evidencias.en.md`](./docs/relatorio-qa-evidencias.en.md) | Final QA, BI Analyst & runtime evidence report |
+| [`rag/notebooks/relatorio_qa_bi_mentoria_tech.ipynb`](./rag/notebooks/relatorio_qa_bi_mentoria_tech.ipynb) | Colab-ready QA & BI analytics notebook (`pandas`, `seaborn`, `matplotlib`) |
+| [`rag/notebooks/validacao_pipeline_mentoria_tech.ipynb`](./rag/notebooks/validacao_pipeline_mentoria_tech.ipynb) | End-to-end validation notebook (3 demo scenarios) |
 | [`metricas-kpis.md`](./docs/metricas-kpis.md) | Metrics, KPIs and BI model |
 | [`decisoes-e-status.md`](./docs/decisoes-e-status.md) | Decisions and actual status |
 | [`engenharia-prompts-e-mercado.md`](./docs/engenharia-prompts-e-mercado.md) | Prompts per profile/format and market analysis |

@@ -185,6 +185,10 @@ Guias: [`docs/oci-tutorial.md`](./docs/oci-tutorial.md) · [`docs/integracao-oci
 | [`integracao-oci.md`](./docs/integracao-oci.md) | IAM, Object Storage, Vault e Autonomous Database |
 | [`oci-tutorial.md`](./docs/oci-tutorial.md) | Tutorial passo a passo da OCI |
 | [`qa-plano.md`](./docs/qa-plano.md) | Plano de QA e método STAR |
+| [`relatorio-qa-evidencias.md`](./docs/relatorio-qa-evidencias.md) | Relatório final de QA, BI Analyst e evidências reais (PT-BR / ES / EN) |
+| [`rag/notebooks/relatorio_qa_bi_mentoria_tech.ipynb`](./rag/notebooks/relatorio_qa_bi_mentoria_tech.ipynb) | Notebook analítico de QA & BI estilo Colab (`pandas`, `seaborn`, `matplotlib`) |
+| [`rag/notebooks/validacao_pipeline_mentoria_tech.ipynb`](./rag/notebooks/validacao_pipeline_mentoria_tech.ipynb) | Notebook de validação ponta a ponta dos 3 cenários demo |
+| [`roteiro-pitch-demoday.md`](./docs/roteiro-pitch-demoday.md) | Roteiro curto do vídeo pitch e plano de contingência |
 | [`metricas-kpis.md`](./docs/metricas-kpis.md) | Métricas, KPIs e modelo para BI |
 | [`decisoes-e-status.md`](./docs/decisoes-e-status.md) | Decisões e status real |
 | [`engenharia-prompts-e-mercado.md`](./docs/engenharia-prompts-e-mercado.md) | Prompts por perfil/formato e análise de mercado |

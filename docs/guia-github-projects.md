@@ -1,6 +1,6 @@
 # Guia Prático: Como Sincronizar Branches, Issues e Pull Requests com o GitHub Projects (`g10-equipo26`)
 
-**Responsável:** Lídia Moura (Lidi) — Líder Técnica  
+**Responsável:** Lídia Moura — Líder Técnica  
 **Data da última atualização:** 09/11/2026  
 **Público:** Todos os integrantes da Equipe 26
 
