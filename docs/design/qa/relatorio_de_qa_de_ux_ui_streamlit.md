@@ -13,7 +13,7 @@ Este documento registra a auditoria de **Design QA** da aplicação deployada no
 | :--- | :--- |
 | **URL da Aplicação (Streamlit)** | `https://mentoria-tech-ai.streamlit.app/` |
 | **Data da Avaliação** | `18/11/2026` |
-| **Avaliador(a) UX/UI** | `[Inserir seu nome / GitHub]` |
+| **Avaliador(a) UX/UI** | `Lysara Pinheiro / @LysaJPDataLab` |
 | **Escopo Analisado** | Código (`main.py`, `.streamlit/config.toml`) + Telas exportadas em **Modo Claro** e **Modo Escuro** (Visão geral, Minha biblioteca, Estúdio de criação, Meus conteúdos) |
 | **Dispositivos / Viewports** | Desktop (paisagem via exportação) + Revisão de regras `@media (max-width: 768px)` no código *(teste interativo em mobile real pendente)* |
 | **Status Geral de UX/UI** | 🔴 **Requer correções críticas no Modo Escuro e ajustes de UX/UI** *(Modo Claro com alta fidelidade ao Brandbook; Modo Escuro com falhas críticas de visibilidade e pontos de atrito inerentes ao Streamlit)* |
@@ -152,7 +152,7 @@ Este documento registra a auditoria de **Design QA** da aplicação deployada no
 
 ## 8. Evidências Visuais
 
-> Recomenda-se salvar as capturas de tela em `docs/qa/evidencias/` (em PNG, sem compressão de impressão em PDF) e vincular abaixo:
+> Recomenda-se salvar as capturas de tela em `docs/design/qa/evidencias/` (em PNG, sem compressão de impressão em PDF) e vincular abaixo:
 
 * **Modo Claro (Desktop):**
   * Visão Geral: `![Visão Geral - Light](./evidencias/visao-geral-light.png)` *(analisada via PDF)*
