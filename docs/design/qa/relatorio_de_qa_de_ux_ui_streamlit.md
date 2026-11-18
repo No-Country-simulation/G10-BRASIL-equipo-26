@@ -29,7 +29,7 @@ Este documento registra a auditoria de **Design QA** da aplicação deployada no
   * **Contraste em botões pastéis (WCAG AA/AAA):** O código resolve proativamente o problema clássico de botões pastéis no Streamlit, forçando texto escuro (`#1B3B2B` / `#293241`) sobre Verde Menta e Lavanda Clara, além de ajustar o texto secundário (`#4A5568`) para manter contraste $\ge 4.5:1$.
   * **Estados bem estruturados:** Estados vazios (*empty states*) presentes em todas as telas, feedback de carregamento passo a passo (`st.status`) com proteção contra duplo clique e tratamento de erros com detalhes técnicos recolhidos.
 
-* **Principais pontos de atrito e limitações críticas:**
+* **Principais pontos de atrito e limitações:**
   * **Falhas graves de visibilidade no Modo Escuro:** Como o `config.toml` fixa `base = "light"`, o CSS customizado de Dark Mode entra em conflito com elementos nativos do Streamlit. Tags `<code>` mantêm fundo branco enquanto recebem texto claro (`#F8FAFC`), tornando nomes como o do bucket na sidebar **invisíveis**. Além disso, o **mascote** e alguns textos/elementos perdem contraste ou desaparecem sobre superfícies escuras.
   * **Limitações inerentes à arquitetura do Streamlit:** A aplicação sofre com **reruns totais de página (`st.rerun`)** a cada troca de aba, upload ou seleção de formato, gerando micro-paralisações perceptíveis para o estudante, além de **distribuição espacial rígida** no *Estúdio de criação*.
   * **Desequilíbrio visual e seleção monótona no Estúdio:** A coluna esquerda concentra todos os parâmetros e 6 opções em um `st.radio` linear e extenso, forçando rolagem até o botão de gerar, enquanto a coluna direita permanece com um grande espaço vazio antes da primeira geração.
