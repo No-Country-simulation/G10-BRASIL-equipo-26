@@ -152,7 +152,7 @@ A identidade visual do projeto **MentorIA Tech** foi desenvolvida por **Lysara J
 - **Tipografia:** Inter (WCAG AA)
 - **Mascote:** cérebro ilustrado
 - **Miro — Mapa IPO:** [acessar board](https://miro.com/app/board/uXjVETxlMKY=/?share_link_id=20932850042)
-- **Documentos salvos em:** `docs/assets-marca/` *(a ser populado pela Lysara)*
+- **Documentos salvos em:** `app/assets/`
 
 ---
 
