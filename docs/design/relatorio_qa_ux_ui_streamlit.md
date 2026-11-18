@@ -11,9 +11,9 @@ Este documento registra a auditoria de **Design QA** da aplicação deployada no
 
 | Campo | Detalhes |
 | :--- | :--- |
-| **URL da Aplicação (Streamlit)** | `[https://mentoria-tech-ai.streamlit.app/](https://mentoria-tech-ai.streamlit.app/)` |
+| **URL da Aplicação (Streamlit)** | `https://mentoria-tech-ai.streamlit.app/` |
 | **Data da Avaliação** | `18/11/2026` |
-| **Avaliador(a) UX/UI** | `[Inserir seu nome / GitHub]` |
+| **Avaliador(a) UX/UI** | `Lysara Pinheiro / @LysaJPDataLab` |
 | **Escopo Analisado** | Código (`main.py`, `.streamlit/config.toml`) + Telas exportadas (Visão geral, Minha biblioteca, Estúdio de criação, Meus conteúdos) |
 | **Dispositivos / Viewports** | Desktop (paisagem via exportação) + Revisão de regras `@media (max-width: 768px)` no código *(teste interativo em mobile real pendente)* |
 | **Status Geral de UX/UI** | 🟡 **Aprovado com ressalvas** (alta fidelidade visual e excelente contraste; requer ajustes pontuais de UX Writing, foco de teclado e compactação de layout) |
