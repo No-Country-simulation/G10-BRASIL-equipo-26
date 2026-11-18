@@ -31,7 +31,7 @@
 La plataforma recibe documentación técnica (manual, guía de nube, artículo) y la convierte en material de estudio estructurado, personalizado por **perfil**, **formato pedagógico** y **nivel de profundidad**. Usa **RAG (Retrieval-Augmented Generation)**, LLMs con *fallback* y validación de contratos con **Pydantic v2**. La salida final se persiste en **OCI Object Storage (Always Free)**.
 
 <p align="center">
-  <img src="./assets/Mascote.png" alt="Mascota MentorIA Tech" width="180">
+  <img src="./assets/Mascote-fundo_branco.png" alt="Mascota MentorIA Tech" width="180">
 </p>
 
 ### Problema
