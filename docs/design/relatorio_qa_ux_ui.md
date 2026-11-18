@@ -1,7 +1,7 @@
 # 🎨 Relatório Design QA
 
 > **Projeto:** MentorIA Tech (Desafio NovaMente) | Hackathon ONE — Grupo 10 (Equipe 26)
-> **Referência Oficial:** [Guia de Design (`design.md`)](../design/design.md) | [Brandbook UX/UI](../design/MentorIA-Tech_Brandbook_UXUI.pdf)
+> **Referência Oficial:** [Guia de Design (`design.md`)](.docs/design/design.md) | [Brandbook UX/UI](.docs/design/MentorIA-Tech_Brandbook_UXUI.pdf)
 
 Este documento registra a auditoria de **Design QA** da aplicação deployada no Streamlit, avaliando a fidelidade visual ao Brandbook, usabilidade da jornada, acessibilidade (WCAG AA) e qualidade da experiência do usuário.
 
