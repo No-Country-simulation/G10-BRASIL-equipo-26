@@ -31,7 +31,7 @@
 The platform takes technical documentation (a manual, a cloud guide, an article) and turns it into structured study material, personalized by **profile**, **pedagogical format** and **depth level**. It uses **RAG (Retrieval-Augmented Generation)**, LLMs with fallback and contract validation with **Pydantic v2**. The final output is persisted in **OCI Object Storage (Always Free)**.
 
 <p align="center">
-  <img src="./assets/Mascote.png" alt="MentorIA Tech mascot" width="180">
+  <img src="./assets/Mascote-fundo_branco.png" alt="MentorIA Tech mascot" width="180">
 </p>
 
 ### Problem
