@@ -1,4 +1,4 @@
-# 🎨 Relatório Design QA
+# 🎨 Relatório de Auditoria Design QA
 
 > **Projeto:** MentorIA Tech (Desafio NovaMente) | Hackathon ONE — Grupo 10 (Equipe 26)
 > **Referência Oficial:** [Guia de Design (`design.md`)](.docs/design/design.md) | [Brandbook UX/UI](.docs/design/MentorIA-Tech_Brandbook_UXUI.pdf)
