@@ -2,7 +2,7 @@
 
 > **Projeto:** MentorIA Tech (Desafio NovaMente) | Hackathon ONE — Grupo 10 (Equipe 26)  
 > **Conceito:** *Aprender com clareza, leveza e autonomia.*  
-> **Referência completa:** [MentorIA-Tech_Brandbook_UXUI.pdf](docs/design/MentorIA-Tech_Brandbook_UXUI.pdf) (Versão 1.1)
+> **Referência completa:** [MentorIA-Tech_Brandbook_UXUI.pdf](./docs/design/MentorIA-Tech_Brandbook_UXUI.pdf) (Versão 1.1)
 
 Este documento reúne os fundamentos visuais, diretrizes de experiência do usuário e tokens de interface para padronizar o desenvolvimento do MVP da **MentorIA Tech**.
 
