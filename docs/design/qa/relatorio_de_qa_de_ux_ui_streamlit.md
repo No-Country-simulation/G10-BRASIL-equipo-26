@@ -152,7 +152,7 @@ Este documento registra a auditoria de **Design QA** da aplicação deployada no
 
 ## 8. Evidências Visuais
 
-> Recomenda-se salvar as capturas de tela em `docs/design/qa/evidencias/` (em PNG, sem compressão de impressão em PDF) e vincular abaixo:
+> Capturas de tela salvas em `docs/design/qa/evidencias/` (em PNG, sem compressão de impressão em PDF):
 
 * **Modo Claro (Desktop):**
   * Visão Geral: `![Visão Geral - Light](./evidencias/visao-geral-light.png)` *(analisada via PDF)*
