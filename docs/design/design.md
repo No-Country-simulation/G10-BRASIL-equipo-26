@@ -36,7 +36,7 @@ O símbolo oficial conecta cognição, inteligência artificial e conhecimento e
 **Diretrizes de uso:**
 * **Área de respiro:** Preservar margem mínima equivalente a `1M` ao redor do logotipo.
 * **Fundo prioritário:** Utilizar preferencialmente sobre fundos claros (`#FFFFFF` ou `#FAFAFC`) para garantir contraste e legibilidade.
-* **Integridade cromática:** Manter estritamente as cores originais dos nós e elementos do símbolo (arquivos disponíveis em `./assets/`).
+* **Integridade cromática:** Manter estritamente as cores originais dos nós e elementos do símbolo (arquivos disponíveis em `app/assets`).
 
 ---
 
