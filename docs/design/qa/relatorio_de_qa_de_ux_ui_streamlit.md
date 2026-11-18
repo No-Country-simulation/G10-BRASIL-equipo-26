@@ -160,6 +160,6 @@ Este documento registra a auditoria de **Design QA** da aplicação deployada no
   * Estúdio de Criação: `![Estúdio de Criação - Light](./evidencias/estudio-criacao-light.png)` *(analisada via PDF)*
   * Meus Conteúdos: `![Meus Conteúdos - Light](./evidencias/meus-conteudos-light.png)` *(analisada via PDF)*
 * **Modo Escuro (Desktop):**
-  * Visão Geral & Bug `<code>` na Sidebar: `![Dark Mode - Sidebar Code Bug](./evidencias/dark-mode-sidebar-code.png)` *(confirmado via PDF `00` p. 2)*
+  * Visão Geral & Bug `<code>` na Sidebar: `![Dark Mode - Sidebar Code Bug](./evidencias/dark-mode-sidebar-code.png)`
   * Estúdio de Criação (Dark Mode / Layout assimétrico): `![Estúdio - Dark](./evidencias/estudio-criacao-dark.png)` *(analisada via PDF `02`)*
 * **Validação Mobile (`390×844`):** `*(Pendente de captura em dispositivo real / DevTools)*`
