@@ -81,7 +81,7 @@ Preferir fontes *sans-serif* gratuitas e leves, como **`Inter`** ou **`system-ui
 
 ### Jornada de Criação (Fluxo Principal)
 1. **Fontes:** Importar material base (`.pdf`, `.md` ou texto colado).
-2. **Personalizar:** Definir perfil do destinatário, nicho e formato desejado.
+2. **Personalizar:** Definir perfil do destinatário e formato desejado.
 3. **Gerar:** Processamento via IA + RAG com feedback visual de progresso.
 4. **Aprender:** Revisar, estudar e exportar o objeto educacional gerado.
 
