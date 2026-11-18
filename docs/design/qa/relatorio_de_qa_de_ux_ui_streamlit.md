@@ -152,14 +152,14 @@ Este documento registra a auditoria de **Design QA** da aplicação deployada no
 
 ## 8. Evidências Visuais
 
-> Capturas de tela salvas em `docs/design/qa/evidencias/` (em PNG, sem compressão de impressão em PDF):
+> Capturas de tela salvas em `docs/design/qa/evidencias/` (em PNG):
 
 * **Modo Claro (Desktop):**
-  * Visão Geral: `![Visão Geral - Light](./evidencias/visao-geral-light.png)` *(analisada via PDF)*
-  * Minha Biblioteca: `![Minha Biblioteca - Light](./evidencias/minha-biblioteca-light.png)` *(analisada via PDF)*
-  * Estúdio de Criação: `![Estúdio de Criação - Light](./evidencias/estudio-criacao-light.png)` *(analisada via PDF)*
-  * Meus Conteúdos: `![Meus Conteúdos - Light](./evidencias/meus-conteudos-light.png)` *(analisada via PDF)*
+  * Visão Geral: `![Visão Geral - Light](./evidencias/visao-geral-light.png)` *(inserir evidência)*
+  * Minha Biblioteca: `![Minha Biblioteca - Light](./evidencias/minha-biblioteca-light.png)` *(inserir evidência)*
+  * Estúdio de Criação: `![Estúdio de Criação - Light](./evidencias/estudio-criacao-light.png)` *(inserir evidência)*
+  * Meus Conteúdos: `![Meus Conteúdos - Light](./evidencias/meus-conteudos-light.png)` *(inserir evidência)*
 * **Modo Escuro (Desktop):**
   * Visão Geral & Bug `<code>` na Sidebar: `![Dark Mode - Sidebar Code Bug](./evidencias/dark-mode-sidebar-code.png)`
-  * Estúdio de Criação (Dark Mode / Layout assimétrico): `![Estúdio - Dark](./evidencias/estudio-criacao-dark.png)` *(analisada via PDF `02`)*
-* **Validação Mobile (`390×844`):** `*(Pendente de captura em dispositivo real / DevTools)*`
+  * Estúdio de Criação (Dark Mode / Layout assimétrico): `![Estúdio - Dark](./evidencias/estudio-criacao-dark.png)` *(inserir evidência)*
+* **Validação Mobile (`390×844`):** `*(Pendente de captura em dispositivo real / DevTools)*` *(inserir evidência)*
