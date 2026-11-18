@@ -1,4 +1,5 @@
 import base64
+import html
 import io
 import re
 import sys
@@ -7,7 +8,6 @@ from pathlib import Path
 from typing import Any
 
 from PIL import Image
-import pypdf
 import streamlit as st
 
 # Garante imports locais em app/ e services/ na raiz do repositório
@@ -48,7 +48,7 @@ def _recortar_imagem(caminho: Path, padding: int = 12) -> Image.Image | None:
         return None
 
 
-@st.cache_resource
+@st.cache_resource(show_spinner=False)
 def carregar_icone_pagina():
     """Carrega e redimensiona o favicon da aplicação."""
     img = _recortar_imagem(config.ASSETS_DIR / "Ícone principal" / "Ícone.png", padding=8)
@@ -57,7 +57,7 @@ def carregar_icone_pagina():
     return img
 
 
-@st.cache_data
+@st.cache_data(show_spinner=False, ttl=86400)
 def carregar_asset_otimizado_b64(
     tipo: str,
     max_size: tuple[int, int],
@@ -97,32 +97,39 @@ def carregar_asset_otimizado_b64(
         return "", 0, 0
 
 
-@st.cache_resource
+@st.cache_resource(show_spinner=False)
 def obter_http_session():
     """Mantém uma única `requests.Session` reaproveitada entre execuções."""
     return api_client.criar_session()
 
 
-@st.cache_data(ttl=15)
+# show_spinner=False: o spinner padrão do cache injeta um elemento temporário no topo
+# da página e desloca o layout (CLS) a cada expiração do TTL.
+@st.cache_data(ttl=15, show_spinner=False)
 def verificar_api_online(base_url: str) -> bool:
     """Consulta `GET /health` com cache curto de 15 segundos."""
     return api_client.verificar_saude(base_url=base_url, session=obter_http_session())
 
 
 img_icone = carregar_icone_pagina()
-logo_b64, logo_w, logo_h = carregar_asset_otimizado_b64("logo", max_size=(440, 160), display_height=76, padding=12)
-mascote_b64, masc_w, masc_h = carregar_asset_otimizado_b64("mascote", max_size=(240, 240), display_height=116, padding=14)
 
 
 # ==============================================================================
 # 2. CONFIGURAÇÃO DA PÁGINA, IDENTIDADE E ESTADO INICIAL
 # ==============================================================================
+# `set_page_config` é emitido antes de qualquer outro delta para que o layout "wide"
+# seja aplicado desde o primeiro paint (evita troca centered -> wide = CLS).
+# `initial_sidebar_state="auto"`: expandida no desktop e recolhida no mobile, evitando
+# que a sidebar de 300px comprima o conteúdo principal em telas de ~400px (CLS/LCP mobile).
 st.set_page_config(
     page_title="MentorIA-Tech · Estúdio de Aprendizagem",
     page_icon=img_icone if img_icone else "🎓",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="auto",
 )
+
+logo_b64, logo_w, logo_h = carregar_asset_otimizado_b64("logo", max_size=(440, 160), display_height=76, padding=12)
+mascote_b64, masc_w, masc_h = carregar_asset_otimizado_b64("mascote", max_size=(240, 240), display_height=116, padding=14)
 
 if "tema" not in st.session_state:
     st.session_state["tema"] = "light"
@@ -222,6 +229,17 @@ st.markdown(
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
+    /* Fallback métrico da Inter (Arial ajustada): com display=swap o texto aparece
+       imediatamente e a troca de fonte não altera altura/largura das linhas (CLS ~0). */
+    @font-face {{
+        font-family: 'Inter Fallback';
+        src: local('Arial'), local('Helvetica'), local('Liberation Sans');
+        ascent-override: 90.2%;
+        descent-override: 22.48%;
+        line-gap-override: 0%;
+        size-adjust: 107.4%;
+    }}
+
     :root {{
         {variaveis_tema_css}
         --radius-card: 16px;
@@ -229,7 +247,7 @@ st.markdown(
     }}
 
     html, body, [class*="css"] {{
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        font-family: 'Inter', 'Inter Fallback', system-ui, -apple-system, sans-serif;
         color: var(--color-text);
         background-color: var(--color-bg);
     }}
@@ -273,6 +291,18 @@ st.markdown(
         text-transform: uppercase;
         margin: 12px 0 6px 0;
         display: block;
+    }}
+
+    /* Legenda da sidebar com contraste WCAG AA garantido (Lighthouse color-contrast) */
+    .nm-sidebar-caption {{
+        color: var(--color-text-muted) !important;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.5;
+        margin: 8px 0 0 0;
+    }}
+    .nm-sidebar-caption code {{
+        color: var(--color-text) !important;
     }}
 
     /* Inputs, Selectbox, NumberInput, TextArea, FileUploader, Expander e Tabs para Light/Dark */
@@ -370,10 +400,17 @@ st.markdown(
         align-items: center;
         justify-content: center;
         padding: 12px;
+        min-height: {logo_h + 26}px; /* reserva a altura da logo antes do decode (CLS) */
+        box-sizing: border-box;
         background: var(--color-logo-box);
         border-radius: var(--radius-card);
         border-bottom: 1px solid var(--color-border);
         margin-bottom: 12px;
+    }}
+    .nm-brand-container img {{
+        max-width: 100%;
+        height: auto;
+        display: block;
     }}
     .nm-eyebrow {{
         font-size: 11.5px;
@@ -396,7 +433,8 @@ st.markdown(
         padding: 30px 34px;
         border: 1px solid var(--color-border);
         margin-bottom: 24px;
-        min-height: 184px;
+        min-height: 200px; /* >= altura do mascote (136px) + padding: reserva o espaço do Hero (CLS) */
+        box-sizing: border-box;
         display: flex;
         flex-wrap: wrap;
         align-items: center;
@@ -433,6 +471,8 @@ st.markdown(
         flex-shrink: 0;
         width: 136px;
         height: 136px;
+        min-height: 136px;
+        box-sizing: border-box;
         background: var(--hero-mascote-bg);
         border-radius: 28px;
         display: flex;
@@ -440,6 +480,14 @@ st.markdown(
         justify-content: center;
         box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
         padding: 10px;
+    }}
+    .nm-hero-mascote img {{
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        display: block;
     }}
     .nm-card {{
         background: var(--color-surface);
@@ -455,6 +503,8 @@ st.markdown(
         border-radius: var(--radius-card);
         padding: 18px 20px;
         min-height: 132px;
+        box-sizing: border-box;
+        contain: layout; /* isola reflow interno do card do restante da página */
         box-shadow: var(--shadow-card);
         display: flex;
         flex-direction: column;
@@ -565,6 +615,7 @@ st.markdown(
             text-align: center;
             padding: 22px 18px;
             gap: 14px;
+            min-height: 340px; /* mascote + título em 2-3 linhas + parágrafo no mobile */
         }}
         .nm-hero-content {{
             flex: 1 1 100%;
@@ -582,6 +633,7 @@ st.markdown(
         .nm-hero-mascote {{
             width: 96px;
             height: 96px;
+            min-height: 96px;
             margin: 0 auto;
         }}
         .nm-stat-card {{
@@ -623,6 +675,8 @@ def extrair_previa_texto(doc: dict[str, Any], limite: int = 800) -> str:
     texto = ""
     try:
         if ext == "PDF":
+            import pypdf  # import tardio: só carrega o parser quando a prévia é aberta
+
             reader = pypdf.PdfReader(io.BytesIO(dados))
             partes = []
             for pag in reader.pages[:3]:
@@ -710,14 +764,16 @@ def _formatar_data_iso(iso_str: str | None) -> str:
 # 5. SIDEBAR
 # ==============================================================================
 api_url = config.obter_api_base_url()
-api_online = verificar_api_online(api_url)
 
 with st.sidebar:
+    # A logo é o primeiro delta da sidebar: a sidebar é montada antes do health check
+    # (I/O de rede), reduzindo o deslocamento horizontal do conteúdo principal (CLS).
     if logo_b64:
         st.markdown(
             f"<div class='nm-brand-container'>"
             f"<img src='{logo_b64}' alt='Logo MentorIA-Tech' width='{logo_w}' height='{logo_h}' "
-            f"style='max-width: 100%; height: auto; display: block;'>"
+            f"decoding='async' "
+            f"style='aspect-ratio: {logo_w} / {logo_h};'>"
             f"</div>",
             unsafe_allow_html=True,
         )
@@ -738,6 +794,7 @@ with st.sidebar:
         key="btn_alternar_tema",
     )
 
+    api_online = verificar_api_online(api_url)
     if api_online:
         st.success(f"🟢 API Online · `{api_url}`")
     else:
@@ -771,11 +828,14 @@ with st.sidebar:
         unsafe_allow_html=True,
     )
     oci_status_txt = "OCI SDK/PAR pronto" if oci_bridge.OCI_DISPONIVEL else "Fallback local ativo"
-    st.caption(f"☁️ Bucket `{config.obter_bucket_artefatos()}` · {oci_status_txt}")
+    st.markdown(
+        f"<p class='nm-sidebar-caption'>☁️ Bucket <code>{html.escape(config.obter_bucket_artefatos())}</code> · {oci_status_txt}</p>",
+        unsafe_allow_html=True,
+    )
 
 
 st.markdown(
-    f"<div style='display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom: 12px;'>"
+    f"<div style='display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom: 12px; min-height: 32px;'>"
     f"<span style='color:var(--color-text-muted); font-size:14px; font-weight:600;'>MentorIA-Tech / <strong style='color:var(--color-text);'>{st.session_state['pagina_atual']}</strong></span>"
     f"<span class='nm-pill nm-pill-lavender'>✦ Hackathon ONE & Alura</span>"
     f"</div>",
@@ -794,7 +854,7 @@ pagina = st.session_state["pagina_atual"]
 if pagina == "Visão geral":
     mascote_html = (
         f"<img src='{mascote_b64}' alt='Mascote MentorIA-Tech' width='{masc_w}' height='{masc_h}' "
-        f"style='max-width: 100%; height: auto; object-fit: contain; display: block;'>"
+        f"decoding='async' style='aspect-ratio: {masc_w} / {masc_h};'>"
         if mascote_b64
         else "<span role='img' aria-label='Mascote MentorIA-Tech'>🎓✨</span>"
     )
@@ -976,8 +1036,16 @@ elif pagina == "Minha biblioteca":
                 if fc2.button("Excluir", key=f"del_{doc['id']}", use_container_width=True):
                     st.session_state["documentos"].pop(idx)
                     st.rerun()
-                with st.expander(f"Prévia textual de '{doc['nome']}'"):
-                    st.text(extrair_previa_texto(doc))
+                # Lazy: a extração de texto (pypdf) só roda quando a prévia é expandida
+                exp_previa = st.expander(
+                    f"Prévia textual de '{doc['nome']}'",
+                    expanded=False,
+                    key=f"exp_previa_{doc['id']}",
+                    on_change="rerun",
+                )
+                with exp_previa:
+                    if exp_previa.open:
+                        st.text(extrair_previa_texto(doc))
                 st.divider()
 
 
@@ -1087,7 +1155,7 @@ elif pagina == "Estúdio de criação":
                     except ApiError as err:
                         st.error(f"❌ {err.mensagem_amigavel}")
                         if err.detalhes_tecnicos:
-                            with st.expander("Detalhes técnicos do erro"):
+                            with st.expander("Detalhes técnicos do erro", expanded=False):
                                 st.code(err.detalhes_tecnicos, language=None)
                     finally:
                         st.session_state["gerando"] = False
@@ -1121,7 +1189,8 @@ elif pagina == "Estúdio de criação":
             else:
                 mascote_empty = (
                     f"<img src='{mascote_b64}' alt='Mascote MentorIA-Tech' width='{masc_w}' height='{masc_h}' "
-                    f"style='max-width: 110px; height: auto; margin: 0 auto; display: block;'>"
+                    f"decoding='async' loading='lazy' "
+                    f"style='max-width: 110px; height: auto; aspect-ratio: {masc_w} / {masc_h}; margin: 0 auto; display: block;'>"
                     if mascote_b64
                     else "<span role='img' aria-label='Mascote MentorIA-Tech'>🪄</span>"
                 )
@@ -1148,107 +1217,138 @@ elif pagina == "Meus conteúdos":
         "persistidos no servidor para o seu `usuario_id`."
     )
 
-    aba_sessao, aba_servidor = st.tabs(["✨ Gerados nesta sessão", "🎯 Quizzes salvos no servidor (GET /quiz)"])
+    # Abas com estado (`on_change="rerun"`): apenas a aba ativa executa e envia seus
+    # elementos ao navegador; a aba inativa não gera DOM nem chamadas à API (TBT menor).
+    aba_sessao, aba_servidor = st.tabs(
+        ["✨ Gerados nesta sessão", "🎯 Quizzes salvos no servidor (GET /quiz)"],
+        key="tabs_meus_conteudos",
+        on_change="rerun",
+    )
 
     with aba_sessao:
-        if not st.session_state["resultados"]:
-            st.info("🗂️ Nenhum conteúdo gerado nesta sessão ainda. Acesse o **Estúdio de criação**.")
+        if aba_sessao.open:
+            if not st.session_state["resultados"]:
+                st.info("🗂️ Nenhum conteúdo gerado nesta sessão ainda. Acesse o **Estúdio de criação**.")
 
-        for item in st.session_state["resultados"]:
-            titulo_exp = f"✨ {item['documento_nome']} · {item['formato']} ({item['perfil']} / {item['nivel']}) — {item['criado_em']}"
-            with st.expander(titulo_exp):
-                t1, t2, t3 = st.tabs(["📖 Visualização / Quiz", "🧾 JSON Estruturado", "☁️ OCI & Exportações"])
+            for item in st.session_state["resultados"]:
+                titulo_exp = f"✨ {item['documento_nome']} · {item['formato']} ({item['perfil']} / {item['nivel']}) — {item['criado_em']}"
+                # Expander recolhido e lazy: o conteúdo (Quiz, JSON, exportações) só é
+                # renderizado quando o usuário o expande.
+                exp_item = st.expander(
+                    titulo_exp,
+                    expanded=False,
+                    key=f"exp_sessao_{item['id']}",
+                    on_change="rerun",
+                )
+                with exp_item:
+                    if not exp_item.open:
+                        continue
 
-                with t1:
-                    renderizadores.renderizar_cabecalho_resultado(item)
-                    if item["formato"] == "Quiz":
-                        quiz_ui.renderizar_quiz(
-                            geracao_id=item["id"],
-                            usuario_id=usuario_id,
-                            sessao_id=sessao_id,
-                            questoes_iniciais=item.get("questoes"),
-                            key_prefix=f"hist_{item['id']}",
-                        )
-                    else:
-                        renderizadores.renderizar_conteudo_nao_quiz(item)
-
-                with t2:
-                    st.json(oci_bridge.montar_pacote_artefato(item))
-
-                with t3:
-                    oci_info = item.get("armazenamento_oci") or {}
-                    _, desc_oci = oci_bridge.rotulo_status_oci(oci_info)
-                    st.markdown(
-                        f"### ☁️ Oracle Cloud Infrastructure (OCI Object Storage)\n"
-                        f"- **Bucket configurado:** `{oci_info.get('bucket', config.obter_bucket_artefatos())}`\n"
-                        f"- **Objeto:** `{oci_info.get('objeto_id', '—')}`\n"
-                        f"- **Status:** {desc_oci}"
+                    t1, t2, t3 = st.tabs(
+                        ["📖 Visualização / Quiz", "🧾 JSON Estruturado", "☁️ OCI & Exportações"],
+                        key=f"tabs_item_{item['id']}",
+                        on_change="rerun",
                     )
-                    st.divider()
-                    renderizadores.exportar_arquivos(
-                        item,
-                        prefixo_key=f"acervo_{item['id']}",
-                        estado_quiz=st.session_state["quiz"].get(item["id"]),
-                    )
+
+                    with t1:
+                        if t1.open:
+                            renderizadores.renderizar_cabecalho_resultado(item)
+                            if item["formato"] == "Quiz":
+                                quiz_ui.renderizar_quiz(
+                                    geracao_id=item["id"],
+                                    usuario_id=usuario_id,
+                                    sessao_id=sessao_id,
+                                    questoes_iniciais=item.get("questoes"),
+                                    key_prefix=f"hist_{item['id']}",
+                                )
+                            else:
+                                renderizadores.renderizar_conteudo_nao_quiz(item)
+
+                    with t2:
+                        if t2.open:
+                            st.json(oci_bridge.montar_pacote_artefato(item), expanded=2)
+
+                    with t3:
+                        if t3.open:
+                            oci_info = item.get("armazenamento_oci") or {}
+                            _, desc_oci = oci_bridge.rotulo_status_oci(oci_info)
+                            st.markdown(
+                                f"### ☁️ Oracle Cloud Infrastructure (OCI Object Storage)\n"
+                                f"- **Bucket configurado:** `{oci_info.get('bucket', config.obter_bucket_artefatos())}`\n"
+                                f"- **Objeto:** `{oci_info.get('objeto_id', '—')}`\n"
+                                f"- **Status:** {desc_oci}"
+                            )
+                            st.divider()
+                            renderizadores.exportar_arquivos(
+                                item,
+                                prefixo_key=f"acervo_{item['id']}",
+                                estado_quiz=st.session_state["quiz"].get(item["id"]),
+                            )
 
     with aba_servidor:
-        col_txt, col_ref = st.columns([3, 1])
-        col_txt.caption(f"Consultando até 30 quizzes recentes para `usuario_id={usuario_id}`.")
-        if col_ref.button("🔄 Atualizar lista", use_container_width=True, key="btn_atualizar_quizzes_srv"):
-            st.session_state["quizzes_servidor"] = None
+        if aba_servidor.open:
+            col_txt, col_ref = st.columns([3, 1])
+            col_txt.caption(f"Consultando até 30 quizzes recentes para `usuario_id={usuario_id}`.")
+            if col_ref.button("🔄 Atualizar lista", use_container_width=True, key="btn_atualizar_quizzes_srv"):
+                st.session_state["quizzes_servidor"] = None
 
-        if st.session_state["quizzes_servidor"] is None:
-            try:
-                st.session_state["quizzes_servidor"] = api_client.listar_quizzes(
-                    usuario_id, base_url=api_url, session=obter_http_session()
+            if st.session_state["quizzes_servidor"] is None:
+                try:
+                    st.session_state["quizzes_servidor"] = api_client.listar_quizzes(
+                        usuario_id, base_url=api_url, session=obter_http_session()
+                    )
+                except ApiError as err:
+                    st.error(f"❌ Não foi possível listar quizzes do servidor: {err.mensagem_amigavel}")
+                    st.session_state["quizzes_servidor"] = []
+
+            quizzes_srv = st.session_state.get("quizzes_servidor") or []
+            if not quizzes_srv:
+                st.info(
+                    "Nenhum Quiz encontrado no servidor para o seu `usuario_id`. "
+                    "Gere um Quiz no Estúdio ou recupere seu ID na sidebar."
                 )
-            except ApiError as err:
-                st.error(f"❌ Não foi possível listar quizzes do servidor: {err.mensagem_amigavel}")
-                st.session_state["quizzes_servidor"] = []
 
-        quizzes_srv = st.session_state.get("quizzes_servidor") or []
-        if not quizzes_srv:
-            st.info(
-                "Nenhum Quiz encontrado no servidor para o seu `usuario_id`. "
-                "Gere um Quiz no Estúdio ou recupere seu ID na sidebar."
-            )
+            nomes_sessao = {r["id"]: r["documento_nome"] for r in st.session_state["resultados"]}
 
-        nomes_sessao = {r["id"]: r["documento_nome"] for r in st.session_state["resultados"]}
+            for qz in quizzes_srv:
+                gid = qz["geracao_id"]
+                doc_nome = nomes_sessao.get(gid)
+                rotulo_doc = f" — {doc_nome}" if doc_nome else ""
+                cab = f"🎯 Quiz `{gid[:8]}`{rotulo_doc} · {qz.get('perfil')} / {qz.get('nivel')} · {_formatar_data_iso(qz.get('data_hora'))}"
+                # Lazy: `GET /quiz/{id}` e o histórico só são consultados ao expandir o item.
+                exp_srv = st.expander(cab, expanded=False, key=f"exp_srv_{gid}", on_change="rerun")
+                with exp_srv:
+                    if not exp_srv.open:
+                        continue
 
-        for qz in quizzes_srv:
-            gid = qz["geracao_id"]
-            doc_nome = nomes_sessao.get(gid)
-            rotulo_doc = f" — {doc_nome}" if doc_nome else ""
-            cab = f"🎯 Quiz `{gid[:8]}`{rotulo_doc} · {qz.get('perfil')} / {qz.get('nivel')} · {_formatar_data_iso(qz.get('data_hora'))}"
-            with st.expander(cab):
-                c_open, _ = st.columns([1.4, 2.6])
-                if c_open.button("Abrir no Estúdio", key=f"open_srv_{gid}", type="secondary", use_container_width=True):
-                    try:
-                        dados_q = api_client.consultar_quiz(gid, usuario_id, base_url=api_url, session=obter_http_session())
-                        st.session_state["resultado_ativo"] = {
-                            "id": gid,
-                            "formato": "Quiz",
-                            "perfil": qz.get("perfil", ""),
-                            "nivel": qz.get("nivel", ""),
-                            "documento_nome": doc_nome or f"Quiz {gid[:8]}",
-                            "quantidade_itens": len(dados_q.get("questoes") or []),
-                            "criado_em": _formatar_data_iso(qz.get("data_hora")),
-                            "duracao_ms": None,
-                            "avaliacao_id": None,
-                            "adequacao": {"divergencia": False, "mensagem": None},
-                            "conteudo": None,
-                            "questoes": dados_q.get("questoes") or [],
-                            "armazenamento_oci": None,
-                        }
-                        navegar_para("Estúdio de criação")
-                        st.rerun()
-                    except ApiError as err:
-                        st.error(f"❌ {err.mensagem_amigavel}")
+                    c_open, _ = st.columns([1.4, 2.6])
+                    if c_open.button("Abrir no Estúdio", key=f"open_srv_{gid}", type="secondary", use_container_width=True):
+                        try:
+                            dados_q = api_client.consultar_quiz(gid, usuario_id, base_url=api_url, session=obter_http_session())
+                            st.session_state["resultado_ativo"] = {
+                                "id": gid,
+                                "formato": "Quiz",
+                                "perfil": qz.get("perfil", ""),
+                                "nivel": qz.get("nivel", ""),
+                                "documento_nome": doc_nome or f"Quiz {gid[:8]}",
+                                "quantidade_itens": len(dados_q.get("questoes") or []),
+                                "criado_em": _formatar_data_iso(qz.get("data_hora")),
+                                "duracao_ms": None,
+                                "avaliacao_id": None,
+                                "adequacao": {"divergencia": False, "mensagem": None},
+                                "conteudo": None,
+                                "questoes": dados_q.get("questoes") or [],
+                                "armazenamento_oci": None,
+                            }
+                            navegar_para("Estúdio de criação")
+                            st.rerun()
+                        except ApiError as err:
+                            st.error(f"❌ {err.mensagem_amigavel}")
 
-                quiz_ui.renderizar_quiz(
-                    geracao_id=gid,
-                    usuario_id=usuario_id,
-                    sessao_id=sessao_id,
-                    questoes_iniciais=None,
-                    key_prefix=f"srv_{gid}",
-                )
+                    quiz_ui.renderizar_quiz(
+                        geracao_id=gid,
+                        usuario_id=usuario_id,
+                        sessao_id=sessao_id,
+                        questoes_iniciais=None,
+                        key_prefix=f"srv_{gid}",
+                    )

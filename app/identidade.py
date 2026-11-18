@@ -105,6 +105,21 @@ def sincronizar_storage_navegador(usuario_id: str, sessao_id: str) -> None:
                     content: 'MentorIA-Tech: Estúdio inteligente de adaptação de documentações técnicas em experiências de aprendizagem via RAG, IA Generativa e Oracle Cloud (OCI).'
                 }});
 
+                // Pré-conexão com o Google Fonts (Inter): antecipa DNS + TCP + TLS
+                // para reduzir o atraso de renderização do texto (LCP).
+                function garantirPreconnect(href, crossorigin) {{
+                    if (!doc.head) return;
+                    const seletor = 'link[rel="preconnect"][href="' + href + '"]';
+                    if (doc.head.querySelector(seletor)) return;
+                    const link = doc.createElement('link');
+                    link.rel = 'preconnect';
+                    link.href = href;
+                    if (crossorigin) link.crossOrigin = 'anonymous';
+                    doc.head.insertBefore(link, doc.head.firstChild);
+                }}
+                garantirPreconnect('https://fonts.googleapis.com', false);
+                garantirPreconnect('https://fonts.gstatic.com', true);
+
                 const uid = {uid_js};
                 const sid = {sid_js};
                 const restaurar = {restaurar_js};

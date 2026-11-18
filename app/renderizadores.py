@@ -123,7 +123,7 @@ def renderizar_conteudo_nao_quiz(res: dict[str, Any]) -> None:
             sub = cls.get("subassunto")
             niv = cls.get("nivel_dificuldade")
             titulo_exp = f"🗂️ Cartão {idx}: {item.get('pergunta', '')}"
-            with st.expander(titulo_exp, expanded=(idx == 1)):
+            with st.expander(titulo_exp, expanded=False):
                 pills = ""
                 if assunto:
                     pills += f"<span class='nm-pill nm-pill-lavender'>{_esc(assunto)}</span>"

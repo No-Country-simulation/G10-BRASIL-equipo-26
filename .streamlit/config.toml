@@ -1,3 +1,4 @@
+
 [theme]
 base = "light"
 primaryColor = "#A8E6CF"
@@ -8,3 +9,7 @@ font = "sans serif"
 
 [server]
 maxUploadSize = 20
+enableStaticServing = true
+
+[browser]
+gatherUsageStats = false
