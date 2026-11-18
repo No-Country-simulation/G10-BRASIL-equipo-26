@@ -75,7 +75,7 @@ Este documento registra a auditoria de **Design QA** da aplicação deployada no
 * [x] **Botões com verbos claros:** CTAs bem redigidos (*"Criar Conteúdo no Estúdio"*, *"Gerenciar Biblioteca"*, *"Adicionar à Biblioteca"*, *"Salvar Texto como .txt"*). Recomenda-se apenas encurtar o CTA da home para evitar corte (`...`).
 * [ ] **Fluidez de navegação:** **Prejudicada por arquitetura do Streamlit.** Chamadas de `st.rerun()` e `on_change="rerun"` reexecutam todo o script Python ao trocar de aba, selecionar formato ou adicionar documento, gerando micro-travamentos perceptíveis.
 * [ ] **Tom de voz da marca:** **Ponto de melhoria prioritário.** Excesso de jargão técnico de infraestrutura (`Contrato v0.3`, `POST /geracoes`, `GET /quiz`, `multipart/form-data`, `SQLite`, `usuario_id`, `OCI SDK/PAR` e URL do Render) disputando atenção com a experiência de aprendizagem.
-* [x] **Mensagens de erro objetivas:** Validações de extensão, arquivo vazio, limite de 20 MiB e campos vazios explicam claramente o problema; erros de API exibem `mensagem_amigavel` e mantêm detalhes técnicos recolhidos.
+* [x] **Mensagens de erro objetivas:** Validações de extensão, arquivo vazio, limite de 20 MB e campos vazios explicam claramente o problema; erros de API exibem `mensagem_amigavel` e mantêm detalhes técnicos recolhidos.
 
 ---
 
