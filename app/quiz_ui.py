@@ -314,26 +314,37 @@ def renderizar_historico(
         else:
             ra["Erros"] += 1
 
-    st.dataframe(linhas_tabela, use_container_width=True, hide_index=True)
+    # Abas com estado (`on_change="rerun"`): somente a aba ativa é renderizada. O gráfico
+    # (Vega-Lite, bundle JS pesado) só é montado quando o usuário abre "Desempenho por assunto".
+    aba_tent, aba_rod, aba_ass = st.tabs(
+        ["🧾 Tentativas", "🔁 Resumo por rodada", "📈 Desempenho por assunto"],
+        key=f"tabs_hist_{key_prefix}_{geracao_id}",
+        on_change="rerun",
+    )
 
-    c_rod, c_ass = st.columns(2)
-    with c_rod:
-        st.markdown("**Resumo por Rodada:**")
-        st.dataframe(
-            [
-                {"Rodada": k, "Tentativas": v["tentativas"], "Acertos": v["acertos"]}
-                for k, v in resumo_rodadas.items()
-            ],
-            use_container_width=True,
-            hide_index=True,
-        )
-    with c_ass:
-        st.markdown("**Desempenho por Assunto:**")
-        dados_assunto = [
-            {"Assunto": k, "Acertos": v["Acertos"], "Erros": v["Erros"]}
-            for k, v in resumo_assuntos.items()
-        ]
-        st.bar_chart(dados_assunto, x="Assunto", y=["Acertos", "Erros"])
+    with aba_tent:
+        if aba_tent.open:
+            st.dataframe(linhas_tabela, use_container_width=True, hide_index=True)
+
+    with aba_rod:
+        if aba_rod.open:
+            st.dataframe(
+                [
+                    {"Rodada": k, "Tentativas": v["tentativas"], "Acertos": v["acertos"]}
+                    for k, v in resumo_rodadas.items()
+                ],
+                use_container_width=True,
+                hide_index=True,
+            )
+
+    with aba_ass:
+        if aba_ass.open:
+            dados_assunto = [
+                {"Assunto": k, "Acertos": v["Acertos"], "Erros": v["Erros"]}
+                for k, v in resumo_assuntos.items()
+            ]
+            if dados_assunto:
+                st.bar_chart(dados_assunto, x="Assunto", y=["Acertos", "Erros"])
 
 
 def renderizar_quiz(
