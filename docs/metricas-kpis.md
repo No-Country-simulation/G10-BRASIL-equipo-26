@@ -1,8 +1,8 @@
 # Definição de Métricas, KPIs e Modelo Analítico — MentorIA Tech
 
 **Responsável:** Lídia Moura — Líder Técnica (com contribuições de Rodrigo Silva, Vagner Marques e Equipe de Dados/BI)  
-**Data da última atualização:** 09/11/2026  
-**Status:** `IMPLEMENTADO NO PIPELINE / SQLITE` (Conexão ativa com Power BI classificada como `PÓS-MVP`)
+**Data da última atualização:** 18/11/2026  
+**Status:** `IMPLEMENTADO NO PIPELINE / SQLITE / NOTEBOOK BI` (Conexão ativa com Power BI classificada como `PÓS-MVP`)
 
 ---
 
@@ -31,7 +31,7 @@ Executado sobre **5 documentos técnicos** (`Machine_Learning.pdf`, `Deep_learni
 
 ## 3. KPIs de Execução do Pipeline e Validação (Runtime)
 
-Registrados a cada geração pelo pipeline (`rag/pipeline/llm_pipeline.py`, `rag/database.py` e notebook de validação):
+Registrados a cada geração pelo pipeline (`rag/pipeline/llm_pipeline.py`, `rag/pipeline/telemetria_llm.py`, `rag/database.py`), exportados via `services/bi_exporter.py` e analisados visualmente no notebook `rag/notebooks/relatorio_qa_bi_mentoria_tech.ipynb`:
 
 | Campo / Indicador | Tipo / Unidade | Descrição e Meta no MVP |
 | :--- | :--- | :--- |

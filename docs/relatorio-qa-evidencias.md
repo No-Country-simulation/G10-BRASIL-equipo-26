@@ -3,7 +3,7 @@
 **Responsável (QA & BI Analyst):** Lídia Moura — Líder Técnica  
 **Notebooks Complementares:** [Relatório Analítico Colab/BI](../rag/notebooks/relatorio_qa_bi_mentoria_tech.ipynb) · [Validação dos 3 Cenários](../rag/notebooks/validacao_pipeline_mentoria_tech.ipynb)  
 **Projeto:** MentorIA Tech — Equipe 26 | Hackathon ONE G10 (Alura, Oracle & NoCountry)  
-**Data da Auditoria:** 16/11/2026 · **Branch de referência:** `main` (`b061126` + validação ponta a ponta)  
+**Data da Auditoria:** 18/11/2026 · **MVP Online:** [mentoria-tech-ai.streamlit.app](https://mentoria-tech-ai.streamlit.app/) · **Branch:** `main` (`1728829` + validação ponta a ponta)  
 **Idiomas:** **Português (PT-BR)** · [Español](./relatorio-qa-evidencias.es.md) · [English](./relatorio-qa-evidencias.en.md)
 
 ---

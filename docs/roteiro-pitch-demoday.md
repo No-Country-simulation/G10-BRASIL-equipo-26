@@ -1,44 +1,94 @@
-# Roteiro Acessível de Vídeo Pitch (Entrega + Demo Day) & Plano de Contingência
+# Roteiro Estratégico de Pitch (Demo Day 4m40s & Vídeo 2–3min) — MentorIA Tech
 
-**Projeto:** MentorIA Tech — Equipe 26 | Hackathon ONE G10  
-**Tempo Alvo:** 2 a 3 minutos (teto máximo de 5 minutos)  
-**Estratégia:** Gravação única em **Tema Claro** (tela cheia, sem barras de ferramentas), aproveitável tanto para a entrega oficial quanto para exibição no Demo Day.  
-**Documento recomendado para a demo:** Material alinhado diretamente aos **finalistas do G10** (como o documento oficial do desafio/NoCountry ou `rag/Machine_Learning.pdf`), evitando materiais exclusivos de *alumni* G9 que não representam o momento atual da plateia.
-
----
-
-## 1. Roteiro Acessível Passo a Passo (Linguagem Clara + Inteligência de Mercado)
-
-### [0:00 – 0:45] A Dor Real & O Nosso Diferencial de Mercado (Lídia Moura)
-* **Abertura conectando com a plateia:**  
-  *"Sabe quando você está estudando tecnologia — ou fazendo transição de carreira — e abre um manual técnico de 30 ou 50 páginas cheio de termos difíceis? Jogar tudo num chat de IA comum parece fácil, mas tem dois problemas sérios: quem está começando muitas vezes nem sabe o que perguntar — é a síndrome da página em branco — e o chat pode misturar informações de fora e inventar respostas sem mostrar onde aquilo estava no texto."*
-* **Nossa proposta (baseada na análise de mercado vs. NotebookLM e ChatGPT):**  
-  *"O **MentorIA Tech** transforma o 'chat passivo' em uma **fábrica estruturada de estudo** para a área de Tecnologia. Com apenas **3 cliques** (documento + perfil + formato), ele entrega o conteúdo pronto no seu nível — de Iniciante a Tech Lead e Gestor — sem que você precise virar especialista em criar prompts."*
-
-### [0:45 – 1:40] Como Funciona por Baixo dos Panos (Rodrigo Silva)
-* **Simplicidade técnica com eficiência:**  
-  *"Por trás da tela em **Streamlit**, nossa API **FastAPI** lê documentos `.pdf`, `.md` e `.txt`, divide e busca os trechos certos com **RAG (ChromaDB)** e usa engenharia de prompts enxuta (*CO-STAR* e JSON direto no schema) para economizar até **40% dos tokens de saída**, evitando texto inútil."*
-* **Confiabilidade:**  
-  *"Cada card ou questão passa por validação estrita (**Pydantic v2**): se a IA tentar citar uma página que não existe no documento, o sistema bloqueia. E se uma API gratuita oscilar, temos roteamento de chaves e fallback automático entre **Gemini** e **Groq**."*
-
-### [1:40 – 3:05] Demonstração Prática no Sistema (Tema Claro)
-1. **Cenário 1 — `Iniciante` + `TL;DR` ou `Flashcards`:**
-   * *"Escolho o material técnico, seleciono o perfil `Iniciante` e o formato `Flashcards` (ou `TL;DR`). Em segundos, recebo o resumo direto e cada item mostra exatamente de qual página e trecho saiu."*
-   * Destacar os botões prontos de exportação (**Markdown**, **JSON** e **CSV para Anki**).
-2. **Cenário 2 — `Tech Lead` + `Quiz` Interativo:**
-   * *"No modo `Quiz`, o sistema nunca entrega o gabarito antes da hora. Ao iniciar a rodada, o aluno tem até 3 tentativas e recebe explicação fundamentada + histórico de acertos salvo sem coletar dados pessoais (LGPD / Zero PII)."*
-3. **Cenário 3 — Oracle Cloud (OCI Always Free):**
-   * *"Automaticamente, o conteúdo gerado em JSON estruturado é enviado para o nosso bucket privado **`mentoria-tech-artifacts`** na Oracle Cloud, comprovando a persistência em nuvem."*
-
-### [3:05 – 3:45] Qualidade (QA), Dados e Próximos Passos (Lídia Moura)
-* *"Como BI Analyst, garantimos a entrega com **28 testes automatizados aprovados**, relatório analítico em notebook estilo Colab (`pandas`/`seaborn`/`matplotlib`) e exportação limpa em CSV para **Power BI**."*
-* *"Para a próxima fase pós-hackathon, já deixamos estruturado o painel ativo de telemetria no Power BI, OCI Vault, bot no Telegram e OCR."*
-* **Fechamento:** *"MentorIA Tech: aprender tecnologia com clareza, autonomia e fidelidade às fontes. Obrigado!"*
+**Projeto:** MentorIA Tech — Equipe 26 | Hackathon ONE G10 (Oracle, Alura & NoCountry)  
+**Formato Demo Day:** 4 min 40 s ao vivo *(margem de 20s antes do corte de 5 min)*  
+**Formato Vídeo de Entrega:** 2 a 3 minutos em **Tema Claro** (tela cheia, sem barras de ferramentas ou abas extras)
 
 ---
 
-## 2. Versão Offline de Contingência (Plano B do Demo Day)
-Para garantir zero imprevistos no palco caso a rede ou as APIs oscilem:
-1. **Vídeo MP4 pré-gravado** deste exato roteiro em tela cheia no Tema Claro.
-2. **Screenshots reais em alta resolução** (`app/assets/screenshots/`).
-3. **Artefatos JSON reais salvos localmente** (`data/oci_fallback/`) demonstrando o `PacoteFinal` e `armazenamento_oci`.
+## 1. Estrutura Narrativa em 5 Etapas (Storytelling "Trailer de Cinema")
+
+### Etapa 1 — Problema / Gancho (~45s) · *Lídia Moura*
+> *Não começar com "Somos o grupo X" nem com jargões técnicos.*
+
+* **Pergunta provocativa (nós somos a própria persona):**  
+  *"Quem aqui, na área de tecnologia, já abriu um manual novo, uma documentação de atualização no GitHub — ou até o guia de um desafio como o nosso aqui no Hackathon — e percebeu que precisava aprender uma ferramenta inteira como o GitHub Projects em tempo recorde para ontem?"*
+* **A dor real:**  
+  *"Ferramentas e tecnologias evoluem toda semana. Jogar um documento denso ou a transcrição de uma aula num chat comum como ChatGPT ou NotebookLM até ajuda, mas exige que o estudante já saiba o que perguntar, gaste tempo escrevendo contexto e ainda corra o risco de a IA inventar respostas sem mostrar de onde tirou."*
+
+### Etapa 2 — Proposta de Valor / Solução (~35s) · *Lídia Moura*
+* **Fórmula de valor:**  
+  *"O **MentorIA Tech** ajuda estudantes de tecnologia — como os alunos do programa ONE e Alura — e profissionais de TI a transformarem qualquer documentação técnica ou transcrição de aula em material de estudo personalizado em menos de 1 minuto, sem precisar virar especialista em prompts."*
+* **Diferencial direto:**  
+  *"Em 3 cliques, a pessoa escolhe o seu perfil (`Iniciante`, `Jr/Pleno`, `Tech Lead` ou `Gestor/Executivo`) e o formato ideal (`Tutorial`, `Flashcards`, `Quiz`, `TL;DR`, `Roteiro` ou `Resumo`), recebendo um estudo adaptado exatamente ao seu ritmo."*
+
+### Etapa 3 — Demonstração do MVP / Prova de Fogo (~1m45s) · *Vídeo Pré-Gravado (Tema Claro)*
+> *Usar vídeo pré-gravado em tela cheia (Tema Claro) narrado ao vivo para evitar atrasos de carregamento ou falhas de rede.*
+
+* **Documento sugerido na demo (conexão direta com finalistas do G10 + Método STAR):**  
+  Usar o próprio documento de requisitos do projeto entregue pela NoCountry ou o guia do GitHub Projects (mostrando o contraste STAR: *Situação/Tarefa* de compreender dezenas de requisitos técnicos -> *Ação* no MentorIA Tech -> *Resultado* estruturado em segundos em vez de horas).
+* **Fluxo enxuto (*happy path*, sem mostrar menus secundários):**
+  1. **Upload / Seleção:** envio do documento em PT-BR e escolha do perfil + formato (`TL;DR` ou `Flashcards`) → mostrar que cada item gerado cita **a página e o trecho real** do documento.
+  2. **Quiz Interativo (Diferencial Ativo):** gerar um `Quiz` para `Tech Lead` → mostrar que o gabarito **não aparece antes da hora**, iniciar rodada, mostrar o limite de **3 tentativas** com feedback na explicação fundamentada e os botões de exportação (**CSV para Anki**, **Markdown** e **JSON**).
+  3. **Prova na Nuvem:** mostrar o status de envio confirmado do JSON estruturado para o bucket privado na **Oracle Cloud (`mentoria-tech-artifacts`)**.
+
+### Etapa 4 — Arquitetura e Tecnologia Traduzida em Valor (~45s) · *Rodrigo Silva*
+> *Traduzir escolhas técnicas em benefício para o usuário, sem listar frameworks soltos.*
+
+* **Como foi construído (visão de resultado):**
+  * **Interface e API integradas:** os sistemas se comunicam automaticamente para que o usuário só precise enviar o arquivo uma vez e acompanhar o progresso em tempo real (interface com **100% de acessibilidade e SEO no Lighthouse**).
+  * **Confiabilidade anti-alucinação:** calibramos o sistema com **200 testes empíricos** para recuperar exatamente os trechos certos; antes de exibir qualquer resposta, um validador automático confere se as páginas citadas realmente existem no documento.
+  * **Alta disponibilidade:** se o provedor principal de IA oscilar ou atingir limite gratuito, o sistema alterna automaticamente para o provedor secundário sem interromper o estudo.
+  * **Privacidade (LGPD) e Nuvem:** armazenamos o progresso com identificadores anônimos (zero coleta de nome, e-mail ou IP) e persistimos os artefatos na **Oracle Cloud (Always Free)**.
+
+### Etapa 5 — Impacto, Visão LATAM e Fechamento (~50s) · *Lídia Moura*
+* **Impacto imediato:** *"Alunos do ONE podem subir até transcrições de aulas da Alura para revisar com Flashcards e Quizzes antes de aplicar no código."*
+* **Visão LATAM & Evolução Estratégica (Roadmap Pós-MVP):**
+  * **Base Trilíngue:** repositório e documentação de QA já estruturados em **Português, Espanhol e Inglês** para escalar na América Latina.
+  * **Próximos Canais de Distribuição:** evolução da nossa API pronta para **Extensão do Chrome** (estudar direto na aba da documentação sem trocar de tela) e **Bot no Telegram** (que, diferente do WhatsApp, preserva arquivos sem perda de qualidade e oferece memória persistente em nuvem para o aluno baixar seus estudos em qualquer dispositivo), além de painel ativo no **Power BI** sobre a telemetria já coletada.
+* **Fechamento:** *"MentorIA Tech: transformar informação técnica complexa em aprendizado claro, confiável e no ritmo de cada pessoa. Obrigado!"*
+
+---
+
+## 2. Checklist de Ouro da Live (Boas Práticas & Erros a Evitar)
+
+### O que DEVE acontecer
+- [ ] Ensaiar em voz alta com cronômetro **pelo menos 5 vezes** (meta: **4m40s**, máximo 5m).
+- [ ] Manter **Tema Claro (Light)** do Streamlit no vídeo e nas telas.
+- [ ] Vídeo gravado em **tela cheia**, sem barra de favoritos/abas extras.
+- [ ] Slides no Canva enxutos (pouco texto, tópicos visuais).
+- [ ] No Q&A: ouvir até o fim, respirar **3 segundos** antes de responder, papéis definidos (sem falar por cima) e posicionar itens futuros no *roadmap* com segurança.
+
+### O que NÃO PODE acontecer
+- [ ] Ultrapassar **5 minutos** (microfone é cortado).
+- [ ] Abrir com *"Somos o grupo X"* ou jargão técnico antes da dor real.
+- [ ] Ler slides ou tentar mostrar todas as telas/botões secundários.
+- [ ] Pedir desculpas pelo que não foi incluído ou inventar respostas no Q&A.
+- [ ] Exibir chaves, `.env` ou dados pessoais na gravação.
+
+---
+
+## 3. Sugestões Práticas para os Slides no Canva (`MentorIA-Tech_Pitch_Hackathon.pptx`)
+
+> Revisão realizada sobre os 8 slides atuais sem editar o arquivo original no Canva:
+
+1. **Slide 1 (Capa):**
+   * Corrigir a caixa de texto do link do GitHub que está quebrada ao meio (`G10-BRASIL-e` / `quipo-26`).
+   * Manter visual limpo com o título **MentorIA Tech** e o slogan oficial: *"Aprender com clareza, leveza e autonomia."*
+2. **Slide 2 (Contexto / Problema & Solução):**
+   * Conectar diretamente o problema à dor da persona (ter que aprender ferramentas novas como GitHub Projects ou documentações densas para ontem, sem saber qual prompt escrever).
+   * Destacar os **3 cliques** (Documento + Perfil + Formato) e os **benefícios imediatos**: economia de semanas para menos de 1 minuto, zero alucinação com citação de páginas e exportação pronta (Anki CSV, Markdown, JSON).
+3. **Slide 3 (Arquitetura — ATENÇÃO CRÍTICA):**
+   * **Substituir a tabela genérica** (`Modelo A / Modelo B / Modelo Escolhido / 450 ms / 94%`) — esses números são de template fictício e não devem ser sustentados diante da banca.
+   * Trocar pelos **fatos reais validados**:
+     * **Benchmark RAG:** `200 experimentos` (`5` PDFs × `40` configs) → `chunk_size=2000`, `overlap=200`, `K=10`, `top_n=5`.
+     * **Resiliência & QA:** Multi-LLM (**Groq** + **Google Gemini** fallback) + validação **Pydantic v2** anti-alucinação + **Oracle Cloud (OCI Always Free)** privado (`mentoria-tech-artifacts`) + **Zero PII (LGPD)**.
+4. **Slide 4 / 5 (MVP em Ação — Vídeo):**
+   * Inserir o vídeo gravado em **Tema Claro (tela cheia, 60–90s)** mostrando o fluxo principal: documento → perfil/formato com fontes → Quiz interativo (3 tentativas sem gabarito antecipado) → confirmação do upload OCI.
+5. **Slide 6 (Equipe 26 + Fechamento):**
+   * Ajustar o texto solto `Tech Lead` para junto de **Lídia Moura** (`Lídia Moura — Tech Lead · OCI, QA & Documentação`).
+   * Corrigir o typo `AI Enginner` → `AI Engineer` no card de Rodrigo do Carmo.
+   * Recomenda-se incluir (antes ou junto do encerramento) 3 tópicos visuais de **Benefícios & Visão LATAM (Pós-MVP)**: documentação trilíngue (`PT-BR / ES / EN`), evolução para **Extensão do Chrome** + **Bot no Telegram** (persistência em nuvem sem perda de qualidade) e painel ativo no **Power BI**.
+6. **Slides 7 e 8 (Páginas finais de Brandbook / Paleta UX/UI):**
+   * **Remover ou ocultar da apresentação de Pitch:** são páginas sobressalentes do manual de marca (inclusive citando `nicho`, já descontinuado no MVP) que quebram o ritmo depois do *"Muito obrigado!"*.
+

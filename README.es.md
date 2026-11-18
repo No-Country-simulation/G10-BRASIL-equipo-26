@@ -12,13 +12,15 @@
 > *Aprender con claridad, ligereza y autonomía.*
 
 <p align="center">
-  <img src="https://img.shields.io/badge/estado-MVP%20en%20integraci%C3%B3n-yellow" alt="Estado: MVP en integración">
+  <img src="https://img.shields.io/badge/estado-MVP%20Online%20y%20Validado-brightgreen" alt="Estado: MVP Online y Validado">
   <img src="https://img.shields.io/badge/Hackathon-ONE%20G10-blue" alt="Hackathon ONE G10">
   <img src="https://img.shields.io/badge/IA%20Generativa-RAG%20%2B%20LLM-purple" alt="IA Generativa y RAG">
   <img src="https://img.shields.io/badge/Cloud-OCI%20Always%20Free-red" alt="OCI">
   <img src="https://img.shields.io/badge/Idioma%20MVP-PT--BR-brightgreen" alt="PT-BR">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT">
 </p>
+
+> **Accede al MVP Online (Streamlit Cloud):** [https://mentoria-tech-ai.streamlit.app/](https://mentoria-tech-ai.streamlit.app/)
 
 ---
 
@@ -107,17 +109,15 @@ flowchart TD
 
 | Estado | Elemento |
 | :--- | :--- |
-|  **IMPLEMENTADO** | Pipeline RAG + LLM con fallback Gemini → Groq |
-|  **IMPLEMENTADO** | Contratos Pydantic v2 (6 formatos) y verificación de fuentes |
-|  **IMPLEMENTADO** | Persistencia SQLite y benchmark RAG (200 experimentos) |
-|  **IMPLEMENTADO** | Extractor multiformato `.pdf/.md/.txt` (PR #40, ya en `main`) |
-|  **IMPLEMENTADO** | Interfaz Streamlit en 4 pantallas con identidad MentorIA Tech (PR #42) |
-|  **EN REVISIÓN** | Renombrar perfiles a `Tech Lead` / `Executivo`; eliminar `nicho` |
-|  **EN REVISIÓN** | Pool de claves de API (`GEMINI_API_KEYS`, `GROQ_API_KEYS`) |
-|  **PROPUESTA** | OCI Vault, Autonomous Database y esquema de BI |
-|  **PENDIENTE** | Conexión del frontend (`app/main.py`, hoy con motor simulado) al pipeline `rag/` |
-|  **PENDIENTE** | Escritura real del JSON estructurado en el bucket OCI (`mentoria-tech-artifacts`) |
-|  **POST-MVP** | Power BI, Telegram, QR Code, chat de IA conversacional, OCR, inglés/español en la interfaz |
+|  **VALIDADO** | Pipeline RAG + LLM con fallback (`Groq` / `Google Gemini`) |
+|  **VALIDADO** | Contratos Pydantic v2 (6 formatos), eliminación de `nicho` y verificación de fuentes |
+|  **VALIDADO** | API FastAPI (`rag/main.py`, contrato `v0.3`) y persistencia SQLite (Zero PII) |
+|  **VALIDADO** | Extractor multiformato `.pdf/.md/.txt` (PR #40) y benchmark RAG (200 experimentos) |
+|  **VALIDADO** | Interfaz Streamlit publicada ([mentoria-tech-ai.streamlit.app](https://mentoria-tech-ai.streamlit.app/)) con optimizaciones Lighthouse/Core Web Vitals (PR #51) |
+|  **VALIDADO** | Pool de claves de API (`GEMINI_API_KEYS`, `GROQ_API_KEYS`) con rotación automática |
+|  **VALIDADO** | Escritura real del JSON estructurado en el bucket privado OCI (`mentoria-tech-artifacts`, Always Free) |
+|  **VALIDADO** | Suite automatizada de QA (`28` pruebas aprobadas) e informes trilingües + notebooks BI |
+|  **POST-MVP** | OCI Vault (límite Always Free), Power BI activo, Extensión Chrome, Bot Telegram, OCR, UI en EN/ES |
 
 Detalles en [`docs/decisoes-e-status.md`](./docs/decisoes-e-status.md) *(en portugués)*.
 

@@ -1,8 +1,8 @@
 # Plano de QA, Testes Automatizados e Validação pelo Método STAR — MentorIA Tech
 
 **Responsável:** Lídia Moura — Líder Técnica (com contribuições de Rodrigo Silva, Lysara Pinheiro, Andrea Gonzalez e Vinicius Ferreira)  
-**Data da última atualização:** 09/11/2026  
-**Status:** Plano de Qualidade Oficial do MVP (Fases 6 e 8)
+**Data da última atualização:** 18/11/2026  
+**Status:** Plano de Qualidade Oficial do MVP (Validado Ponta a Ponta)
 
 ---
 
@@ -74,8 +74,20 @@ A estratégia de QA do **MentorIA Tech** combina três camadas complementares:
 * **Situation (Situação):**
   * O requisito central do Hackathon ONE G10 exige demonstrar como um mesmo documento técnico é adaptado para pelo menos 3 cenários/perfis distintos mantendo fidelidade à fonte.
 * **Task (Tarefa):**
-  * Validar a geração parametrizada combinando: (1) `Iniciante + Flashcards + PT-BR`, (2) `Jr/Pleno (Desenvolvedor) + Tutorial + PT-BR`, e (3) `Arquiteto/Gestor (Liderança) + Resumo/TL;DR ou Quiz + PT-BR`.
+  * Validar a geração parametrizada combinando: (1) `Iniciante + Flashcards + PT-BR`, (2) `Jr/Pleno (Desenvolvedor) + Tutorial + PT-BR`, e (3) `Tech Lead/Gestor (Liderança) + Resumo/TL;DR ou Quiz + PT-BR`.
 * **Action (Ação):**
-  * Parametrização de `PedidoGeracao` injetando perfil, formato, nicho e nível no prompt estruturado `rag-llm-v1` com validação de saída específica por discriminador Pydantic (`Flashcards`, `Tutorial`, `ResumoTLDR`/`Quiz`).
+  * Parametrização de `PedidoGeracao` injetando perfil, formato e nível no prompt estruturado `rag-llm-v1` com validação de saída específica por discriminador Pydantic (`Flashcards`, `Tutorial`, `ResumoTLDR`/`Quiz`).
 * **Result (Resultado):**
   * Geração de pacotes distintos em estrutura, profundidade e foco pedagógico a partir da mesma base indexada, preservando em todos os casos a rastreabilidade de `chunk_ids` e páginas e registrando telemetria em SQLite.
+
+---
+
+### STAR 04 — Integração Ponta a Ponta (FastAPI + Streamlit + OCI Object Storage) e Suíte QA
+* **Situation (Situação):**
+  * Era necessário comprovar que a interface web publicada ([mentoria-tech-ai.streamlit.app](https://mentoria-tech-ai.streamlit.app/)) se comunicava com o backend real FastAPI (`rag/main.py`), gravava no SQLite sem PII e persistia o JSON final no bucket privado da Oracle Cloud (`mentoria-tech-artifacts`).
+* **Task (Tarefa):**
+  * Alinhar a suíte automatizada (`pytest`) ao contrato `v0.3`, validar `POST /geracoes` e o fluxo completo de Quiz em execução real e comprovar a gravação física do objeto na OCI Always Free.
+* **Action (Ação):**
+  * Atualizados `tests/test_qa_pipeline.py` (19 cenários incluindo `TestClient` FastAPI + SQLite) e `tests/test_frontend_app_smoke.py`; validados `GET /health`, `POST /geracoes` (Flashcards `35,8s` e Quiz com gabarito oculto), rodadas/respostas e upload OCI via `app/oci_bridge.py` → `services/oci_storage.py`.
+* **Result (Resultado):**
+  * `28` testes aprovados (`19/19` em `test_qa_pipeline.py` e `9/9` em `test_frontend_api_client.py`); upload real confirmado no bucket privado `mentoria-tech-artifacts` (`NoPublicAccess`, objeto `resultado_qa-fase4-validacao.json` com `status_upload: "concluido"`) e evidências consolidadas em `docs/relatorio-qa-evidencias.md` e `rag/notebooks/relatorio_qa_bi_mentoria_tech.ipynb`.
