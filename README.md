@@ -31,7 +31,7 @@ O **MentorIA Tech** *(codinome inicial: NovaMente)* é a solução da **Equipe 2
 A plataforma recebe uma documentação técnica (manual, guia de nuvem, artigo) e a transforma em material de estudo estruturado, personalizado por **perfil**, **formato pedagógico** e **nível de profundidade**. Usa **RAG (Retrieval-Augmented Generation)**, LLMs com fallback e validação de contratos com **Pydantic v2**, com a saída final persistida no **OCI Object Storage (Always Free)**.
 
 <p align="center">
-  <img src="./assets/Mascote.png" alt="Mascote MentorIA Tech" width="180">
+  <img src="./assets/Mascote-fundo_branco.png" alt="Mascote MentorIA Tech" width="180">
 </p>
 
 ### Problema
