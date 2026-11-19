@@ -525,3 +525,61 @@ def test_19_api_post_geracoes_quiz_sem_gabarito_e_persiste_sqlite(api_client_iso
     assert row is not None
     assert row[1] == "Iniciante"
     assert row[2] == "Quiz"
+
+
+def test_20_llm_pipeline_ordem_padrao_groq_primeiro_e_override_env(monkeypatch):
+    """Cenário 20: Ordem padrão prioriza Groq -> Gemini e respeita LLM_PROVIDER_ORDER."""
+    from pipeline.llm_pipeline import _provedores_padrao, chamar_gemini, chamar_groq
+
+    monkeypatch.delenv("LLM_PROVIDER_ORDER", raising=False)
+    assert _provedores_padrao() == [chamar_groq, chamar_gemini]
+
+    monkeypatch.setenv("LLM_PROVIDER_ORDER", "gemini,groq")
+    assert _provedores_padrao() == [chamar_gemini, chamar_groq]
+
+
+def test_21_llm_pipeline_fallback_groq_para_gemini():
+    """Cenário 21: Resiliência de IA — Groq falha e Gemini assume como fallback."""
+    from pipeline.llm_pipeline import gerar_de_contexto
+
+    doc = DocumentoEntrada(documento_id="doc_ml", nome_arquivo="Machine_Learning.pdf")
+    pedido = PedidoGeracao(
+        documento=doc,
+        perfil=Perfil.INICIANTE,
+        formato=Formato.FLASHCARDS,
+        nivel="basico",
+        quantidade_itens=1,
+    )
+    trecho = TrechoRecuperado(
+        chunk_id="doc_ml_p1_0",
+        documento_id="doc_ml",
+        texto="Machine Learning é um subcampo da IA.",
+        paginas=[1],
+        posicao=1,
+    )
+    contexto = ContextoRAG(pedido=pedido, trechos=[trecho])
+
+    def mock_groq(system, user):
+        raise RuntimeError("429 RATE_LIMIT")
+
+    json_valido = json.dumps({
+        "formato": "Flashcards",
+        "itens": [
+            {
+                "pergunta": "O que é ML?",
+                "resposta": "Subcampo da inteligência artificial.",
+                "classificacao": {"assunto": "IA", "subassunto": "ML", "nivel_dificuldade": "basico"},
+                "fontes": [{"paginas": [1], "chunk_ids": ["doc_ml_p1_0"]}],
+            }
+        ],
+    })
+
+    def mock_gemini(system, user):
+        return json_valido, "gemini-3.8-flash"
+
+    resultado = gerar_de_contexto(contexto, provedores=[mock_groq, mock_gemini])
+
+    assert resultado.provedor == "mock_gemini"
+    assert len(resultado.erros_anteriores) == 1
+    assert "mock_groq" in resultado.erros_anteriores[0]
+    assert resultado.pacote.metadados.modelo_llm == "gemini-3.8-flash"

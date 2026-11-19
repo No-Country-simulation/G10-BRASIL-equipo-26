@@ -295,7 +295,7 @@ def chamar_gemini(
     for indice, chave in enumerate(chaves, start=1):
         client = genai.Client(
             api_key=chave,
-            http_options=types.HttpOptions(timeout=60000),
+            http_options=types.HttpOptions(timeout=int(os.getenv("GEMINI_TIMEOUT_MS", "30000"))),
         )
 
         try:

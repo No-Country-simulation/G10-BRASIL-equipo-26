@@ -31,7 +31,7 @@ Executado sobre **5 documentos técnicos** (`Machine_Learning.pdf`, `Deep_learni
 
 ## 3. KPIs de Execução do Pipeline e Validação (Runtime)
 
-Registrados a cada geração pelo pipeline (`rag/pipeline/llm_pipeline.py`, `rag/pipeline/telemetria_llm.py`, `rag/database.py`), exportados via `services/bi_exporter.py` e analisados visualmente no notebook `rag/notebooks/relatorio_qa_bi_mentoria_tech.ipynb`:
+Registrados a cada geração pelo pipeline (`rag/pipeline/llm_pipeline.py`, `rag/pipeline/telemetria_llm.py`, `rag/database.py`), exportados via `services/bi_exporter.py` e analisados visualmente no notebook `data_science/relatorio_qa_bi_mentoria_tech.ipynb`:
 
 | Campo / Indicador | Tipo / Unidade | Descrição e Meta no MVP |
 | :--- | :--- | :--- |

@@ -1,9 +1,9 @@
 # Relatório Final de QA, Auditoria Técnica e Evidências — MentorIA Tech
 
 **Responsável (QA & BI Analyst):** Lídia Moura — Líder Técnica  
-**Notebooks Complementares:** [Relatório Analítico Colab/BI](../rag/notebooks/relatorio_qa_bi_mentoria_tech.ipynb) · [Validação dos 3 Cenários](../rag/notebooks/validacao_pipeline_mentoria_tech.ipynb)  
+**Notebooks Complementares:** [Relatório Analítico Colab/BI](../data_science/relatorio_qa_bi_mentoria_tech.ipynb) · [Validação dos 3 Cenários](../data_science/validacao_pipeline_mentoria_tech.ipynb)  
 **Projeto:** MentorIA Tech — Equipe 26 | Hackathon ONE G10 (Alura, Oracle & NoCountry)  
-**Data da Auditoria:** 18/11/2026 · **MVP Online:** [mentoria-tech-ai.streamlit.app](https://mentoria-tech-ai.streamlit.app/) · **Branch:** `main` (`1728829` + validação ponta a ponta)  
+**Data da Auditoria:** 19/11/2026 · **MVP Online:** [mentoria-tech-ai.streamlit.app](https://mentoria-tech-ai.streamlit.app/) · **Branch:** `mentoria-tech-integracao` (integração de otimização LLM + validação ponta a ponta)  
 **Idiomas:** **Português (PT-BR)** · [Español](./relatorio-qa-evidencias.es.md) · [English](./relatorio-qa-evidencias.en.md)
 
 ---
@@ -15,7 +15,7 @@ Este relatório consolida a auditoria técnica, de dados e de qualidade (**QA & 
 ```mermaid
 flowchart LR
     U[Streamlit UI<br/>app/main.py :8501] -->|HTTP multipart v0.3| API[FastAPI Backend<br/>rag/main.py :8000]
-    API -->|Extração + ChromaDB| RAG[Pipeline RAG/LLM<br/>Gemini -> Groq Fallback]
+    API -->|Extração + ChromaDB| RAG[Pipeline RAG/LLM<br/>Groq -> Gemini Fallback]
     RAG -->|Pydantic v2 + Fontes| DB[(SQLite Local<br/>rag/novamente.db)]
     U -->|app/oci_bridge.py| OCI[(OCI Object Storage<br/>mentoria-tech-artifacts)]
     DB -->|services/bi_exporter.py| BI[CSVs Analíticos<br/>data/bi_exports/]
@@ -29,14 +29,14 @@ flowchart LR
 
 ```mermaid
 xychart-beta
-    title "Testes Automatizados Executados por Camada (Total: 30)"
-    x-axis ["QA Pipeline & API (19)", "API Client & OCI Bridge (9)", "Frontend AppTest Smoke (2)"]
-    y-axis "Quantidade de Testes" 0 --> 22
-    bar [19, 9, 2]
-    bar [19, 9, 1]
+    title "Testes Automatizados Executados por Camada (Total: 32)"
+    x-axis ["QA Pipeline & API (21)", "API Client & OCI Bridge (9)", "Frontend AppTest Smoke (2)"]
+    y-axis "Quantidade de Testes" 0 --> 24
+    bar [21, 9, 2]
+    bar [21, 9, 1]
 ```
 
-> **Leitura do gráfico:** Barras totais = testes definidos; barras validadas = testes aprovados (`19/19` em `tests/test_qa_pipeline.py` e `9/9` em `tests/test_frontend_api_client.py`). Em `tests/test_frontend_app_smoke.py`, `1` teste passou e `1` atingiu timeout de 30s do `AppTest` no Windows (fluxo validado manualmente ao vivo no navegador na Fase 3).
+> **Leitura do gráfico:** Barras totais = testes definidos; barras validadas = testes aprovados (`21/21` em `tests/test_qa_pipeline.py` e `9/9` em `tests/test_frontend_api_client.py`). Em `tests/test_frontend_app_smoke.py`, `1` teste passou e `1` atingiu timeout de 30s do `AppTest` no Windows (fluxo validado manualmente ao vivo no navegador na Fase 3).
 
 ### 2.2 Tempos de Resposta Observados em Execução Real (Backend `POST /geracoes`)
 
@@ -58,7 +58,7 @@ xychart-beta
 | **RAG com rastreabilidade (`chunk_ids` e páginas)** | `rag/pipeline/rag_retrieval.py` + validação determinística em `llm_pipeline.py`; retorno real comprovado (`1138610e-..._p1_0`, página `[1]`). | **IMPLEMENTADO E VALIDADO** |
 | **Mínimo de 3 cenários/formatos adaptados em PT-BR** | Validados ao vivo: `Flashcards` (`Iniciante`), `Quiz` (`Tech Lead`) e `TL;DR` via Streamlit + FastAPI; 6 formatos cobertos por Pydantic v2. | **IMPLEMENTADO E VALIDADO** |
 | **Contrato de dados estrito (Pydantic v2)** | `rag/pipeline/schemas.py` (`extra='forbid'`), alinhado ao contrato `v0.3` (`docs/contrato-fastapi-frontend.md`). | **IMPLEMENTADO E VALIDADO** |
-| **Resiliência multi-provedor (Gemini + Groq)** | Comprovado em execução real: fallback automático para `openai/gpt-oss-120b` sem queda da aplicação. | **IMPLEMENTADO E VALIDADO** |
+| **Resiliência multi-provedor (Groq + Gemini)** | Comprovado em execução real: `LLM_PROVIDER_ORDER=groq,gemini` (`openai/gpt-oss-120b` como primário) com fallback automático para Gemini e timeouts de `20s`/`30s`. | **IMPLEMENTADO E VALIDADO** |
 | **Persistência SQLite sem coleta de PII** | `rag/database.py` (UUID anônimo); confirmados registros reais em `geracoes` e `respostas` (`rag/novamente.db`). | **IMPLEMENTADO E VALIDADO** |
 | **Persistência em nuvem OCI Object Storage (Always Free)** | Bucket privado `mentoria-tech-artifacts` (`NoPublicAccess`) verificado via SDK; upload real concluído (`resultado_qa-fase4-validacao.json`). | **IMPLEMENTADO E VALIDADO** |
 | **Exportação analítica para BI** | `services/bi_exporter.py` validado em `test_12` gerando CSVs sanitizados sem payloads JSON brutos. | **IMPLEMENTADO E VALIDADO** |
@@ -68,7 +68,7 @@ xychart-beta
 ## 4. Evidência dos Testes Executados (Logs Auditados)
 
 ### 4.1 Suíte Automatizada (`pytest`)
-* `tests/test_qa_pipeline.py`: **19 passed in 2.58s** (schemas Pydantic v2, pool de chaves, OCI mock + fallback, exportador CSV, fallback Gemini→Groq, varredura anti-vazamento de segredos, `GET /health`, `POST /geracoes` rejeitando `.exe`, `POST /geracoes` gerando Quiz sem gabarito e gravando no SQLite).
+* `tests/test_qa_pipeline.py`: **21 passed** (schemas Pydantic v2, pool de chaves, OCI mock + fallback, exportador CSV, ordem padrão `Groq -> Gemini` + override `LLM_PROVIDER_ORDER`, fallback bidirecional, varredura anti-vazamento de segredos, `GET /health`, `POST /geracoes` rejeitando `.exe`, `POST /geracoes` gerando Quiz sem gabarito e gravando no SQLite).
 * `tests/test_frontend_api_client.py`: **9 passed** (cliente HTTP v0.3, tratamento de erros 400/404/409/413/422/500/503, `oci_bridge` sem vazar `usuario_id` nem gabarito).
 * `tests/test_frontend_app_smoke.py`: **1 passed, 1 failed** (timeout de 30s no `AppTest` automatizado no Windows; fluxo completo validado manualmente no navegador).
 
@@ -79,6 +79,11 @@ xychart-beta
 * `POST /quiz/rodadas` → `200` | `rodada_id: acf6d061-6bc3-4f21-980e-25ad194a2d23`
 * `POST /quiz/respostas` → `200` | `acertou: True`, liberação de `indice_resposta_correta` e `explicacao` após resposta válida.
 * `GET /quiz/{id}/historico` → `200` | `1` registro retornado e confirmado na tabela `respostas` do `rag/novamente.db`.
+
+### 4.2.1 Otimização de Latência LLM & Timeouts (19/11/2026)
+* Diagnóstico via `telemetria_api` (`rag/novamente.db`) identificou travamentos em chamadas Gemini sem timeout no reranking e latência elevada quando Gemini atuava antes do Groq.
+* **Ajuste aplicado:** `LLM_PROVIDER_ORDER=groq,gemini` (`rag/pipeline/llm_pipeline.py`) + `GEMINI_TIMEOUT_MS` (`20000` ms para avaliação/reranking em `avaliacao_documento.py` e `rag_retrieval.py`; `30000` ms para geração fallback em `llm_pipeline.py`).
+* **Evidência pós-ajuste (ao vivo no Streamlit + FastAPI):** `POST /geracoes` (`Quiz`, `Iniciante`, 5 questões) → `200` | `geracao_id: 26f0bfc6-ac66-4e17-b6c5-ec6366db3082` | `modelo_llm: openai/gpt-oss-120b` (`5.67s` na chamada de geração) | **`duracao_geracao_ms: 13733.52` (`13,7s` vs. `60,4s`–`73s` antes do ajuste)**.
 
 ### 4.3 Validação Real na Oracle Cloud (OCI Object Storage)
 * Bucket consultado via `oci.object_storage.ObjectStorageClient`: `mentoria-tech-artifacts` (`public_access_type: NoPublicAccess`).
@@ -110,6 +115,6 @@ xychart-beta
 | :--- | :--- |
 | Interface Streamlit integrada via HTTP à FastAPI (`v0.3`) | **OCI Vault:** adiado pelo limite de 1 Vault por tenancy na camada Always Free (`USE_OCI_VAULT=false` no MVP) |
 | Geração em PT-BR com 6 formatos e 4 perfis (`Iniciante`, `Jr/Pleno`, `Tech Lead`, `Gestor`) | **Power BI Ativo:** painéis interativos sobre telemetria de tokens e acertos (hoje exporta CSVs em `data/bi_exports/`) |
-| Nicho 100% focado em Educação em Tecnologia | **Otimização de Ordem LLM:** análise estatística de latência para avaliar `Groq -> Gemini` como padrão |
+| Nicho 100% focado em Educação em Tecnologia + ordem `Groq -> Gemini` (`13,7s` no Quiz) | **Power BI Ativo:** painéis interativos sobre telemetria de tokens e acertos (hoje exporta CSVs em `data/bi_exports/`) |
 | Quiz sem gabarito antecipado e limite de 3 tentativas | **Tema Escuro:** ajuste fino de contraste para ativos PNG no modo escuro |
 | Persistência SQLite + Upload real em OCI Object Storage | **Canais e Extras:** Bot Telegram, QR Code, chat conversacional aberto, OCR e tradução EN/ES da UI |

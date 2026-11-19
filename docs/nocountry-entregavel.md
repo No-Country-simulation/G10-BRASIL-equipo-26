@@ -1,5 +1,5 @@
 # MentorIA Tech — Equipe 26 (Hackathon ONE G10)
-*Atualizado em: 18/11/2026 — Responsável: Lídia Moura (Líder Técnica)*  
+*Atualizado em: 19/11/2026 — Responsável: Lídia Moura (Líder Técnica)*  
 **Aplicação Online (Streamlit Cloud):** [https://mentoria-tech-ai.streamlit.app/](https://mentoria-tech-ai.streamlit.app/)
 
 ## 1. Nome do Projeto
@@ -30,8 +30,8 @@ Estudantes de tecnologia, profissionais em transição de carreira, desenvolvedo
 - **Validação:** Pydantic v2 com contratos estritos — verificação determinística de `chunk_ids` e páginas
 
 ### Orquestração de LLMs
-- **Provedor principal:** Google Gemini (`gemini-3.8-flash`)
-- **Fallback automático:** Groq (`openai/gpt-oss-120b`)
+- **Provedor principal (geração):** Groq (`openai/gpt-oss-120b`) — padrão via `LLM_PROVIDER_ORDER=groq,gemini`, reduzindo a latência de geração para menos de 15 segundos
+- **Fallback automático (geração) e suporte RAG:** Google Gemini (`gemini-3.8-flash` na geração com timeout de `30s`; `gemini-embedding-001`, avaliação de documento e reranking com timeout de `20s`)
 - **Pool de chaves:** Rotação automática entre múltiplas chaves por provedor para alta disponibilidade
 
 ### Integração OCI (Always Free)
@@ -105,13 +105,13 @@ Estudantes de tecnologia, profissionais em transição de carreira, desenvolvedo
 ## 8. Resultado Esperado
 Reduzir de semanas para menos de 60 segundos a criação de materiais de estudo técnicos validados, entregando saídas JSON estruturadas com verificação determinística de citações (`chunk_ids` e páginas), armazenamento automático na OCI e alta disponibilidade via fallback de LLMs.
 
-## 9. Status Atual do MVP (18/11/2026)
+## 9. Status Atual do MVP (19/11/2026)
 
 | Componente | Status |
 |---|---|
 | API FastAPI (`rag/main.py`, contrato `v0.3`) | ✅ Implementado e validado em execução real |
 | Pipeline RAG completo (chunking, embeddings, vector store) | ✅ Implementado e validado |
-| Geração nos 6 formatos com Gemini + fallback Groq | ✅ Implementado e validado (`openai/gpt-oss-120b`) |
+| Geração nos 6 formatos com Groq principal + fallback Gemini (`LLM_PROVIDER_ORDER`) | ✅ Implementado e validado (`openai/gpt-oss-120b`, Quiz 5 questões em `13,7s`) |
 | Pool de chaves com rotação automática | ✅ Implementado e validado |
 | Validação Pydantic v2 com verificação de chunks/páginas | ✅ Implementado e validado |
 | Extrator multi-formato PDF/MD/TXT | ✅ Implementado e validado |
@@ -121,9 +121,9 @@ Reduzir de semanas para menos de 60 segundos a criação de materiais de estudo 
 | Fallback local automático (OCI indisponível) | ✅ Implementado e validado |
 | Exportação CSV para Power BI | ✅ Implementado (`services/bi_exporter.py`) |
 | Benchmark experimental (200 combinações) | ✅ Implementado |
-| Testes QA automatizados (`pytest`) | ✅ Validados (19/19 pipeline/API + 9/9 cliente HTTP) |
+| Testes QA automatizados (`pytest`) | ✅ Validados (21/21 pipeline/API + 9/9 cliente HTTP) |
 | Relatório Final de QA & Evidências (PT-BR/ES/EN) | ✅ Publicado (`docs/relatorio-qa-evidencias.md`) |
-| Notebooks de Validação & BI/Colab | ✅ Publicados (`rag/notebooks/`) |
+| Notebooks de Validação & BI/Colab | ✅ Publicados (`data_science/`) |
 
 ## 10. Responsável e Equipe
 

@@ -41,7 +41,10 @@ class GeminiEmbeddings(Embeddings):
     def __init__(self, keys: list[str]):
         self.keys = keys
         self.key_index = 0
-        self.client = genai.Client(api_key=keys[0])
+        self.client = genai.Client(
+            api_key=keys[0],
+            http_options=types.HttpOptions(timeout=int(os.getenv("GEMINI_TIMEOUT_MS", "20000"))),
+        )
 
 
     def executar(self, operacao, nome_operacao=None, modelo=None):
@@ -98,7 +101,8 @@ class GeminiEmbeddings(Embeddings):
                 self.client.close()
                 self.key_index += 1
                 self.client = genai.Client(
-                    api_key=self.keys[self.key_index]
+                    api_key=self.keys[self.key_index],
+                    http_options=types.HttpOptions(timeout=int(os.getenv("GEMINI_TIMEOUT_MS", "20000"))),
                 )
 
             except Exception as exc:

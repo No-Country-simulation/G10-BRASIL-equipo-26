@@ -78,10 +78,10 @@ flowchart TD
     E --> F[Top-K = 10]
     F --> G[Reranking → Top 5]
     G --> H{LLM orchestration}
-    H -->|Primary| I[Google Gemini]
-    H -->|Fallback| J[Groq]
-    I --> K[Pydantic v2 validation + source check]
-    J --> K
+    H -->|Primary| J[Groq]
+    H -->|Fallback| I[Google Gemini]
+    J --> K[Pydantic v2 validation + source check]
+    I --> K
     K --> L([Final JSON package])
     L --> M[(Local SQLite)]
     L -.->|In integration| N[(OCI Object Storage)]
@@ -98,7 +98,7 @@ flowchart TD
 | **Language and contracts** | Python 3.11+ · Pydantic v2 |
 | **Extraction** | `pdfplumber` (multi-format, with tables) · `pypdf` |
 | **RAG** | LangChain · ChromaDB · `gemini-embedding-001` |
-| **LLMs** | Google Gemini (primary) · Groq `openai/gpt-oss-120b` (fallback) |
+| **LLMs** | Groq `openai/gpt-oss-120b` (primary) · Google Gemini (fallback + embeddings/reranking) |
 | **Persistence** | Local SQLite (SHA-256 hashes, no name/email/IP) · OCI Object Storage |
 | **Interface** | Streamlit, with Brandbook UX/UI v1.1 (WCAG AA) |
 | **Cloud** | Oracle Cloud Infrastructure (OCI SDK), Always Free tier |
@@ -116,7 +116,7 @@ flowchart TD
 |  **VALIDATED** | Live Streamlit UI ([mentoria-tech-ai.streamlit.app](https://mentoria-tech-ai.streamlit.app/)) with Lighthouse/Core Web Vitals optimizations (PR #51) |
 |  **VALIDATED** | API key pool (`GEMINI_API_KEYS`, `GROQ_API_KEYS`) with automatic rotation |
 |  **VALIDATED** | Real structured JSON upload to private OCI bucket (`mentoria-tech-artifacts`, Always Free) |
-|  **VALIDATED** | Automated QA suite (`28` passing tests), trilingual QA reports & BI notebooks |
+|  **VALIDATED** | Automated QA suite (`30` passing tests), trilingual QA reports & BI notebooks |
 |  **POST-MVP** | OCI Vault (Always Free limit), live Power BI, Chrome Extension, Telegram Bot, OCR, EN/ES UI |
 
 Details in [`docs/decisoes-e-status.md`](./docs/decisoes-e-status.md) *(in Portuguese)*.
@@ -186,8 +186,8 @@ Guides *(in Portuguese)*: [`docs/oci-tutorial.md`](./docs/oci-tutorial.md) · [`
 | [`oci-tutorial.md`](./docs/oci-tutorial.md) | Step-by-step OCI tutorial |
 | [`qa-plano.md`](./docs/qa-plano.md) | QA plan and STAR method |
 | [`relatorio-qa-evidencias.en.md`](./docs/relatorio-qa-evidencias.en.md) | Final QA, BI Analyst & runtime evidence report |
-| [`rag/notebooks/relatorio_qa_bi_mentoria_tech.ipynb`](./rag/notebooks/relatorio_qa_bi_mentoria_tech.ipynb) | Colab-ready QA & BI analytics notebook (`pandas`, `seaborn`, `matplotlib`) |
-| [`rag/notebooks/validacao_pipeline_mentoria_tech.ipynb`](./rag/notebooks/validacao_pipeline_mentoria_tech.ipynb) | End-to-end validation notebook (3 demo scenarios) |
+| [`data_science/relatorio_qa_bi_mentoria_tech.ipynb`](./data_science/relatorio_qa_bi_mentoria_tech.ipynb) | Colab-ready QA & BI analytics notebook (`pandas`, `seaborn`, `matplotlib`) |
+| [`data_science/validacao_pipeline_mentoria_tech.ipynb`](./data_science/validacao_pipeline_mentoria_tech.ipynb) | End-to-end validation notebook (3 demo scenarios) |
 | [`metricas-kpis.md`](./docs/metricas-kpis.md) | Metrics, KPIs and BI model |
 | [`decisoes-e-status.md`](./docs/decisoes-e-status.md) | Decisions and actual status |
 | [`engenharia-prompts-e-mercado.md`](./docs/engenharia-prompts-e-mercado.md) | Prompts per profile/format and market analysis |
