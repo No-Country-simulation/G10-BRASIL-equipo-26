@@ -12,15 +12,15 @@
 > *Não começar com "Somos o grupo X" nem com jargões técnicos.*
 
 * **Pergunta provocativa (nós somos a própria persona):**  
-  *"Quem aqui, na área de tecnologia, já abriu um manual novo, uma documentação de atualização no GitHub — ou até o guia de um desafio como o nosso aqui no Hackathon — e percebeu que precisava aprender uma ferramenta inteira como o GitHub Projects em tempo recorde para ontem?"*
-* **A dor real:**  
-  *"Ferramentas e tecnologias evoluem toda semana. Jogar um documento denso ou a transcrição de uma aula num chat comum como ChatGPT ou NotebookLM até ajuda, mas exige que o estudante já saiba o que perguntar, gaste tempo escrevendo contexto e ainda corra o risco de a IA inventar respostas sem mostrar de onde tirou."*
+  *"Em tempos de IA, tudo na tecnologia se atualiza em tempo recorde — durante este próprio Hackathon vimos modelos da API do Gemini mudarem e ferramentas como o GitHub Projects exigirem aprendizado constante para ontem. Quem aqui já abriu uma documentação densa ou a transcrição de uma aula e precisou dominar tudo rápido?"*
+* **A dor real (vs. LLMs genéricas e NotebookLM):**  
+  *"Jogar um documento gigante ou uma transcrição em uma LLM comum ou no NotebookLM até ajuda, mas obriga você a escrever prompts longos para dar contexto, saber exatamente o que perguntar e ainda correr o risco de alucinação sem rastreio de página."*
 
 ### Etapa 2 — Proposta de Valor / Solução (~35s) · *Lídia Moura*
 * **Fórmula de valor:**  
-  *"O **MentorIA Tech** ajuda estudantes de tecnologia — como os alunos do programa ONE e Alura — e profissionais de TI a transformarem qualquer documentação técnica ou transcrição de aula em material de estudo personalizado em menos de 1 minuto, sem precisar virar especialista em prompts."*
-* **Diferencial direto:**  
-  *"Em 3 cliques, a pessoa escolhe o seu perfil (`Iniciante`, `Jr/Pleno`, `Tech Lead` ou `Gestor/Executivo`) e o formato ideal (`Tutorial`, `Flashcards`, `Quiz`, `TL;DR`, `Roteiro` ou `Resumo`), recebendo um estudo adaptado exatamente ao seu ritmo."*
+  *"O **MentorIA Tech** traz um caminho mais leve, acessível e assertivo para estudantes (como os alunos do ONE e Alura) e profissionais de TI se manterem atualizados em menos de 1 minuto (com folga dentro da margem de 2 minutos) — sem perder tempo lendo textos densos ou virando especialista em prompts, sobrando tempo para o que realmente amam: construir tecnologia."*
+* **Diferencial direto (Entradas, Saídas e Reuso):**  
+  *"Em poucos cliques, você sobe um arquivo **`.pdf`, `.md` ou `.txt`** (como a transcrição de uma aula da Alura salva direto em `.txt`), escolhe seu perfil (`Iniciante`, `Jr/Pleno`, `Tech Lead` ou `Gestor`) e o formato (`Tutorial`, `Flashcards`, `Quiz`, `TL;DR`, `Roteiro` ou `Resumo`). Além disso, pode baixar tudo em **Markdown (`.md`), CSV (pronto para o Anki) e JSON** — conteúdo que inclusive pode ser reaproveitado em outras LLMs ou no NotebookLM."*
 
 ### Etapa 3 — Demonstração do MVP / Prova de Fogo (~1m45s) · *Vídeo Pré-Gravado (Tema Claro)*
 > *Usar vídeo pré-gravado em tela cheia (Tema Claro) narrado ao vivo para evitar atrasos de carregamento ou falhas de rede.*
@@ -35,17 +35,19 @@
 ### Etapa 4 — Arquitetura e Tecnologia Traduzida em Valor (~45s) · *Rodrigo Silva*
 > *Traduzir escolhas técnicas em benefício para o usuário, sem listar frameworks soltos.*
 
-* **Como foi construído (visão de resultado):**
-  * **Interface e API integradas:** os sistemas se comunicam automaticamente para que o usuário só precise enviar o arquivo uma vez e acompanhar o progresso em tempo real (interface com **100% de acessibilidade e SEO no Lighthouse**).
-  * **Confiabilidade anti-alucinação:** calibramos o sistema com **200 testes empíricos** para recuperar exatamente os trechos certos; antes de exibir qualquer resposta, um validador automático confere se as páginas citadas realmente existem no documento.
-  * **Alta disponibilidade:** se o provedor principal de IA oscilar ou atingir limite gratuito, o sistema alterna automaticamente para o provedor secundário sem interromper o estudo.
-  * **Privacidade (LGPD) e Nuvem:** armazenamos o progresso com identificadores anônimos (zero coleta de nome, e-mail ou IP) e persistimos os artefatos na **Oracle Cloud (Always Free)**.
+* **Como foi construído (visão de resultado — fala do Rodrigo):**
+  * **Benchmark RAG (5 PDFs × 40 configs = 200 experimentos):** *"Realizamos um benchmark de RAG utilizando cinco PDFs de diferentes tamanhos, com 40 configurações por documento, para avaliar e selecionar os melhores parâmetros de recuperação."*  
+    **Vantagem para o usuário:** garante que os trechos recuperados contenham informações suficientes e relevantes para a geração dos materiais de estudo.
+  * **Prompts adaptados + Auditoria por IA no Quiz:** *"Desenvolvemos prompts específicos para cada perfil e nível de conhecimento do usuário. Para o Quiz, implementamos uma auditoria por IA que avalia a dificuldade, a qualidade das questões e sua fidelidade ao documento, evitando alucinações."*  
+    **Vantagem para o usuário:** recebe materiais de estudo didáticos, de alta qualidade e 100% compatíveis com o documento enviado (validados por Pydantic v2 com citação de páginas e `chunk_ids`).
+  * **Extrator multi-formato & Velocidade (`Groq -> Gemini`):** aceita `.pdf`, `.md` e `.txt` e entrega para download em `.md`, `.csv` (Anki) e `.json`. Com **Groq (`openai/gpt-oss-120b`) como principal** e **Gemini como fallback** + timeouts ajustados (`20s`/`30s`), reduzimos a geração completa do Quiz de 5 questões para **`~13,7s`**.
+  * **Interface, Privacidade (LGPD) e Nuvem:** UI com **100% de acessibilidade e SEO no Lighthouse**, identificadores anônimos SHA-256 (zero PII) e persistência na **Oracle Cloud (`mentoria-tech-artifacts`, Always Free)**.
 
 ### Etapa 5 — Impacto, Visão LATAM e Fechamento (~50s) · *Lídia Moura*
 * **Impacto imediato:** *"Alunos do ONE podem subir até transcrições de aulas da Alura para revisar com Flashcards e Quizzes antes de aplicar no código."*
 * **Visão LATAM & Evolução Estratégica (Roadmap Pós-MVP):**
   * **Base Trilíngue:** repositório e documentação de QA já estruturados em **Português, Espanhol e Inglês** para escalar na América Latina.
-  * **Próximos Canais de Distribuição:** evolução da nossa API pronta para **Extensão do Chrome** (estudar direto na aba da documentação sem trocar de tela) e **Bot no Telegram** (que, diferente do WhatsApp, preserva arquivos sem perda de qualidade e oferece memória persistente em nuvem para o aluno baixar seus estudos em qualquer dispositivo), além de painel ativo no **Power BI** sobre a telemetria já coletada.
+  * **Próximos Canais e Exportações:** evolução da nossa API pronta para **Extensão do Chrome** (estudar direto na aba da documentação sem trocar de tela), **Bot no Telegram** (que, diferente do WhatsApp, preserva arquivos sem perda de qualidade e oferece memória persistente em nuvem), **exportação direta em `.pdf`/`.txt`** (facilitando ainda mais o reuso no NotebookLM) e painel ativo no **Power BI** sobre a telemetria já coletada.
 * **Fechamento:** *"MentorIA Tech: transformar informação técnica complexa em aprendizado claro, confiável e no ritmo de cada pessoa. Obrigado!"*
 
 ---
@@ -81,14 +83,14 @@
 3. **Slide 3 (Arquitetura — ATENÇÃO CRÍTICA):**
    * **Substituir a tabela genérica** (`Modelo A / Modelo B / Modelo Escolhido / 450 ms / 94%`) — esses números são de template fictício e não devem ser sustentados diante da banca.
    * Trocar pelos **fatos reais validados**:
-     * **Benchmark RAG:** `200 experimentos` (`5` PDFs × `40` configs) → `chunk_size=2000`, `overlap=200`, `K=10`, `top_n=5`.
-     * **Resiliência & QA:** Multi-LLM (**Groq** + **Google Gemini** fallback) + validação **Pydantic v2** anti-alucinação + **Oracle Cloud (OCI Always Free)** privado (`mentoria-tech-artifacts`) + **Zero PII (LGPD)**.
+     * **Benchmark RAG & Auditoria:** `200 experimentos` (`5` PDFs × `40` configs) → `chunk_size=2000`, `overlap=200`, `K=10`, `top_n=5`, prompts por perfil/nível + auditoria por IA no Quiz.
+     * **Resiliência, Latência & QA:** Multi-LLM (**Groq** principal + **Google Gemini** fallback, Quiz de 5 questões em **`13,7s`**) + validação **Pydantic v2** + entradas `.pdf/.md/.txt` e downloads `.md/.csv/.json` + **OCI Always Free** (`mentoria-tech-artifacts`) + **Zero PII (LGPD)**.
 4. **Slide 4 / 5 (MVP em Ação — Vídeo):**
    * Inserir o vídeo gravado em **Tema Claro (tela cheia, 60–90s)** mostrando o fluxo principal: documento → perfil/formato com fontes → Quiz interativo (3 tentativas sem gabarito antecipado) → confirmação do upload OCI.
 5. **Slide 6 (Equipe 26 + Fechamento):**
    * Ajustar o texto solto `Tech Lead` para junto de **Lídia Moura** (`Lídia Moura — Tech Lead · OCI, QA & Documentação`).
    * Corrigir o typo `AI Enginner` → `AI Engineer` no card de Rodrigo do Carmo.
    * Recomenda-se incluir (antes ou junto do encerramento) 3 tópicos visuais de **Benefícios & Visão LATAM (Pós-MVP)**: documentação trilíngue (`PT-BR / ES / EN`), evolução para **Extensão do Chrome** + **Bot no Telegram** (persistência em nuvem sem perda de qualidade) e painel ativo no **Power BI**.
-6. **Slides 7 e 8 (Páginas finais de Brandbook / Paleta UX/UI):**
-   * **Remover ou ocultar da apresentação de Pitch:** são páginas sobressalentes do manual de marca (inclusive citando `nicho`, já descontinuado no MVP) que quebram o ritmo depois do *"Muito obrigado!"*.
+6. **Slides 7 e 8 (Páginas de Identidade Visual / Brandbook — criado pela Lys):**
+   * **Manter 1 slide/card focado na identidade visual do MVP (criada pela Lys):** ela reforça diretamente a nossa proposta de trazer um caminho mais leve, acessível e didático para estudantes e profissionais de tecnologia aprenderem no seu ritmo — garantindo apenas que não haja menção ao termo antigo `nicho` (já descontinuado). Ocultar apenas slides excedentes de paleta/regras técnicas para não quebrar o ritmo após o fechamento.
 
