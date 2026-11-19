@@ -7,7 +7,7 @@ Este diretório contém os componentes desenvolvidos para o processamento de doc
 A implementação utiliza:
 
 - **RAG (Retrieval-Augmented Generation):** recuperação de informações relevantes de documentos.
-- **LLM:** geração de conteúdo educacional utilizando Gemini como provedor principal e Groq como fallback.
+- **LLM:** geração de conteúdo educacional utilizando **Groq** como provedor principal e **Gemini** como fallback (configurável via `LLM_PROVIDER_ORDER`), com timeouts HTTP ajustados (`GEMINI_TIMEOUT_MS`).
 - **Pydantic v2:** definição de contratos, validação e estruturação dos dados.
 - **ChromaDB:** armazenamento e recuperação vetorial.
 - **Benchmark:** avaliação experimental de diferentes configurações de recuperação e reranking.
@@ -64,7 +64,7 @@ O PDF de exemplo deve ser incluído apenas se sua licença permitir redistribui�
 | `schemas.py` | Contratos e validação dos dados com Pydantic |
 | `rag_config.py` | Configurações de chunking, embeddings e recuperação |
 | `rag_retrieval.py` | Indexação, embeddings, recuperação e reranking |
-| `llm_pipeline.py` | Geração de conteúdo com Gemini e fallback Groq |
+| `llm_pipeline.py` | Geração de conteúdo com Groq (principal) e fallback Gemini (`LLM_PROVIDER_ORDER`) |
 | `avaliacao_documento.py` | Avaliação da adequação do documento ao perfil e nível solicitados |
 | `telemetria_llm.py` | Registro de tentativas e duração de chamadas aos modelos |
 | `main.py` | API FastAPI de geração, Quiz e histórico |
@@ -83,8 +83,8 @@ Para executar o projeto, são necessários:
 
 - Python 3.11 ou superior, preferencialmente em uma versão compatível com todas as dependências.
 - Acesso à internet.
-- Chave de API do Gemini.
-- Chave de API do Groq para fallback.
+- Chave de API do Groq (provedor principal de geração).
+- Chave de API do Gemini (embeddings, avaliação/reranking e fallback de geração).
 - Bibliotecas listadas em `rag/requirements.txt`.
 
 Para executar novamente o benchmark, também será necessária uma chave da Voyage AI.
@@ -142,6 +142,8 @@ GROQ_API_KEY=sua_chave_groq
 
 GEMINI_MODEL=gemini-3.6-flash
 GROQ_MODEL=openai/gpt-oss-120b
+LLM_PROVIDER_ORDER=groq,gemini
+GEMINI_TIMEOUT_MS=30000
 ```
 
 Os identificadores dos modelos são exemplos da configuração utilizada no teste local. É necessário confirmar sua disponibilidade na conta e no provedor correspondente.
@@ -187,9 +189,9 @@ Recuperação e reranking
 Contexto relevante
       |
       v
-Geração com Gemini
+Geração com Groq (principal)
       |
-      +---- Falha ----> Groq (fallback)
+      +---- Falha ----> Gemini (fallback)
       |
       v
 Validação Pydantic
@@ -355,11 +357,11 @@ Uma alternativa é abrir os arquivos JSON diretamente no VS Code.
 
 ---
 
-## 9. Gemini e fallback Groq
+## 9. Groq principal e fallback Gemini
 
-O Gemini é o provedor principal de geração de conteúdo.
+Por padrão (`LLM_PROVIDER_ORDER=groq,gemini`), o **Groq** (`openai/gpt-oss-120b`) é o provedor principal na etapa de geração de conteúdo por sua menor latência média, enquanto o **Gemini** atua como fallback automático (além de ser o provedor de embeddings `gemini-embedding-001`, avaliação e reranking, com timeouts configuráveis via `GEMINI_TIMEOUT_MS`: padrão `20000` ms na avaliação/reranking e `30000` ms na geração).
 
-Se ocorrer uma falha durante a geração, o pipeline pode tentar o Groq como provedor alternativo.
+Se ocorrer uma falha durante a geração no provedor primário, o pipeline aciona automaticamente o provedor alternativo na ordem definida.
 
 Exemplos de falhas que podem provocar o fallback incluem indisponibilidade do serviço e limites de utilização.
 

@@ -78,10 +78,10 @@ flowchart TD
     E --> F[Top-K = 10]
     F --> G[Reranking → Top 5]
     G --> H{Orquestração LLM}
-    H -->|Principal| I[Google Gemini]
-    H -->|Fallback| J[Groq]
-    I --> K[Validação Pydantic v2 + checagem de fontes]
-    J --> K
+    H -->|Principal| J[Groq]
+    H -->|Fallback| I[Google Gemini]
+    J --> K[Validação Pydantic v2 + checagem de fontes]
+    I --> K
     K --> L([PacoteFinal JSON])
     L --> M[(SQLite local)]
     L -.->|Em integração| N[(OCI Object Storage)]
@@ -98,7 +98,7 @@ flowchart TD
 | **Linguagem e contratos** | Python 3.11+ · Pydantic v2 |
 | **Extração** | `pdfplumber` (multi-formato, com tabelas) · `pypdf` |
 | **RAG** | LangChain · ChromaDB · `gemini-embedding-001` |
-| **LLMs** | Google Gemini (principal) · Groq `openai/gpt-oss-120b` (fallback) |
+| **LLMs** | Groq `openai/gpt-oss-120b` (principal) · Google Gemini (fallback + embeddings/reranking) |
 | **Persistência** | SQLite local (hash SHA-256, sem nome/e-mail/IP) · OCI Object Storage |
 | **Interface** | Streamlit, com Brandbook UX/UI v1.1 (WCAG AA) |
 | **Nuvem** | Oracle Cloud Infrastructure (OCI SDK), camada Always Free |
@@ -116,7 +116,7 @@ flowchart TD
 |  **VALIDADO** | Interface Streamlit publicada ([mentoria-tech-ai.streamlit.app](https://mentoria-tech-ai.streamlit.app/)) com otimizações Lighthouse/Core Web Vitals (PR #51) |
 |  **VALIDADO** | Pool de chaves de API (`GEMINI_API_KEYS`, `GROQ_API_KEYS`) com rotação automática |
 |  **VALIDADO** | Gravação real de JSON estruturado no bucket privado OCI (`mentoria-tech-artifacts`, Always Free) |
-|  **VALIDADO** | Suíte automatizada de QA (`28` testes aprovados) e relatórios trilíngues + notebooks BI |
+|  **VALIDADO** | Suíte automatizada de QA (`30` testes aprovados) e relatórios trilíngues + notebooks BI |
 |  **PÓS-MVP** | OCI Vault (limite Always Free), Power BI ativo, Extensão do Chrome, Bot Telegram, OCR, UI em EN/ES |
 
 Detalhes e justificativas em [`docs/decisoes-e-status.md`](./docs/decisoes-e-status.md).
@@ -186,8 +186,8 @@ Guias: [`docs/oci-tutorial.md`](./docs/oci-tutorial.md) · [`docs/integracao-oci
 | [`oci-tutorial.md`](./docs/oci-tutorial.md) | Tutorial passo a passo da OCI |
 | [`qa-plano.md`](./docs/qa-plano.md) | Plano de QA e método STAR |
 | [`relatorio-qa-evidencias.md`](./docs/relatorio-qa-evidencias.md) | Relatório final de QA, BI Analyst e evidências reais (PT-BR / ES / EN) |
-| [`rag/notebooks/relatorio_qa_bi_mentoria_tech.ipynb`](./rag/notebooks/relatorio_qa_bi_mentoria_tech.ipynb) | Notebook analítico de QA & BI estilo Colab (`pandas`, `seaborn`, `matplotlib`) |
-| [`rag/notebooks/validacao_pipeline_mentoria_tech.ipynb`](./rag/notebooks/validacao_pipeline_mentoria_tech.ipynb) | Notebook de validação ponta a ponta dos 3 cenários demo |
+| [`data_science/relatorio_qa_bi_mentoria_tech.ipynb`](./data_science/relatorio_qa_bi_mentoria_tech.ipynb) | Notebook analítico de QA & BI estilo Colab (`pandas`, `seaborn`, `matplotlib`) |
+| [`data_science/validacao_pipeline_mentoria_tech.ipynb`](./data_science/validacao_pipeline_mentoria_tech.ipynb) | Notebook de validação ponta a ponta dos 3 cenários demo |
 | [`roteiro-pitch-demoday.md`](./docs/roteiro-pitch-demoday.md) | Roteiro curto do vídeo pitch e plano de contingência |
 | [`metricas-kpis.md`](./docs/metricas-kpis.md) | Métricas, KPIs e modelo para BI |
 | [`decisoes-e-status.md`](./docs/decisoes-e-status.md) | Decisões e status real |

@@ -1,28 +1,10 @@
-# 📂 Dados & Arquivos de Teste
+# 📂 Dados & Exportações Analíticas — MentorIA Tech
 
-Este diretório armazena amostras de dados e arquivos locais para desenvolvimento e validação.
+Este diretório armazena artefatos de dados locais e exportações analíticas do projeto **MentorIA Tech**.
 
-### Responsabilidades:
-- Documentos técnicos de exemplo (manuais, documentações em PDF ou Markdown).
-- Payloads de teste para validação de formatos e cenários do hackathon.
+## Estrutura e uso ativo no MVP
 
-> **Nota:** Não versione arquivos confidenciais ou credenciais de acesso neste diretório.
+- **`data/bi_exports/`** *(gerado em runtime)*: pasta padrão onde `services/bi_exporter.py` grava os CSVs sanitizados (`geracoes.csv`, `respostas.csv`, `eventos_estudo.csv`, `telemetria_api.csv`) para consumo em BI, e onde `services/oci_storage.py` salva o fallback local caso a OCI não esteja disponível.
+- **`data/output_schema.json`** *(referência histórica/preliminar)*: esquema JSON inicial desenhado antes da definição dos contratos estritos em Pydantic v2 (`rag/pipeline/schemas.py` / contrato `v0.3`). Mantido apenas para rastreabilidade histórica.
 
-
-
-# 🧠 NovaMente - EdTech LLM/RAG Application
-
-O **NovaMente** é um sistema inteligente de adaptação e geração automática de conteúdos educacionais utilizando arquitetura de RAG (Retrieval-Augmented Generation) e orquestração de LLMs.
-
-## 🚀 Status do Projeto
-
-- [x] Definição da Arquitetura e Estrutura de Pastas
-- [x] Especificação do PRD (Product Requirement Document)
-- [x] Contrato de Dados Oficial (`data/output_schema.json`)
-- [x] Configuração do Ambiente Virtual (`venv`) e Dependências
-- [x] Interface Base com Streamlit (`app/main.py`)
-- [ ] Integração dos Provedores de LLM e Fallbacks
-- [ ] Pipeline de RAG e Persistência na Oracle Cloud (OCI)
-- [ ] Dashboard de Métrica e BI (Grounding Scores)
-
-## 📁 Estrutura de Diretórios
+> **Nota:** Não versione arquivos confidenciais, bancos SQLite locais (`rag/novamente.db`) ou credenciais de acesso neste diretório.

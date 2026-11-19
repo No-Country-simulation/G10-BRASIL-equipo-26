@@ -8,10 +8,12 @@ Responsabilidade:
   - Opcionalmente envia os CSVs para o bucket mentoria-tech-observability na OCI.
 
 Tabelas exportadas:
-  - geracoes       → histórico de gerações de conteúdo
-  - respostas      → respostas de quizzes dos usuários
-  - eventos_estudo → eventos de navegação e estudo
-  - feedbacks      → avaliações (estrelas + comentário) — se existir
+  - geracoes             → histórico de gerações de conteúdo
+  - respostas            → respostas de quizzes dos usuários
+  - eventos_estudo       → eventos de navegação e estudo
+  - telemetria_api       → chamadas por etapa/provedor/latência/HTTP (se existir)
+  - avaliacoes_documento → adequação do documento ao perfil/nível (se existir)
+  - feedbacks            → avaliações (estrelas + comentário) — se existir
 
 Uso:
     from services.bi_exporter import exportar_tudo
@@ -48,6 +50,8 @@ _TABELAS = {
     "geracoes": "geracoes.csv",
     "respostas": "respostas.csv",
     "eventos_estudo": "eventos_estudo.csv",
+    "telemetria_api": "telemetria_api.csv",
+    "avaliacoes_documento": "avaliacoes_documento.csv",
     "feedbacks": "feedbacks.csv",  # exportado apenas se a tabela existir
 }
 

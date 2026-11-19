@@ -250,7 +250,7 @@ Não invente evidências.
         try:
             client = genai.Client(
                 api_key=chaves[0],
-                http_options=types.HttpOptions(timeout=60000),
+                http_options=types.HttpOptions(timeout=int(os.getenv("GEMINI_TIMEOUT_MS", "20000"))),
             )
 
             response = client.models.generate_content(

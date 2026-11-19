@@ -1,8 +1,8 @@
 # Definição de Métricas, KPIs e Modelo Analítico — MentorIA Tech
 
 **Responsável:** Lídia Moura — Líder Técnica (com contribuições de Rodrigo Silva, Vagner Marques e Equipe de Dados/BI)  
-**Data da última atualização:** 18/11/2026  
-**Status:** `IMPLEMENTADO NO PIPELINE / SQLITE / NOTEBOOK BI` (Conexão ativa com Power BI classificada como `PÓS-MVP`)
+**Data da última atualização:** 19/11/2026  
+**Status:** `IMPLEMENTADO NO PIPELINE / SQLITE / EXPORTAÇÃO CSV / NOTEBOOK BI` (Dashboard Power BI alimentado via `data/bi_exports/`)
 
 ---
 
@@ -31,21 +31,21 @@ Executado sobre **5 documentos técnicos** (`Machine_Learning.pdf`, `Deep_learni
 
 ## 3. KPIs de Execução do Pipeline e Validação (Runtime)
 
-Registrados a cada geração pelo pipeline (`rag/pipeline/llm_pipeline.py`, `rag/pipeline/telemetria_llm.py`, `rag/database.py`), exportados via `services/bi_exporter.py` e analisados visualmente no notebook `rag/notebooks/relatorio_qa_bi_mentoria_tech.ipynb`:
+Registrados a cada geração pelo pipeline (`rag/pipeline/llm_pipeline.py`, `rag/pipeline/telemetria_llm.py`, `rag/database.py`), exportados via `services/bi_exporter.py` e analisados visualmente no notebook `data_science/relatorio_qa_bi_mentoria_tech.ipynb`:
 
 | Campo / Indicador | Tipo / Unidade | Descrição e Meta no MVP |
 | :--- | :--- | :--- |
-| `modelo_llm` / `provedor` | Texto (`chamar_gemini` / `chamar_groq`) | Identifica se a geração foi atendida pelo provedor primário ou pelo fallback. |
+| `modelo_llm` / `provedor` | Texto (`chamar_groq` / `chamar_gemini`) | Identifica se a geração foi atendida pelo provedor primário (`Groq`, via `LLM_PROVIDER_ORDER=groq,gemini`) ou pelo fallback (`Gemini`). |
 | `versao_prompt` | Texto (`rag-llm-v1`) | Rastreabilidade de qual versão de engenharia de prompt gerou o pacote. |
 | `perfil` / `formato` / `idioma` | Categorias (`PT-BR`) | Dimensões de corte para análise de uso por persona e tipo de material. |
 | `tempo_extracao_ms` | Milissegundos (`ms`) | Tempo gasto na leitura e limpeza do arquivo (`.pdf`, `.md`, `.txt`). |
-| `tempo_recuperacao_ms` | Milissegundos (`ms`) | Tempo de chunking + embeddings + busca ChromaDB + reranking. |
-| `duracao_geracao_ms` | Milissegundos (`ms`) | Latência de inferência da LLM + validação Pydantic (registrado na tabela `geracoes`). |
-| `tempo_total_ms` | Milissegundos (`ms`) | Tempo ponta a ponta (Meta do MVP: `< 60.000 ms` por formato). |
+| `tempo_recuperacao_ms` | Milissegundos (`ms`) | Tempo de chunking + embeddings + busca ChromaDB + reranking (timeout Gemini `20.000 ms`). |
+| `duracao_geracao_ms` | Milissegundos (`ms`) | Latência de inferência da LLM + validação Pydantic (`geracoes`). Baseline pós-otimização: `13.733,52 ms` (`13,7s`) no Quiz de 5 questões vs. `60,4s`–`73s` antes do ajuste. |
+| `tempo_total_ms` | Milissegundos (`ms`) | Tempo ponta a ponta (Meta SLA do MVP: `< 60.000 ms` por formato; fallback Gemini limitado a `30.000 ms`). |
 | `quantidade_chunks` | Inteiro | Total de blocos indexados do documento de origem. |
-| `json_valido` | Booleano (`1` / `0`) | Meta: **100%** dos pacotes persistidos devem passar por `PacoteFinal.model_validate()`. |
+| `json_valido` | Booleano (`1` / `0`) | Meta: **100%** dos pacotes persistidos passam por `PacoteFinal.model_validate()` (validado na suíte `pytest`: `30/30`). |
 | `referencias_encontradas` | Booleano / Contagem | Verifica se todos os `chunk_ids` e páginas citadas pertencem ao `ContextoRAG`. |
-| `erros_anteriores` | Lista / Texto | Registra se houve erro `429` ou `503` antes do fallback assumir a requisição. |
+| `erros_anteriores` / `codigo_http` | Lista / Inteiro | Registra erros `429`, `503` ou `504` em `telemetria_api` antes do fallback assumir a requisição. |
 
 ---
 
@@ -63,10 +63,14 @@ Implementados nas tabelas `geracoes`, `respostas` e `eventos_estudo` (e expandid
 
 > **Diretriz de Escopo:** A construção do dashboard ativo no Power BI é uma entrega **PÓS-MVP**. No MVP atual, deixamos o **Modelo Estrela (Star Schema)** e a **exportação CSV (`database.export_csv`)** 100% prontos e padronizados.
 
-### 5.1.Tabelas Exportáveis (`rag/database.py` -> CSV / OCI Object Storage)
-* **Fato Gerações (`geracoes.csv`):**
+### 5.1. Tabelas Exportáveis (`services/bi_exporter.py` -> `data/bi_exports/` CSV / Power BI)
+* **Fato Gerações (`geracoes_YYYYMMDD.csv`):**
   ```csv
-  geracao_id,data_hora,usuario_id,sessao_id,documento_id,perfil,formato,nicho,nivel,quantidade_itens,tempo_estimado_estudo_minutos,ancoragem_fonte_score,modelo_llm,duracao_geracao_ms
+  geracao_id,data_hora,usuario_id,sessao_id,documento_id,perfil,formato,nivel,quantidade_itens,tempo_estimado_estudo_minutos,ancoragem_fonte_score,modelo_llm,duracao_geracao_ms,avaliacao_id
+  ```
+* **Fato Telemetria API (`telemetria_api_YYYYMMDD.csv`):**
+  ```csv
+  chamada_id,execucao_id,geracao_id,documento_id,data_hora,provedor,modelo,operacao,tokens_entrada,tokens_saida,tokens_totais,duracao_ms,status,codigo_http
   ```
 * **Fato Respostas Quiz (`respostas.csv`):**
   ```csv
