@@ -35,20 +35,21 @@
 ### Etapa 4 — Arquitetura e Tecnologia Traduzida em Valor (~45s) · *Rodrigo Silva*
 > *Traduzir escolhas técnicas em benefício para o usuário, sem listar frameworks soltos.*
 
-* **Como foi construído (visão de resultado — fala do Rodrigo):**
-  * **Benchmark RAG (5 PDFs × 40 configs = 200 experimentos):** *"Realizamos um benchmark de RAG utilizando cinco PDFs de diferentes tamanhos, com 40 configurações por documento, para avaliar e selecionar os melhores parâmetros de recuperação."*  
-    **Vantagem para o usuário:** garante que os trechos recuperados contenham informações suficientes e relevantes para a geração dos materiais de estudo.
+* **Como foi construído (visão integrada de resultado — fala do Rodrigo):**
+  * **Interface e API integradas:** os sistemas se comunicam automaticamente para que o usuário só precise enviar o arquivo uma vez (`.pdf`, `.md` ou `.txt`) e acompanhar o progresso em tempo real — com interface validada com **100% de acessibilidade e SEO no Lighthouse** e downloads prontos em **`.md`, `.csv` (Anki) e `.json`**.
+  * **Benchmark RAG & Confiabilidade anti-alucinação:** *"Realizamos um benchmark de RAG utilizando cinco PDFs de diferentes tamanhos, com 40 configurações por documento (200 experimentos), para avaliar e selecionar os melhores parâmetros de recuperação."* Antes de exibir qualquer resposta, um validador automático (Pydantic v2) confere se as páginas e `chunk_ids` citados realmente existem no documento.  
+    **Vantagem para o usuário:** garante que os trechos recuperados contenham informações suficientes, relevantes e rastreáveis para a geração dos materiais de estudo.
   * **Prompts adaptados + Auditoria por IA no Quiz:** *"Desenvolvemos prompts específicos para cada perfil e nível de conhecimento do usuário. Para o Quiz, implementamos uma auditoria por IA que avalia a dificuldade, a qualidade das questões e sua fidelidade ao documento, evitando alucinações."*  
-    **Vantagem para o usuário:** recebe materiais de estudo didáticos, de alta qualidade e 100% compatíveis com o documento enviado (validados por Pydantic v2 com citação de páginas e `chunk_ids`).
-  * **Extrator multi-formato & Velocidade (`Groq -> Gemini`):** aceita `.pdf`, `.md` e `.txt` e entrega para download em `.md`, `.csv` (Anki) e `.json`. Com **Groq (`openai/gpt-oss-120b`) como principal** e **Gemini como fallback** + timeouts ajustados (`20s`/`30s`), reduzimos a geração completa do Quiz de 5 questões para **`~13,7s`**.
-  * **Interface, Privacidade (LGPD) e Nuvem:** UI com **100% de acessibilidade e SEO no Lighthouse**, identificadores anônimos SHA-256 (zero PII) e persistência na **Oracle Cloud (`mentoria-tech-artifacts`, Always Free)**.
+    **Vantagem para o usuário:** recebe materiais didáticos de alta qualidade e 100% compatíveis com o documento enviado.
+  * **Alta disponibilidade & Velocidade (`Groq -> Gemini`):** se o provedor principal de IA (**Groq `openai/gpt-oss-120b`**) oscilar ou atingir limite gratuito, o sistema alterna automaticamente para o provedor secundário (**Google Gemini**) com timeouts ajustados (`20s`/`30s`), reduzindo o Quiz completo de 5 questões para **`~13,7s`** sem interromper o estudo.
+  * **Privacidade (LGPD) e Nuvem:** armazenamos o progresso com identificadores anônimos SHA-256 (zero coleta de nome, e-mail ou IP) e persistimos os artefatos na **Oracle Cloud (`mentoria-tech-artifacts`, Always Free)**.
 
 ### Etapa 5 — Impacto, Visão LATAM e Fechamento (~50s) · *Lídia Moura*
 * **Impacto imediato:** *"Alunos do ONE podem subir até transcrições de aulas da Alura para revisar com Flashcards e Quizzes antes de aplicar no código."*
 * **Visão LATAM & Evolução Estratégica (Roadmap Pós-MVP):**
   * **Base Trilíngue:** repositório e documentação de QA já estruturados em **Português, Espanhol e Inglês** para escalar na América Latina.
   * **Próximos Canais e Exportações:** evolução da nossa API pronta para **Extensão do Chrome** (estudar direto na aba da documentação sem trocar de tela), **Bot no Telegram** (que, diferente do WhatsApp, preserva arquivos sem perda de qualidade e oferece memória persistente em nuvem), **exportação direta em `.pdf`/`.txt`** (facilitando ainda mais o reuso no NotebookLM) e painel ativo no **Power BI** sobre a telemetria já coletada.
-* **Fechamento:** *"MentorIA Tech: transformar informação técnica complexa em aprendizado claro, confiável e no ritmo de cada pessoa. Obrigado!"*
+* **Fechamento:** *"MentorIA Tech: transformamos informação técnica complexa em aprendizado eficiente e confiável no ritmo de cada pessoa. Obrigado!"*
 
 ---
 
