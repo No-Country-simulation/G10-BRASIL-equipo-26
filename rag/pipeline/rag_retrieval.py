@@ -128,6 +128,9 @@ class GeminiEmbeddings(Embeddings):
             return []
 
         vetores = []
+        modelo_embedding = os.getenv("EMBEDDING_MODEL") or (
+            "text-embedding-004" if self.client.vertexai else EMBEDDING_MODEL
+        )
 
         for i in range(0, len(textos), 16):
             lote = textos[i:i + 16]
@@ -135,7 +138,7 @@ class GeminiEmbeddings(Embeddings):
 
             resposta = self.executar(
                 lambda client: client.models.embed_content(
-                    model=EMBEDDING_MODEL,
+                    model=modelo_embedding,
                     contents=lote,
                     config=types.EmbedContentConfig(
                         task_type=tarefa
@@ -146,7 +149,7 @@ class GeminiEmbeddings(Embeddings):
                     if tarefa == "RETRIEVAL_DOCUMENT"
                     else "embedding_consulta"
                 ),
-                modelo=EMBEDDING_MODEL,
+                modelo=modelo_embedding,
             )
 
 
