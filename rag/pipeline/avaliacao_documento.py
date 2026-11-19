@@ -249,6 +249,7 @@ Não invente evidências.
 
         try:
             client = genai.Client(
+                vertexai=chaves[0].startswith("AQ."),
                 api_key=chaves[0],
                 http_options=types.HttpOptions(timeout=60000),
             )

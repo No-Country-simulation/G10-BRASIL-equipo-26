@@ -294,6 +294,7 @@ def chamar_gemini(
 
     for indice, chave in enumerate(chaves, start=1):
         client = genai.Client(
+            vertexai=chave.startswith("AQ."),
             api_key=chave,
             http_options=types.HttpOptions(timeout=60000),
         )

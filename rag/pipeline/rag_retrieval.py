@@ -41,7 +41,10 @@ class GeminiEmbeddings(Embeddings):
     def __init__(self, keys: list[str]):
         self.keys = keys
         self.key_index = 0
-        self.client = genai.Client(api_key=keys[0])
+        self.client = genai.Client(
+            vertexai=keys[0].startswith("AQ."),
+            api_key=keys[0],
+        )
 
 
     def executar(self, operacao, nome_operacao=None, modelo=None):
@@ -97,8 +100,10 @@ class GeminiEmbeddings(Embeddings):
 
                 self.client.close()
                 self.key_index += 1
+                chave = self.keys[self.key_index]
                 self.client = genai.Client(
-                    api_key=self.keys[self.key_index]
+                    vertexai=chave.startswith("AQ."),
+                    api_key=chave,
                 )
 
             except Exception as exc:
