@@ -952,6 +952,40 @@ if pagina == "Visão geral":
                 unsafe_allow_html=True,
             )
 
+    st.write("")
+    c_onb, c_vid = st.columns([1.15, 1], gap="medium")
+    with c_onb:
+        with st.container(border=True):
+            st.markdown("<h2 class='nm-section-title'>📘 Onboarding & Guia Passo a Passo</h2>", unsafe_allow_html=True)
+            st.markdown(
+                "1. **Prepare a fonte:** em **Minha biblioteca**, cole uma transcrição/texto técnico (`+ Salvar Texto como .txt`), "
+                "use `📘 Carregar exemplo real (Machine_Learning.pdf)` ou suba um arquivo (`.pdf`, `.md`, `.txt`) em `📥 Adicionar à Biblioteca`.\n"
+                "2. **Personalize e gere:** no **Estúdio de criação**, escolha o material, o perfil (`Iniciante`, `Jr/Pleno`, `Tech Lead`, `Gestor`), "
+                "o nível e o formato, depois clique em `✦ Gerar Conteúdo Educacional com IA`.\n"
+                "3. **Revise, pratique e baixe:** confira as fontes (`chunk_ids` e páginas), responda ao **Quiz Interativo** (até 3 tentativas) "
+                "e exporte em **Markdown (`.md`)**, **CSV (Anki)** ou **JSON**.\n"
+                "4. **Acompanhe na nuvem:** em **Meus conteúdos**, revise o histórico, o JSON completo e o envio ao bucket OCI."
+            )
+            with st.expander("📖 Guia detalhado e tutorial interativo (Trupeer)"):
+                st.markdown(
+                    "- **Tutorial interativo em vídeo/passos (Andrea Gonzalez):** "
+                    "[Abrir guia no Trupeer](https://app.trupeer.ai/view/uApUfd7nr/criacao-de-conteudo-educacional-com-ia)\n"
+                    "- **Documentação técnica completa:** `docs/tutorial-uso-mvp.md` no repositório oficial."
+                )
+
+    with c_vid:
+        with st.container(border=True):
+            st.markdown("<h2 class='nm-section-title'>🎬 Vídeo Pitch & Demonstração</h2>", unsafe_allow_html=True)
+            video_pitch_url = config.obter_config("MENTORIA_PITCH_VIDEO_URL", "")
+            if video_pitch_url:
+                st.video(video_pitch_url)
+            else:
+                st.info(
+                    "🎬 **Placeholder do Vídeo Pitch (YouTube)**\n\n"
+                    "Assim que o link oficial do YouTube estiver salvo, defina `MENTORIA_PITCH_VIDEO_URL` "
+                    "nos **Secrets** do Streamlit Cloud (ou no `.env`) para exibir o vídeo aqui automaticamente."
+                )
+
 
 # ------------------------------------------------------------------------------
 # TELA 2: MINHA BIBLIOTECA

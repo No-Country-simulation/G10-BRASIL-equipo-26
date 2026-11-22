@@ -180,6 +180,7 @@ Guides *(in Portuguese)*: [`docs/oci-tutorial.md`](./docs/oci-tutorial.md) · [`
 
 | Document | Content |
 | :--- | :--- |
+| [`tutorial-uso-mvp.md`](./docs/tutorial-uso-mvp.md) | Step-by-step MVP user tutorial (based on Trupeer guide) |
 | [`pitch.md`](./docs/pitch.md) | Pitch and AI Canvas |
 | [`arquitetura-mvp.md`](./docs/arquitetura-mvp.md) | Modules, contracts and integration |
 | [`integracao-oci.md`](./docs/integracao-oci.md) | IAM, Object Storage, Vault and Autonomous Database |
