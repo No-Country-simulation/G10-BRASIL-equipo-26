@@ -645,4 +645,29 @@ python .\rag\testar_tentativas_sqlite.py
 
 ---
 
-**Status da entrega:** pipeline, persistência SQLite e API FastAPI testados localmente; integração com a interface definitiva da equipe ainda necessária.
+---
+
+## 16. Deploy em Produção (Render + Streamlit Cloud)
+
+Para subir a API FastAPI em produção (ex.: **Render**) integrada ao frontend no **Streamlit Cloud**:
+
+1. **Root Directory:** `rag/`
+2. **Build Command:**
+   ```bash
+   pip install -r requirements.txt fastapi uvicorn python-multipart
+   ```
+   *(O `rag/requirements.txt` inclui as libs do pipeline RAG/LLM e fixa `google-genai>=3.0.0`, necessário para compatibilidade com chaves Gemini mais recentes iniciadas em `AQ.` — versões `1.x` retornavam `400 API_KEY_INVALID` no endpoint de embeddings).*
+3. **Start Command:**
+   ```bash
+   uvicorn main:app --host 0.0.0.0 --port $PORT
+   ```
+4. **Variáveis de Ambiente obrigatórias no Render:**
+   - `GEMINI_API_KEY` (e opcionalmente `GEMINI_API_KEY_BACKUP` / `GEMINI_API_KEYS` separadas por vírgula)
+   - `GROQ_API_KEY` (e `GROQ_API_KEYS` para rotação)
+   - `LLM_PROVIDER_ORDER=groq,gemini`
+   - `GEMINI_TIMEOUT_MS=30000`
+5. **No Streamlit Cloud (`app/main.py`):** configurar `MENTORIA_API_URL = "https://<seu-servico>.onrender.com"` e `OCI_BUCKET_ARTIFACTS = "mentoria-tech-artifacts"` nos **Secrets**.
+
+> **Nota sobre `503 UNAVAILABLE` na avaliação do documento:** se a API do Gemini estiver em pico momentâneo durante a etapa opcional de `avaliacao_documento`, o pipeline registra o aviso nos logs e prossegue normalmente com a geração via Groq sem interromper o usuário.
+
+**Status da entrega:** pipeline, persistência SQLite, API FastAPI e integração com a interface Streamlit validados localmente e em nuvem (Render + Streamlit Cloud).

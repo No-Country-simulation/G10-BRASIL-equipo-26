@@ -20,7 +20,7 @@
   <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT">
 </p>
 
-> **Acesse o MVP Online (Streamlit Cloud):** [https://mentoria-tech-ai.streamlit.app/](https://mentoria-tech-ai.streamlit.app/)
+> **Acesse o MVP Online (Streamlit Cloud):** [https://mentoria-tech.streamlit.app/](https://mentoria-tech.streamlit.app/)
 
 ---
 
@@ -113,7 +113,7 @@ flowchart TD
 |  **VALIDADO** | Contratos Pydantic v2 (6 formatos), remoção de `nicho` e verificação de fontes |
 |  **VALIDADO** | API FastAPI (`rag/main.py`, contrato `v0.3`) e persistência SQLite (Zero PII) |
 |  **VALIDADO** | Extrator multi-formato `.pdf/.md/.txt` (PR #40) e benchmark RAG (200 experimentos) |
-|  **VALIDADO** | Interface Streamlit publicada ([mentoria-tech-ai.streamlit.app](https://mentoria-tech-ai.streamlit.app/)) com otimizações Lighthouse/Core Web Vitals (PR #51) |
+|  **VALIDADO** | Interface Streamlit publicada ([mentoria-tech.streamlit.app](https://mentoria-tech.streamlit.app/)) com otimizações Lighthouse/Core Web Vitals (PR #51) |
 |  **VALIDADO** | Pool de chaves de API (`GEMINI_API_KEYS`, `GROQ_API_KEYS`) com rotação automática |
 |  **VALIDADO** | Gravação real de JSON estruturado no bucket privado OCI (`mentoria-tech-artifacts`, Always Free) |
 |  **VALIDADO** | Suíte automatizada de QA (`30` testes aprovados) e relatórios trilíngues + notebooks BI |

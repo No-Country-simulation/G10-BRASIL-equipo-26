@@ -2,7 +2,7 @@
 
 **Baseado no guia interativo produzido por:** Andrea De Nardi Gonzalez ([Tutorial Trupeer](https://app.trupeer.ai/view/uApUfd7nr/criacao-de-conteudo-educacional-com-ia))  
 **Revisão e padronização técnica:** Lídia Moura — Líder Técnica  
-**Aplicação Online:** [mentoria-tech-ai.streamlit.app](https://mentoria-tech-ai.streamlit.app/) *(Tema Claro — padrão Demo Day)*
+**Aplicação Online:** [mentoria-tech.streamlit.app](https://mentoria-tech.streamlit.app/) *(Tema Claro — padrão Demo Day)*
 
 ---
 
