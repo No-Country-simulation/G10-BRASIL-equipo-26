@@ -1,6 +1,6 @@
 # MentorIA Tech — Equipe 26 (Hackathon ONE G10)
 *Atualizado em: 19/11/2026 — Responsável: Lídia Moura (Líder Técnica)*  
-**Aplicação Online (Streamlit Cloud):** [https://mentoria-tech-ai.streamlit.app/](https://mentoria-tech-ai.streamlit.app/)
+**Aplicação Online (Streamlit Cloud):** [https://mentoria-tech.streamlit.app/](https://mentoria-tech.streamlit.app/)
 
 ## 1. Nome do Projeto
 **MentorIA Tech** *(codinome de desenvolvimento: NovaMente)* — Sistema Inteligente de Adaptação e Geração de Conteúdo Educacional Técnico.
@@ -61,7 +61,7 @@ Estudantes de tecnologia, profissionais em transição de carreira, desenvolvedo
 ```
 
 ### Interface e Persistência
-- **Interface Online:** Streamlit publicada em [mentoria-tech-ai.streamlit.app](https://mentoria-tech-ai.streamlit.app/) — jornada em 4 telas com otimizações Lighthouse/Core Web Vitals (PR #51)
+- **Interface Online:** Streamlit publicada em [mentoria-tech.streamlit.app](https://mentoria-tech.streamlit.app/) — jornada em 4 telas com otimizações Lighthouse/Core Web Vitals (PR #51)
 - **Banco local:** SQLite com tabelas `geracoes`, `respostas`, `eventos_estudo` (telemetria anonimizada SHA-256)
 - **Exportação BI:** CSVs automáticos em `data/bi_exports/` para conexão com Power BI
 

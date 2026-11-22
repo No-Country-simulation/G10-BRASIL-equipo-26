@@ -84,7 +84,7 @@ A estratégia de QA do **MentorIA Tech** combina três camadas complementares:
 
 ### STAR 04 — Integração Ponta a Ponta (FastAPI + Streamlit + OCI Object Storage) e Suíte QA
 * **Situation (Situação):**
-  * Era necessário comprovar que a interface web publicada ([mentoria-tech-ai.streamlit.app](https://mentoria-tech-ai.streamlit.app/)) se comunicava com o backend real FastAPI (`rag/main.py`), gravava no SQLite sem PII e persistia o JSON final no bucket privado da Oracle Cloud (`mentoria-tech-artifacts`).
+  * Era necessário comprovar que a interface web publicada ([mentoria-tech.streamlit.app](https://mentoria-tech.streamlit.app/)) se comunicava com o backend real FastAPI (`rag/main.py`), gravava no SQLite sem PII e persistia o JSON final no bucket privado da Oracle Cloud (`mentoria-tech-artifacts`).
 * **Task (Tarefa):**
   * Alinhar a suíte automatizada (`pytest`) ao contrato `v0.3`, validar `POST /geracoes` e o fluxo completo de Quiz em execução real e comprovar a gravação física do objeto na OCI Always Free.
 * **Action (Ação):**

@@ -3,7 +3,7 @@
 **Owner (QA & BI Analyst):** Lídia Moura — Tech Lead  
 **Companion Notebooks:** [Colab/BI Analytics Report](../data_science/relatorio_qa_bi_mentoria_tech.ipynb) · [3-Scenario Validation](../data_science/validacao_pipeline_mentoria_tech.ipynb)  
 **Project:** MentorIA Tech — Team 26 | Hackathon ONE G10 (Alura, Oracle & NoCountry)  
-**Audit Date:** 2026-11-19 · **Live MVP:** [mentoria-tech-ai.streamlit.app](https://mentoria-tech-ai.streamlit.app/) · **Branch:** `mentoria-tech-integracao` (LLM latency optimization + end-to-end validation)  
+**Audit Date:** 2026-11-19 · **Live MVP:** [mentoria-tech.streamlit.app](https://mentoria-tech.streamlit.app/) · **Branch:** `mentoria-tech-integracao` (LLM latency optimization + end-to-end validation)  
 **Languages:** [Português (PT-BR)](./relatorio-qa-evidencias.md) · [Español](./relatorio-qa-evidencias.es.md) · **English**
 
 ---

@@ -20,7 +20,7 @@
   <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT">
 </p>
 
-> **Live MVP (Streamlit Cloud):** [https://mentoria-tech-ai.streamlit.app/](https://mentoria-tech-ai.streamlit.app/)
+> **Live MVP (Streamlit Cloud):** [https://mentoria-tech.streamlit.app/](https://mentoria-tech.streamlit.app/)
 
 ---
 
@@ -113,7 +113,7 @@ flowchart TD
 |  **VALIDATED** | Pydantic v2 contracts (6 formats), `nicho` removed, and source verification |
 |  **VALIDATED** | FastAPI (`rag/main.py`, contract `v0.3`) and SQLite persistence (Zero PII) |
 |  **VALIDATED** | Multi-format `.pdf/.md/.txt` extractor (PR #40) and RAG benchmark (200 experiments) |
-|  **VALIDATED** | Live Streamlit UI ([mentoria-tech-ai.streamlit.app](https://mentoria-tech-ai.streamlit.app/)) with Lighthouse/Core Web Vitals optimizations (PR #51) |
+|  **VALIDATED** | Live Streamlit UI ([mentoria-tech.streamlit.app](https://mentoria-tech.streamlit.app/)) with Lighthouse/Core Web Vitals optimizations (PR #51) |
 |  **VALIDATED** | API key pool (`GEMINI_API_KEYS`, `GROQ_API_KEYS`) with automatic rotation |
 |  **VALIDATED** | Real structured JSON upload to private OCI bucket (`mentoria-tech-artifacts`, Always Free) |
 |  **VALIDATED** | Automated QA suite (`30` passing tests), trilingual QA reports & BI notebooks |
@@ -180,6 +180,7 @@ Guides *(in Portuguese)*: [`docs/oci-tutorial.md`](./docs/oci-tutorial.md) · [`
 
 | Document | Content |
 | :--- | :--- |
+| [`tutorial-uso-mvp.md`](./docs/tutorial-uso-mvp.md) | Step-by-step MVP user tutorial (based on Trupeer guide) |
 | [`pitch.md`](./docs/pitch.md) | Pitch and AI Canvas |
 | [`arquitetura-mvp.md`](./docs/arquitetura-mvp.md) | Modules, contracts and integration |
 | [`integracao-oci.md`](./docs/integracao-oci.md) | IAM, Object Storage, Vault and Autonomous Database |
