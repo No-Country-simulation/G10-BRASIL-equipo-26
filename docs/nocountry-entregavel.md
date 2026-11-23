@@ -1,6 +1,6 @@
 # MentorIA Tech — Equipe 26 (Hackathon ONE G10)
-*Atualizado em: 19/11/2026 — Responsável: Lídia Moura (Líder Técnica)*  
-**Aplicação Online (Streamlit Cloud):** [https://mentoria-tech.streamlit.app/](https://mentoria-tech.streamlit.app/)
+*Atualizado em: 22/11/2026 — Responsável: Lídia Moura (Líder Técnica)*  
+**Aplicação Online (Streamlit Cloud):** [https://mentoria-tech.streamlit.app/](https://mentoria-tech.streamlit.app/) · **Vídeo Pitch:** [youtu.be/jZzWt8NILnk](https://youtu.be/jZzWt8NILnk)
 
 ## 1. Nome do Projeto
 **MentorIA Tech** *(codinome de desenvolvimento: NovaMente)* — Sistema Inteligente de Adaptação e Geração de Conteúdo Educacional Técnico.
@@ -125,7 +125,17 @@ Reduzir de semanas para menos de 60 segundos a criação de materiais de estudo 
 | Relatório Final de QA & Evidências (PT-BR/ES/EN) | ✅ Publicado (`docs/relatorio-qa-evidencias.md`) |
 | Notebooks de Validação & BI/Colab | ✅ Publicados (`data_science/`) |
 
-## 10. Responsável e Equipe
+## 10. Equipe 26 — Hackathon ONE G10 (Oracle, Alura & NoCountry)
 
-**Responsável pelo documento:** Lídia Moura — Líder Técnica  
-**Equipe:** Equipe 26 — Hackathon ONE G10 (Oracle Next Education & Alura / NoCountry)
+| Integrante | Função | Atuação no Projeto |
+|---|---|---|
+| **Lídia Moura** | BI Analyst | Liderança técnica, OCI/IAM, QA, BI e documentação |
+| **Andrea De Nardi Gonzalez** | Data Analyst | Compliance, Scrum Master e tutorial do MVP |
+| **Rodrigo Silva do Carmo** | Data Scientist | Arquitetura RAG/LLM, Pydantic v2, benchmark e modelos preditivos |
+| **Wagner Julio de Campos** | Full Stack Developer | Front-end Streamlit, integração e acessibilidade/SEO |
+| **Lysara Jacó Pinheiro** | Data Analyst | Marca, Brandbook UX/UI e marketing |
+| **Marcos Vinicius Ferreira de Oliveira** | Backend Developer | Back-end, ingestão e extração multi-formato |
+| **Vagner Marques de Souza Lopes** | Data Analyst | Dados, schemas e integração BI |
+| **Leonardo Santos** | Data Analyst | Dados e suporte à extração de documentos |
+| **Josiane da Silva** | Full Stack Developer | Apoio full stack inicial |
+| **João Okuyama** | Data Analyst | Estruturação inicial e GitHub |
