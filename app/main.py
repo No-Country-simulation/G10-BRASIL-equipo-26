@@ -955,17 +955,43 @@ if pagina == "Visão geral":
 
     with c_steps:
         with st.container(border=True):
-            st.markdown("<h2 class='nm-section-title'>🚀 Próximas Evoluções & Equipe</h2>", unsafe_allow_html=True)
+            st.markdown("<h2 class='nm-section-title'>🚀 Próximas Evoluções (Roadmap)</h2>", unsafe_allow_html=True)
             st.markdown(
                 "- 🌎 **App Trilíngue (PT-BR / ES / EN):** acessibilidade completa para toda a comunidade LATAM.\n"
                 "- 🧩 **Extensão do Chrome & Bot Telegram:** estudar direto na aba da documentação e salvar na nuvem.\n"
                 "- 📄 **Exportação `.pdf` / `.txt` & Power BI ativo:** reuso no NotebookLM e painel com avaliações em tempo real.\n"
                 "- 🤖 **Agentes Conversacionais (`agents/`):** tutoria interativa multi-turno pós-MVP."
             )
-            with st.expander("🤝 Equipe 26 & Parcerias / Novos Projetos"):
+
+    st.write("")
+    c_onb, c_eq = st.columns([1.25, 1], gap="medium")
+    with c_onb:
+        with st.container(border=True):
+            st.markdown("<h2 class='nm-section-title'>📘 Jornada de Criação & Guia Passo a Passo</h2>", unsafe_allow_html=True)
+            st.markdown(
+                "1. **Fontes (`Minha biblioteca`):** cole uma transcrição/texto (`+ Salvar Texto como .txt`), use `📘 Carregar exemplo real (Machine_Learning.pdf)` "
+                "ou envie arquivos `.pdf`, `.md` ou `.txt` (até 20 MiB) em `📥 Adicionar à Biblioteca`.\n"
+                "2. **Personalização & Geração (`Estúdio de criação`):** escolha o material, o perfil (`Iniciante`, `Jr/Pleno`, `Tech Lead`, `Gestor`), "
+                "o nível e o formato pedagógico, e clique em `✦ Gerar Conteúdo Educacional com IA`.\n"
+                "3. **Prática & Downloads:** confira as citações (`chunk_ids` e páginas), responda ao **Quiz Interativo** (3 tentativas sem gabarito antecipado) "
+                "e baixe em **Markdown (`.md`)**, **CSV (Anki)** ou **JSON**.\n"
+                "4. **Nuvem & Histórico (`Meus conteúdos`):** consulte o histórico no SQLite, inspecione o JSON e acompanhe o envio ao bucket **OCI (`mentoria-tech-artifacts`)**."
+            )
+            with st.expander("📖 Ver tutorial interativo completo (Trupeer · Andrea Gonzalez)"):
                 st.markdown(
-                    "Interessado em parcerias, oportunidades ou evoluções do **MentorIA Tech**? "
-                    "Conheça quem construiu o projeto e fale conosco via [GitHub Oficial](https://github.com/No-Country-simulation/G10-BRASIL-equipo-26):\n\n"
+                    "- **Guia interativo passo a passo:** [Abrir no Trupeer](https://app.trupeer.ai/view/uApUfd7nr/criacao-de-conteudo-educacional-com-ia)\n"
+                    "- **Documentação técnica:** `docs/tutorial-uso-mvp.md` no repositório."
+                )
+
+    with c_eq:
+        with st.container(border=True):
+            st.markdown("<h2 class='nm-section-title'>👥 Equipe 26 & Parcerias</h2>", unsafe_allow_html=True)
+            st.markdown(
+                "Interessado em parcerias, oportunidades ou evoluções do **MentorIA Tech**? "
+                "Fale conosco pelo [GitHub Oficial](https://github.com/No-Country-simulation/G10-BRASIL-equipo-26)."
+            )
+            with st.expander("🤝 Conheça os 10 integrantes da Equipe 26", expanded=False):
+                st.markdown(
                     "- **Lídia Moura** *(BI Analyst · Tech Lead)* — Liderança técnica, OCI, QA, BI & Documentação\n"
                     "- **Andrea De Nardi Gonzalez** *(Data Analyst)* — Compliance, Scrum Master & Tutorial MVP\n"
                     "- **Rodrigo Silva do Carmo** *(Data Scientist)* — Arquitetura RAG/LLM, Pydantic v2 & Benchmark\n"
@@ -979,31 +1005,16 @@ if pagina == "Visão geral":
 
     st.write("")
     with st.container(border=True):
-        st.markdown("<h2 class='nm-section-title'>📘 Jornada de Criação & Guia Passo a Passo</h2>", unsafe_allow_html=True)
-        st.markdown(
-            "1. **Fontes (`Minha biblioteca`):** cole uma transcrição/texto (`+ Salvar Texto como .txt`), use `📘 Carregar exemplo real (Machine_Learning.pdf)` "
-            "ou envie arquivos `.pdf`, `.md` ou `.txt` (até 20 MiB) em `📥 Adicionar à Biblioteca`.\n"
-            "2. **Personalização & Geração (`Estúdio de criação`):** escolha o material, o perfil (`Iniciante`, `Jr/Pleno`, `Tech Lead`, `Gestor`), "
-            "o nível e o formato pedagógico, e clique em `✦ Gerar Conteúdo Educacional com IA`.\n"
-            "3. **Prática & Downloads:** confira as citações (`chunk_ids` e páginas), responda ao **Quiz Interativo** (3 tentativas sem gabarito antecipado) "
-            "e baixe em **Markdown (`.md`)**, **CSV (Anki)** ou **JSON**.\n"
-            "4. **Nuvem & Histórico (`Meus conteúdos`):** consulte o histórico no SQLite, inspecione o JSON e acompanhe o envio ao bucket **OCI (`mentoria-tech-artifacts`)**."
-        )
-        with st.expander("📖 Ver tutorial interativo completo (Trupeer · Andrea Gonzalez)"):
-            st.markdown(
-                "- **Guia interativo passo a passo:** [Abrir no Trupeer](https://app.trupeer.ai/view/uApUfd7nr/criacao-de-conteudo-educacional-com-ia)\n"
-                "- **Documentação técnica:** `docs/tutorial-uso-mvp.md` no repositório."
-            )
-
-    st.write("")
-    with st.container(border=True):
         st.markdown("<h2 class='nm-section-title'>🎬 Vídeo Pitch & Demonstração (Modo Teatro)</h2>", unsafe_allow_html=True)
         video_pitch_url = config.obter_config(
             "MENTORIA_PITCH_VIDEO_URL",
             "https://youtu.be/jZzWt8NILnk",
         )
         st.video(video_pitch_url)
-        st.caption("Atualize `MENTORIA_PITCH_VIDEO_URL` nos Secrets do Streamlit Cloud (ou `.env`) para trocar automaticamente para a versão final do YouTube.")
+        st.caption(
+            "Demonstração completa do MentorIA Tech em ação: ingestão de documentos técnicos (.pdf, .md e .txt), "
+            "adaptação por perfil e formato pedagógico, Quiz interativo anti-alucinação e persistência na Oracle Cloud (OCI)."
+        )
 
     st.write("")
     alura_key = "alura_dark" if tema_ativo == "dark" else "alura_light"
