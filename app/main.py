@@ -1000,7 +1000,7 @@ if pagina == "Visão geral":
         st.markdown("<h2 class='nm-section-title'>🎬 Vídeo Pitch & Demonstração (Modo Teatro)</h2>", unsafe_allow_html=True)
         video_pitch_url = config.obter_config(
             "MENTORIA_PITCH_VIDEO_URL",
-            "https://www.youtube.com/watch?v=XVR9EwhYYkg",
+            "https://youtu.be/jZzWt8NILnk",
         )
         st.video(video_pitch_url)
         st.caption("Atualize `MENTORIA_PITCH_VIDEO_URL` nos Secrets do Streamlit Cloud (ou `.env`) para trocar automaticamente para a versão final do YouTube.")
