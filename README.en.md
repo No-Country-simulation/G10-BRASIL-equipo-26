@@ -99,7 +99,7 @@ flowchart TD
 | **Extraction** | `pdfplumber` (multi-format, with tables) · `pypdf` |
 | **RAG** | LangChain · ChromaDB · `gemini-embedding-001` |
 | **LLMs** | Groq `openai/gpt-oss-120b` (primary) · Google Gemini (fallback + embeddings/reranking) |
-| **Persistence** | Local SQLite (SHA-256 hashes, no name/email/IP) · OCI Object Storage |
+| **Persistence & Privacy** | Local SQLite with anonymous UUID (`usuario_id` to recover Quizzes/progress via `?uid=` or sidebar; `sessao_id` per visit — Zero PII) · OCI Object Storage |
 | **Interface** | Streamlit, with Brandbook UX/UI v1.1 (WCAG AA) |
 | **Cloud** | Oracle Cloud Infrastructure (OCI SDK), Always Free tier |
 

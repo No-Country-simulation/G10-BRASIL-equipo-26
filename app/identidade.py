@@ -170,17 +170,18 @@ def renderizar_painel_identidade() -> None:
 
     with st.sidebar.expander("🪪 Identidade anônima", expanded=False):
         st.caption(
-            "Sem login nesta fase: seus quizzes são associados a um UUID anônimo "
-            "mantido na URL (`?uid=`) e no navegador (`localStorage`)."
+            "Sem login ou senha (Zero PII / LGPD): seus **Quizzes, tentativas e evolução** "
+            "ficam salvos no servidor vinculados ao seu **`usuario_id`** anônimo (mantido na URL `?uid=` e no navegador). "
+            "Guarde seu `usuario_id` para recuperar seu histórico em outro navegador ou dispositivo."
         )
-        st.markdown("**`usuario_id` (copie para salvar):**")
+        st.markdown("**`usuario_id` (chave anônima para recuperar seus Quizzes):**")
         st.code(uid, language=None)
-        st.markdown("**`sessao_id` (sessão atual):**")
+        st.markdown("**`sessao_id` (identificador da visita atual):**")
         st.code(sid, language=None)
 
         novo_input = st.text_input(
-            "Recuperar meu ID:",
-            placeholder="Cole um UUID válido...",
+            "Recuperar histórico com seu `usuario_id`:",
+            placeholder="Cole um UUID válido e clique em Aplicar ID...",
             key="input_recuperar_uid",
         )
         col_rec, col_novo = st.columns(2)
