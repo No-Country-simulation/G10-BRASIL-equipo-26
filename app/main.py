@@ -71,7 +71,12 @@ def carregar_asset_otimizado_b64(
     """
     mapa_caminhos = {
         "logo": config.ASSETS_DIR / "Logomarca principal" / "Logomarca principal.png",
+        "logo_dark": config.REPO_DIR / "assets" / "logo-mentoria-tech-dark.png",
         "mascote": config.ASSETS_DIR / "Mascote" / "Mascote.png",
+        "alura_light": config.REPO_DIR / "assets" / "logo-alura-light.png",
+        "alura_dark": config.REPO_DIR / "assets" / "logo-alura-dark.png",
+        "nocountry": config.REPO_DIR / "assets" / "logo-nocountry.png",
+        "one_oracle": config.REPO_DIR / "assets" / "logo-one-oracle-next-education.png",
     }
     caminho = mapa_caminhos.get(tipo)
     if not caminho:
@@ -129,6 +134,7 @@ st.set_page_config(
 )
 
 logo_b64, logo_w, logo_h = carregar_asset_otimizado_b64("logo", max_size=(440, 160), display_height=76, padding=12)
+logo_dark_b64, logo_dark_w, logo_dark_h = carregar_asset_otimizado_b64("logo_dark", max_size=(440, 160), display_height=76, padding=12)
 mascote_b64, masc_w, masc_h = carregar_asset_otimizado_b64("mascote", max_size=(240, 240), display_height=116, padding=14)
 
 if "tema" not in st.session_state:
@@ -768,12 +774,17 @@ api_url = config.obter_api_base_url()
 with st.sidebar:
     # A logo é o primeiro delta da sidebar: a sidebar é montada antes do health check
     # (I/O de rede), reduzindo o deslocamento horizontal do conteúdo principal (CLS).
-    if logo_b64:
+    if tema_ativo == "dark" and logo_dark_b64:
+        sb_logo_b64, sb_logo_w, sb_logo_h = logo_dark_b64, logo_dark_w, logo_dark_h
+    else:
+        sb_logo_b64, sb_logo_w, sb_logo_h = logo_b64, logo_w, logo_h
+
+    if sb_logo_b64:
         st.markdown(
             f"<div class='nm-brand-container'>"
-            f"<img src='{logo_b64}' alt='Logo MentorIA-Tech' width='{logo_w}' height='{logo_h}' "
+            f"<img src='{sb_logo_b64}' alt='Logo MentorIA-Tech' width='{sb_logo_w}' height='{sb_logo_h}' "
             f"decoding='async' "
-            f"style='aspect-ratio: {logo_w} / {logo_h};'>"
+            f"style='aspect-ratio: {sb_logo_w} / {sb_logo_h};'>"
             f"</div>",
             unsafe_allow_html=True,
         )
@@ -870,12 +881,15 @@ if pagina == "Visão geral":
         unsafe_allow_html=True,
     )
 
-    col_a1, col_a2, _ = st.columns([1.5, 1.5, 2.0])
-    if col_a1.button("✦ Criar Conteúdo no Estúdio →", type="primary", use_container_width=True, key="cta_estudio"):
+    col_a1, col_a2, col_a3, _ = st.columns([1.45, 1.55, 1.35, 0.65])
+    if col_a1.button("1. 📂 Gerenciar Biblioteca →", type="primary", use_container_width=True, key="cta_biblioteca"):
+        navegar_para("Minha biblioteca")
+        st.rerun()
+    if col_a2.button("2. ✦ Criar no Estúdio →", type="secondary", use_container_width=True, key="cta_estudio"):
         navegar_para("Estúdio de criação")
         st.rerun()
-    if col_a2.button("📂 Gerenciar Biblioteca", type="secondary", use_container_width=True, key="cta_biblioteca"):
-        navegar_para("Minha biblioteca")
+    if col_a3.button("3. 🗂️ Meus Conteúdos", type="secondary", use_container_width=True, key="cta_conteudos"):
+        navegar_para("Meus conteúdos")
         st.rerun()
     st.write("")
 
@@ -917,14 +931,14 @@ if pagina == "Visão geral":
     )
     st.write("")
 
-    c_rec, c_steps = st.columns([1.35, 1], gap="medium")
+    c_rec, c_steps = st.columns([1.25, 1], gap="medium")
     with c_rec:
         with st.container(border=True):
             st.markdown("<h2 class='nm-section-title'>🌷 Gerações Recentes desta Sessão</h2>", unsafe_allow_html=True)
             if not st.session_state["resultados"]:
                 st.info(
                     "🌱 Nenhum conteúdo gerado nesta sessão ainda. "
-                    "Carregue um documento em **Minha biblioteca** e crie seu primeiro material no **Estúdio de criação**."
+                    "Comece enviando um documento em **Minha biblioteca** e gere seu material no **Estúdio de criação**."
                 )
             for r in st.session_state["resultados"][:4]:
                 rc1, rc2 = st.columns([3.2, 1])
@@ -941,50 +955,82 @@ if pagina == "Visão geral":
 
     with c_steps:
         with st.container(border=True):
+            st.markdown("<h2 class='nm-section-title'>🚀 Próximas Evoluções & Equipe</h2>", unsafe_allow_html=True)
             st.markdown(
-                "<h2 class='nm-section-title'>A Jornada de Criação 🌸</h2>"
-                "<p style='font-size: 13.5px; line-height: 1.8; margin-bottom: 0;'>"
-                "<strong>01 · Fontes:</strong> Envie manuais técnicos reais (.pdf, .md ou .txt até 20 MiB).<br>"
-                "<strong>02 · Personalizar:</strong> Escolha perfil, nível, formato e quantidade de itens.<br>"
-                "<strong>03 · Gerar:</strong> O backend FastAPI processa via RAG + LLM e salva no SQLite.<br>"
-                "<strong>04 · Praticar e Exportar:</strong> Responda Quizzes por rodadas (3 tentativas) e salve na OCI."
-                "</p>",
-                unsafe_allow_html=True,
+                "- 🌎 **App Trilíngue (PT-BR / ES / EN):** acessibilidade completa para toda a comunidade LATAM.\n"
+                "- 🧩 **Extensão do Chrome & Bot Telegram:** estudar direto na aba da documentação e salvar na nuvem.\n"
+                "- 📄 **Exportação `.pdf` / `.txt` & Power BI ativo:** reuso no NotebookLM e painel com avaliações em tempo real.\n"
+                "- 🤖 **Agentes Conversacionais (`agents/`):** tutoria interativa multi-turno pós-MVP."
+            )
+            with st.expander("🤝 Equipe 26 & Parcerias / Novos Projetos"):
+                st.markdown(
+                    "Interessado em parcerias, oportunidades ou evoluções do **MentorIA Tech**? "
+                    "Conheça quem construiu o projeto e fale conosco via [GitHub Oficial](https://github.com/No-Country-simulation/G10-BRASIL-equipo-26):\n\n"
+                    "- **Lídia Moura** *(BI Analyst · Tech Lead)* — Liderança técnica, OCI, QA, BI & Documentação\n"
+                    "- **Andrea De Nardi Gonzalez** *(Data Analyst)* — Compliance, Scrum Master & Tutorial MVP\n"
+                    "- **Rodrigo Silva do Carmo** *(Data Scientist)* — Arquitetura RAG/LLM, Pydantic v2 & Benchmark\n"
+                    "- **Wagner Julio de Campos** *(Full Stack)* — Front-end Streamlit, Integração & Lighthouse\n"
+                    "- **Lysara Jacó Pinheiro** *(Data Analyst)* — Identidade de Marca, Brandbook UX/UI & Marketing\n"
+                    "- **Marcos Vinicius Ferreira** *(Backend)* — Pipeline de ingestão e extração multi-formato\n"
+                    "- **Vagner Marques** *(Data Analyst)* — Dados, schemas & exportação analítica BI\n"
+                    "- **Leonardo Santos** *(Data Analyst)* — Suporte a dados e extração de documentos\n"
+                    "- **Josiane da Silva** *(Full Stack)* & **João Okuyama** *(Data Analyst)* — Apoio inicial e repositório"
+                )
+
+    st.write("")
+    with st.container(border=True):
+        st.markdown("<h2 class='nm-section-title'>📘 Jornada de Criação & Guia Passo a Passo</h2>", unsafe_allow_html=True)
+        st.markdown(
+            "1. **Fontes (`Minha biblioteca`):** cole uma transcrição/texto (`+ Salvar Texto como .txt`), use `📘 Carregar exemplo real (Machine_Learning.pdf)` "
+            "ou envie arquivos `.pdf`, `.md` ou `.txt` (até 20 MiB) em `📥 Adicionar à Biblioteca`.\n"
+            "2. **Personalização & Geração (`Estúdio de criação`):** escolha o material, o perfil (`Iniciante`, `Jr/Pleno`, `Tech Lead`, `Gestor`), "
+            "o nível e o formato pedagógico, e clique em `✦ Gerar Conteúdo Educacional com IA`.\n"
+            "3. **Prática & Downloads:** confira as citações (`chunk_ids` e páginas), responda ao **Quiz Interativo** (3 tentativas sem gabarito antecipado) "
+            "e baixe em **Markdown (`.md`)**, **CSV (Anki)** ou **JSON**.\n"
+            "4. **Nuvem & Histórico (`Meus conteúdos`):** consulte o histórico no SQLite, inspecione o JSON e acompanhe o envio ao bucket **OCI (`mentoria-tech-artifacts`)**."
+        )
+        with st.expander("📖 Ver tutorial interativo completo (Trupeer · Andrea Gonzalez)"):
+            st.markdown(
+                "- **Guia interativo passo a passo:** [Abrir no Trupeer](https://app.trupeer.ai/view/uApUfd7nr/criacao-de-conteudo-educacional-com-ia)\n"
+                "- **Documentação técnica:** `docs/tutorial-uso-mvp.md` no repositório."
             )
 
     st.write("")
-    c_onb, c_vid = st.columns([1.15, 1], gap="medium")
-    with c_onb:
-        with st.container(border=True):
-            st.markdown("<h2 class='nm-section-title'>📘 Onboarding & Guia Passo a Passo</h2>", unsafe_allow_html=True)
-            st.markdown(
-                "1. **Prepare a fonte:** em **Minha biblioteca**, cole uma transcrição/texto técnico (`+ Salvar Texto como .txt`), "
-                "use `📘 Carregar exemplo real (Machine_Learning.pdf)` ou suba um arquivo (`.pdf`, `.md`, `.txt`) em `📥 Adicionar à Biblioteca`.\n"
-                "2. **Personalize e gere:** no **Estúdio de criação**, escolha o material, o perfil (`Iniciante`, `Jr/Pleno`, `Tech Lead`, `Gestor`), "
-                "o nível e o formato, depois clique em `✦ Gerar Conteúdo Educacional com IA`.\n"
-                "3. **Revise, pratique e baixe:** confira as fontes (`chunk_ids` e páginas), responda ao **Quiz Interativo** (até 3 tentativas) "
-                "e exporte em **Markdown (`.md`)**, **CSV (Anki)** ou **JSON**.\n"
-                "4. **Acompanhe na nuvem:** em **Meus conteúdos**, revise o histórico, o JSON completo e o envio ao bucket OCI."
-            )
-            with st.expander("📖 Guia detalhado e tutorial interativo (Trupeer)"):
-                st.markdown(
-                    "- **Tutorial interativo em vídeo/passos (Andrea Gonzalez):** "
-                    "[Abrir guia no Trupeer](https://app.trupeer.ai/view/uApUfd7nr/criacao-de-conteudo-educacional-com-ia)\n"
-                    "- **Documentação técnica completa:** `docs/tutorial-uso-mvp.md` no repositório oficial."
-                )
+    with st.container(border=True):
+        st.markdown("<h2 class='nm-section-title'>🎬 Vídeo Pitch & Demonstração (Modo Teatro)</h2>", unsafe_allow_html=True)
+        video_pitch_url = config.obter_config(
+            "MENTORIA_PITCH_VIDEO_URL",
+            "https://www.youtube.com/watch?v=XVR9EwhYYkg",
+        )
+        st.video(video_pitch_url)
+        st.caption("Atualize `MENTORIA_PITCH_VIDEO_URL` nos Secrets do Streamlit Cloud (ou `.env`) para trocar automaticamente para a versão final do YouTube.")
 
-    with c_vid:
-        with st.container(border=True):
-            st.markdown("<h2 class='nm-section-title'>🎬 Vídeo Pitch & Demonstração</h2>", unsafe_allow_html=True)
-            video_pitch_url = config.obter_config("MENTORIA_PITCH_VIDEO_URL", "")
-            if video_pitch_url:
-                st.video(video_pitch_url)
-            else:
-                st.info(
-                    "🎬 **Placeholder do Vídeo Pitch (YouTube)**\n\n"
-                    "Assim que o link oficial do YouTube estiver salvo, defina `MENTORIA_PITCH_VIDEO_URL` "
-                    "nos **Secrets** do Streamlit Cloud (ou no `.env`) para exibir o vídeo aqui automaticamente."
-                )
+    st.write("")
+    alura_key = "alura_dark" if tema_ativo == "dark" else "alura_light"
+    alura_b64, alura_w, alura_h = carregar_asset_otimizado_b64(alura_key, max_size=(240, 90), display_height=34, padding=6)
+    nc_b64, nc_w, nc_h = carregar_asset_otimizado_b64("nocountry", max_size=(260, 90), display_height=34, padding=6)
+    one_b64, one_w, one_h = carregar_asset_otimizado_b64("one_oracle", max_size=(300, 90), display_height=38, padding=6)
+    logos_rodape = []
+    for b64, w, h, alt in (
+        (one_b64, one_w, one_h, "Oracle Next Education (ONE)"),
+        (alura_b64, alura_w, alura_h, "Alura"),
+        (nc_b64, nc_w, nc_h, "NoCountry"),
+    ):
+        if b64:
+            logos_rodape.append(
+                f"<img src='{b64}' alt='{alt}' width='{w}' height='{h}' decoding='async' "
+                f"style='height:{h}px; width:auto; object-fit:contain;'>"
+            )
+    if logos_rodape:
+        st.markdown(
+            "<div style='text-align:center; padding: 14px 12px 6px; opacity: 0.9;'>"
+            "<div style='font-size:12px; color:var(--color-text-muted); margin-bottom:10px; font-weight:600; letter-spacing:0.05em;'>"
+            "REALIZAÇÃO & PARCEIROS · HACKATHON ONE G10"
+            "</div>"
+            f"<div style='display:flex; justify-content:center; align-items:center; gap:28px; flex-wrap:wrap;'>{''.join(logos_rodape)}</div>"
+            "</div>",
+            unsafe_allow_html=True,
+        )
 
 
 # ------------------------------------------------------------------------------
