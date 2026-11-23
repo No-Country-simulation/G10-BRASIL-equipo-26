@@ -76,10 +76,11 @@ Você pode adicionar arquivos ao acervo de duas formas:
 
 > **Dica para Quiz Interativo:** ao selecionar **Quiz Interativo**, o gabarito permanece oculto por padrão até o usuário acertar a questão ou atingir o limite de **3 tentativas**, exibindo então a explicação fundamentada e as fontes do documento.
 
-### Passo 8 — Revisar, avaliar e consultar “Meus conteúdos” (OCI + JSON)
+### Passo 8 — Revisar, avaliar, recuperar sessão e consultar “Meus conteúdos” (OCI + JSON)
 1. Expanda os itens gerados (ex.: os flashcards) para revisar perguntas, respostas e referências de páginas/trechos.
 2. Na seção **Avaliação do Conteúdo**, selecione a nota em estrelas (1 a 5) e clique em **Enviar Avaliação** para registrar o feedback da sessão.
-3. Acesse **Meus conteúdos** no menu lateral para:
+3. **Recuperar sua evolução sem login (LGPD / Zero PII):** no menu lateral, abra **🪪 Identidade anônima** e copie o seu **`usuario_id`** (UUID anônimo). Caso mude de navegador ou dispositivo, basta colar esse UUID em **Recuperar histórico → Aplicar ID** (ou abrir a URL com `?uid=<seu_usuario_id>`) para continuar com acesso aos seus Quizzes e evolução salvos no servidor (`sessao_id` identifica apenas a visita atual).
+4. Acesse **Meus conteúdos** no menu lateral para:
    - Visualizar as prévias de todos os materiais gerados na sessão;
    - Inspecionar o **payload JSON** completo de cada geração;
    - Conferir os metadados de persistência no bucket privado da **Oracle Cloud (`mentoria-tech-artifacts`)**.
