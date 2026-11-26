@@ -51,4 +51,5 @@ design/
 
 ## 🔗 Acesso Rápido ao Protótipo Navegável
 
+* **Execução Online (GitHub Pages):** https://No-Country-simulation.github.io/G10-BRASIL-equipo-26/docs/design/prototipo/
 * **Execução Local:** Basta abrir o arquivo [`design/prototipo/index.html`](./prototipo/index.html) diretamente em qualquer navegador moderno (não requer servidor ou dependências externas).
