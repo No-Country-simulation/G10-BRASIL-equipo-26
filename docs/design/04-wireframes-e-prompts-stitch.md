@@ -12,9 +12,6 @@ O layout da aplicação segue um **Shell Persistente** composto por:
 * **Barra Superior (Topbar - 78px):** Breadcrumb dinâmico de localização, badge de status do ambiente e avatar do usuário.
 * **Área de Conteúdo Fluida (Max-width 1450px):** Grid responsivo com cards arredondados (`16px`–`19px`), espaçamento generoso e hierarquia visual clara.
 
-### Ajuste de Escopo Aplicado (Nicho EdTech)
-* No **Estúdio de Criação**, o campo *"Contexto de aplicação / Setor"* foi removido para eliminar atrito cognitivo, mantendo o foco 100% direcionado ao aprendizado técnico e capacitação no ecossistema de tecnologia (programa ONE).
-
 ---
 
 ## 2. Prompts para o Google Stitch
@@ -35,6 +32,8 @@ Abaixo estão os prompts estruturados usados para geração dos wireframes no **
 > Style: Clean SaaS wireframe, rounded cards (16px radius), generous whitespace, clear visual hierarchy, no clutter.
 > ```
 
+![Home](./wireframes/04.1-wireframe-home-dashboard.png)
+
 ### Prompt 2 — Tela: Biblioteca de Fontes (Minha Biblioteca)
 > **Copiar e colar no Google Stitch:**
 > ```text
@@ -47,6 +46,8 @@ Abaixo estão os prompts estruturados usados para geração dos wireframes no **
 >   - Right column card titled "Materiais disponíveis" with a counter badge ("3 fontes"): A vertical list of uploaded technical documents, each row showing a document icon, file title, file type and status subtitle (e.g., "PDF · Indexado via RAG"), a primary quick-action button "Estudar" and a secondary "Excluir" button.
 > Style: Clean low-fidelity SaaS wireframe, rounded containers, clear form labels, accessible button spacing.
 > ```
+
+![Biblioteca](./wireframes/04.2-wireframe-biblioteca-fontes.png)
 
 ### Prompt 3 — Tela: Estúdio de Criação (Split-View de Parametrização e Pré-visualização)
 > **Copiar e colar no Google Stitch:**
@@ -68,6 +69,8 @@ Abaixo estão os prompts estruturados usados para geração dos wireframes no **
 > Style: Clean SaaS wireframe, high clarity, split-screen productivity layout.
 > ```
 
+![Estudio](./wireframes/04.3-wireframe-estudio-criacao.png)
+
 ### Prompt 4 — Tela: Biblioteca de Conteúdo (Meus Conteúdos)
 > **Copiar e colar no Google Stitch:**
 > ```text
@@ -81,3 +84,5 @@ Abaixo estão os prompts estruturados usados para geração dos wireframes no **
 > - Bottom subtle disclaimer banner regarding source-grounded RAG generation.
 > Style: Clean low-fidelity SaaS wireframe, generous padding, scannable list rows, developer-friendly hierarchy.
 > ```
+
+![Conteudo](./wireframes/04.4-wireframe-biblioteca-conteudo.png)
