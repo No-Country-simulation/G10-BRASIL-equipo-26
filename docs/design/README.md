@@ -49,6 +49,6 @@ design/
 
 ---
 
-## 🔗 Acesso Rápido ao Protótipo Navegável
+## 🔗 Protótipo Navegável
 
 * **Execução Local:** Basta abrir o arquivo `design/prototipo/index.html` diretamente em qualquer navegador moderno (não requer servidor ou dependências externas).
