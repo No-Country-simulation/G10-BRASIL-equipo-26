@@ -1,7 +1,8 @@
 # 🎨 Relatório de Auditoria Design QA — Streamlit
 
 > **Projeto:** MentorIA Tech (Desafio NovaMente) | Hackathon ONE — Grupo 10 (Equipe 26)
-> **Referência Oficial:** [Guia de Design (`design.md`)](../design/design.md) | [Brandbook UX/UI](../design/MentorIA-Tech_Brandbook_UXUI.pdf)
+>
+> **Referência Oficial:** `mentoria-tech-brandbook-v1.1`
 
 Este documento registra a auditoria de **Design QA** da aplicação deployada no Streamlit, avaliando a fidelidade visual ao Brandbook, usabilidade da jornada, acessibilidade (WCAG AA), UX Writing, comportamento em Modo Claro/Escuro e impactos das limitações arquiteturais do Streamlit, com base na análise do código-fonte (`main.py` e `.streamlit/config.toml`) e nas capturas das 4 telas principais.
 
