@@ -13,7 +13,7 @@ Os documentos estão organizados seguindo a cronologia do processo de design (*D
 
 | Etapa | Artefato | Descrição |
 | :--- | :--- | :--- |
-| **01. Estratégia** | [`01-discovery-e-estrategia-produto.md`](./01-discovery-e-estrategia-produto.md) | Contexto do mercado EdTech no Brasil, Matriz CSD, Benchmarking competitivo, Proposta de Valor Única (UVP) e priorização de MVP (MoSCoW). |
+| **01. Estratégia** | [`01-discovery-e-estrategia-produto.md`](./docs/design/01-discovery-e-estrategia-produto.md) | Contexto do mercado EdTech no Brasil, Matriz CSD, Benchmarking competitivo, Proposta de Valor Única (UVP) e priorização de MVP (MoSCoW). |
 | **02. Empatia** | [`02-persona-e-jornada-usuario.md`](./02-persona-e-jornada-usuario.md) | Definição da Proto-Persona (estudante/profissional em transição no programa ONE) e Mapa da Jornada do Usuário ponta a ponta. |
 | **03. Estrutura** | [`03-arquitetura-informacao-e-user-flow.md`](./03-arquitetura-informacao-e-user-flow.md) | Sitemap, especificação funcional dos 4 módulos principais (*Home*, *Biblioteca de Fontes*, *Estúdio de Criação* e *Biblioteca de Conteúdo*) e *User Flow*. |
 | **04. Ideação UI** | [`04-wireframes-e-prompts-stitch.md`](./04-wireframes-e-prompts-stitch.md) | Diretrizes estruturais de layout (*Split-View*), prompts utilizados no Google Stitch e referência visual dos wireframes de baixa fidelidade (`/wireframes`). |
