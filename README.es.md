@@ -202,18 +202,18 @@ Guías *(en portugués)*: [`docs/oci-tutorial.md`](./docs/oci-tutorial.md) · [`
 
 Funciones oficiales según el registro en NoCountry, junto con la actuación real en el proyecto.
 
-| Integrante | Función en NoCountry | Actuación en el proyecto |
-| :--- | :--- | :--- |
-| **Lídia Moura** | BI Analyst | Liderazgo técnico, configuración OCI, QA y documentación |
-| **Andrea De Nardi Gonzalez** | Data Analyst | Compliance y Scrum Master |
-| **Rodrigo Silva do Carmo** | Data Scientist | Arquitectura RAG/LLM, contratos Pydantic, benchmark |
-| **Wagner Julio de Campos** | Full Stack Developer | Front-end Streamlit e integración |
-| **Josiane da Silva** | Full Stack Developer | Full stack |
-| **Marcos Vinicius Ferreira de Oliveira** | Backend Developer | Back-end, ingesta y extracción de documentos |
-| **Lysara Jacó Pinheiro** | Data Analyst | Marca, Brandbook, UX/UI y marketing |
-| **Vagner Marques de Souza Lopes** | Data Analyst | Datos, esquemas e integración |
-| **Leonardo Santos** | Data Analyst | Datos y extracción de documentos |
-| **João Okuyama** | Data Analyst | Datos y administración de GitHub |
+| Integrante | Función en NoCountry | Actuación en el proyecto | Enlaces |
+| :--- | :--- | :--- | :--- |
+| **Lídia Moura** | BI Analyst | Liderazgo técnico, configuración OCI, QA y documentación | [LinkedIn](https://www.linkedin.com/in/lidimoura) |
+| **Andrea De Nardi Gonzalez** | Data Analyst | Compliance y Scrum Master | [GitHub](https://github.com/AndreaGonzalez-cursoimersao) |
+| **Rodrigo Silva do Carmo** | Data Scientist | Arquitectura RAG/LLM, contratos Pydantic, benchmark | [LinkedIn](https://www.linkedin.com/in/rodrigo-do-carmo-1b7b41204/) |
+| **Wagner Julio de Campos** | Full Stack Developer | Front-end Streamlit e integración | [LinkedIn](https://www.linkedin.com/in/wagnercampos5/) |
+| **Josiane da Silva** | Full Stack Developer | Full stack | — |
+| **Marcos Vinicius Ferreira de Oliveira** | Backend Developer | Back-end, ingesta y extracción de documentos | [GitHub](https://github.com/fervinicius) |
+| **Lysara Jacó Pinheiro** | Data Analyst | Marca, Brandbook, UX/UI y marketing | [LinkedIn](https://www.linkedin.com/in/lysara-pinheiro) |
+| **Vagner Marques de Souza Lopes** | Data Analyst | Datos, esquemas e integración | [LinkedIn](https://www.linkedin.com/in/vagnermarques-dados) |
+| **Leonardo Santos** | Data Analyst | Datos y extracción de documentos | [LinkedIn](https://www.linkedin.com/in/souleosantos) |
+| **João Okuyama** | Data Analyst | Datos y administración de GitHub | — |
 
 ---
 
