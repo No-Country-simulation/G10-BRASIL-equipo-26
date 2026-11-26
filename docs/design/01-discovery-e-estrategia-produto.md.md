@@ -92,10 +92,11 @@ Definição dos requisitos funcionais para a primeira versão testável do produ
        │
        ▼ (Geração automática em 1 clique)
 [Workspace de Estudo — Navegação em 4 Abas]
-       ├──► Aba 1: Resumo Estruturado (Visão Geral)
-       ├──► Aba 2: Passo a Passo Prático (Hands-on)
-       ├──► Aba 3: Flashcards Técnicos (Memorização)
-       └──► Aba 4: Quiz Interativo (Validação com Feedback)
+       ├──► Aba 1: Home: Dashboard geral e visão das capacitações em andamento. (Visão Geral)
+       ├──► Aba 2: Biblioteca de Fontes: Catálogo e gestão de materiais técnicos carregados.
+       ├──► Aba 3: Estúdio de Criação: Usuário parametriza o estudo, aciona a IA e tem a Pré-visualização do conteúdo antes de exportar.
+       └──► Aba 4: Biblioteca de Conteúdo: Repositório organizado de todos os artefatos educacionais prontos. 
+
 ```
 
 ---
