@@ -33,8 +33,8 @@ design/
 ├── 03-arquitetura-informacao-e-user-flow.md
 ├── 04-wireframes-e-prompts-stitch.md
 ├── 05-design-system-e-tokens.md
-├── 05-brandbook-identidade-visual.pdf
 ├── 06-validacao-prototipo-e-dogfooding.md
+├── mentoria-tech-brandbook-v1.1.pdf
 ├── wireframes/
 │   ├── 04.1-wireframe-home-dashboard.png
 │   ├── 04.2-wireframe-biblioteca-fontes.png
