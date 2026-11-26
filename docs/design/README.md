@@ -27,21 +27,24 @@ Os documentos estão organizados seguindo a cronologia do processo de design (*D
 
 ```text
 design/
-├── README.md
-├── 01-discovery-e-estrategia-produto.md
-├── 02-persona-e-jornada-usuario.md
-├── 03-arquitetura-informacao-e-user-flow.md
-├── 04-wireframes-e-prompts-stitch.md
-├── 05-design-system-e-tokens.md
-├── 06-validacao-prototipo-e-dogfooding.md
-├── mentoria-tech-brandbook-v1.1.pdf
-├── wireframes/
+├── README.md                                     
+├── 01-discovery-e-estrategia-produto.md          
+├── 02-persona-e-jornada-usuario.md               
+├── 03-arquitetura-informacao-e-user-flow.md      
+├── 04-wireframes-e-prompts-stitch.md             
+├── 05-design-system-e-tokens.md                  
+├── 06-validacao-prototipo-e-dogfooding.md            
+├── mentoria-tech-brandbook-v1.1.pdf              
+├── wireframes/                                   
 │   ├── 04.1-wireframe-home-dashboard.png
 │   ├── 04.2-wireframe-biblioteca-fontes.png
 │   ├── 04.3-wireframe-estudio-criacao.png
 │   └── 04.4-wireframe-biblioteca-conteudo.png
-└── prototipo/
-    └── index.html
+├── prototipo/                                    
+│   └── index.html
+└── qa/                                           
+    ├── relatorio_de_qa_de_ux_ui_streamlit.md
+    └── evidencias/                               
 ```
 
 ---
